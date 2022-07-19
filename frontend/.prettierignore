@@ -1,0 +1,8 @@
+/node_modules/
+/public/
+.vscode
+.idea
+/dist/
+/backups/
+canister_ids.json
+src/assets

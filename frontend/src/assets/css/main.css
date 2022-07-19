@@ -1,0 +1,151 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: Roboto, Helvetica, Tahoma, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "微软雅黑", "WenQuanYi Micro Hei", sans-serif;
+    background-color: white;
+    color: black;
+}
+
+/* 单个特征 */
+.font-weight-bold {
+  font-weight: bold;
+}
+/* 点击效果 */
+.clickable {
+  cursor: pointer;
+}
+/* 单行显示 带省略 */
+.single-line {
+    display: block;
+    word-break: keep-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* 导航栏耦合样式 */
+/* 导航栏固定，凡是包含导航栏的页面，最外围应当有这个属性 */
+/* .include-fixed-top-navigator {
+    padding-top: 80px;
+}
+@media screen and (max-width: 992px) {
+    .include-fixed-top-navigator {
+        padding-top: 0;
+    }
+} */
+
+/* 页面适配 */
+.container {
+  padding-left: 0;
+  padding-right: 0;
+}
+@media (min-width: 1400px) {
+  .container-xxl,
+  .container-xl,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container {
+    max-width: 1200px; /* 网站设计风格 用 1200 宽度 */
+  }
+}
+.flex{
+    display: flex;
+}
+/*垂直居中*/
+.flex-y-center{
+    display: flex;
+    align-items: center;
+}
+
+.create-time{
+    font-size: 14px;
+    color: rgb(133, 144, 166);
+}
+
+.el-icon.el-backtop__icon {
+    color: #0fb8e0;
+}
+
+.i-message {
+    background-color: #3E0A55 !important;
+    font-size: 48px !important;
+    color: white !important;
+}
+
+.i-message .el-message__content {
+    font-size: 24px !important;
+    margin-left: 19px;
+}
+
+@media screen and (max-width: 440px) {
+    .i-message {
+        font-size: 30px !important;
+    }
+
+    .i-message .el-message__content {
+        font-size: 20px !important;
+    }
+}
+
+/*富文本编辑器样式*/
+.ql-toolbar.ql-snow .ql-formats{
+    line-height: 24px;
+}
+.ql-toolbar{
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+}
+.ql-container{
+    width: 100%;
+    font-size: 16px!important;
+    /*设置height100%会导致编辑器和其他内容挤在一起*/
+    height: inherit!important;
+    min-height:200px!important;
+    border-radius: 0 0 4px 4px;
+}
+.ql-editor{
+    line-height: 1.6!important;
+}
+/*富文本编辑器显示的样式*/
+.content.ql-snow .ql-editor{
+    padding: 10px 0!important;
+}
+/*隐藏富文本实际显示时的行数*/
+.content.ql-snow .ql-editor.hidden{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent);
+    mask-image: linear-gradient(180deg, #000 55%, transparent);
+}
+
+/*自定义时间选择器*/
+.i-date-pop .el-picker-panel__icon-btn{
+    margin-top: -3px;
+}
+/*状态的样式*/
+.post-status{
+    padding: 2px 12px;
+    border-radius: 14px;
+    color: white;
+    white-space: nowrap;
+}
+.post-status.enable{
+    background-color: rgb(103,194,58);
+}
+.post-status.completed{
+    background-color: rgb(144,147,153);
+}
+.post-status.closed{
+    background-color: rgb(245,108,108);
+}
+

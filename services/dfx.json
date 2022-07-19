@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  
+  "canisters": {
+    "backend": {
+      "type": "custom",
+      "wasm": "target/wasm32-unknown-unknown/release/backend_opt.wasm",
+      "build": [
+        "cargo build --target wasm32-unknown-unknown --package  backend --release",
+        "ic-cdk-optimizer target/wasm32-unknown-unknown/release/backend.wasm -o target/wasm32-unknown-unknown/release/backend_opt.wasm"
+      ],
+      "candid": "src/backend/src/backend.did"
+    },
+    "photo": {
+      "main": "src/photo/Main.mo",
+      "type": "motoko"
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": "",
+      "args": ""
+    }
+  },
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  }
+}

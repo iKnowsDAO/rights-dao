@@ -1,0 +1,19 @@
+ # Various IDEs and Editors
+.idea/
+**/*~
+
+# Mac OSX temporary files
+.DS_Store
+**/.DS_Store
+
+# dfx temporary files
+.dfx/
+
+# frontend code
+node_modules/
+dist/
+
+# env
+# 忽略一些自己的环境配置
+.env.local
+.env.*.local
