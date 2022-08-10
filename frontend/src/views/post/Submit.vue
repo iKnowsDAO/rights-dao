@@ -11,7 +11,7 @@
                 </h3>
             </div>
             <el-row class="post-form">
-                <el-col :span="16" :offset="4">
+                <el-col :sm={span:16,offset:4} :xs="24">
                     <el-form :model="form" hide-required-asterisk
                              ref="ruleFormRef">
                         <el-form-item prop="title" :label="$t('post.help.title.label')"
@@ -290,32 +290,19 @@
         }, 1500);
     }
 
-    // const  filterEditorImg = async (html:string) =>{
-    //     try {
-    //         //限制图片大小2M
-    //         const limitSize = 2;
-    //         //全是空格不准提交
-    //         if (myTextEditor.value?.getText().trim() === '') {
-    //             showMessageError(t('project.create.informationNull'));
-    //             return null;
-    //         }
-    //         let res = await filterImgToICPId(html, limitSize, limitLength);
-    //         //超过限制的长度，返回错误
-    //         if (res.overLimitLength) {
-    //             loading.value = false;
-    //             return null;
-    //         } else {
-    //             return res;
-    //         }
-    //     } catch (e: any) {
-    //         console.error(e);
-    //         return null;
-    //     }
-    // }
 </script>
 
 <style lang="scss">
     .post-submit-container {
+        /* 当页面宽度小于426px*/
+        @media screen and (max-width:426px) {
+            .container{
+                padding: 0 10px;
+            }
+            .post-form .el-form-item{
+                display: block;
+            }
+        }
         .container {
             .is-error, .isEditorError {
                 .ql-toolbar {
@@ -353,6 +340,7 @@
                 }
             }
             .form-footer {
+                margin-top: 10px;
                 .submit-button {
                     font-size: 1.45rem;
                     min-width: 110px;

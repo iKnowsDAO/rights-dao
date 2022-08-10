@@ -2,14 +2,14 @@
     <div class="person-profile-user-container">
         <div class="container">
             <el-row>
-                <el-col :span="3" :offset="3" style="display: inherit;">
+                <el-col :sm={span:3,offset:3} :xs="24" class="avatar">
                     <Avatar :username=user.name
                             :principal-id=targetPrincipal
                             :avatar-id="0"
                             :clickable="false"
                             :size="120"/>
                 </el-col>
-                <el-col :span="15">
+                <el-col :sm=15 :xs="24">
                     <div class="user-profile">
                         <el-row justify="space-between" class="title">
                             <div class="flex-y-center">
@@ -326,8 +326,22 @@
             color: rgb(96, 98, 102);
             font-size: 20px;
         }
+        @media screen and (max-width:426px) {
+            .avatar,.title{
+                justify-content: center;
+            }
+            .title{
+                margin-top: 5px;
+            }
+            .container{
+                padding: 0 20px!important;
+            }
+        }
         .container {
             padding: 40px 40px;
+            .avatar{
+                display: inherit
+            }
             .avatar-container {
                 align-items: start;
             }

@@ -180,6 +180,11 @@
         padding: 20px;
         background-color: rgb(246, 246, 246);
         min-height: 70vh;
+        @media screen and (max-width:426px) {
+            .container{
+                padding:unset!important;
+            }
+        }
         .empty{
             /*margin-top: 10px;*/
         }
