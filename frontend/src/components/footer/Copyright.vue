@@ -4,7 +4,7 @@
             {{
                 `Copyright © ${
                     2021 + (new Date().getFullYear() === 2021 ? '' : '-' + new Date().getFullYear())
-                } ICPL. All rights reserved`
+                } RightsDao. All rights reserved`
             }}
         </p>
     </div>
@@ -12,7 +12,7 @@
 <script lang="ts" setup></script>
 <style lang="scss">
 .copyright {
-    background-color: black;
+    /*background-color: black;*/
     > p {
         font-size: 12px;
         margin: 0 auto;

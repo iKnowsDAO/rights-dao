@@ -120,7 +120,8 @@
     import {Close} from '@element-plus/icons-vue';
     import type {FormInstance, FormRules} from 'element-plus'
     import {SupportedLocale, t} from '@/locale';
-    import {QuillEditor} from '@vueup/vue-quill';
+    import {Quill, QuillEditor} from '@vueup/vue-quill';
+    import ImageUploader from "quill-image-uploader";
     import {useRoute, useRouter} from 'vue-router';
     import en from 'element-plus/lib/locale/lang/en';
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
@@ -128,7 +129,7 @@
     import {submitPost} from "@/api/post";
     import {goBack} from "@/router/routers";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
-    import {calculatedICPIdLength} from "@/utils/images";
+    import {calculatedICPIdLength, uploadImage} from "@/utils/images";
 
     const store = useStore();
     const router = useRouter();
@@ -142,6 +143,8 @@
     //编辑器是否发生变化
     const isEditorChange = ref(false);
     const isEditorErr = ref(false);
+    //注册quill上传图片模块
+    Quill.register("modules/imageUploader", ImageUploader);
     //限制输入长度10000个字
     const limitLength = 10000;
     const ruleFormRef = ref<FormInstance>();
@@ -189,6 +192,20 @@
                     // ["link", "image","video"], // 链接、图片、视频
                 ], //工具菜单栏配置
             },
+            imageUploader: {
+                upload: (file) => {
+                    return new Promise((resolve, reject) => {
+                        uploadImage(file).then(res => {
+                                if (res!=='') {
+                                    resolve(res)
+                                } else {
+                                    reject()
+                                }
+                            }
+                        )
+                    });
+                }
+            },
         },
         placeholder: '......',       //placeholder,在双语切换时不会即时响应，注释了
         readyOnly: false, //是否只读
@@ -214,7 +231,7 @@
         return length;
     });
 
-    const addParticipants = () =>{
+    const addParticipants = () => {
         form.value.participants.push("");
     }
 

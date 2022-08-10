@@ -6,7 +6,7 @@
             :title="total === 1 || total ===0 ?
                     total + $t('post.item') + $t('post.comment'):
                     total + $t('post.item') + $t('post.comments')"
-            width="35%"
+            :width="isPhone? '95%' : '35%'"
         >
             <template v-if="showList.length>0">
                 <div class="replyReply" v-for="(item,index) in showList">
@@ -89,6 +89,8 @@
     const showList = ref<ApiPostComments[]>([])
     const itemList = ref<ApiPostComments[]>([])
     const emit = defineEmits(['update:visible', 'refreshCallback'])
+    //如果宽度小于769px则说明是平板以下的尺寸
+    const isPhone = ref(document.documentElement.clientWidth < 769);
     const pageSize = ref(10);
     const pageNum = ref(1);
     const total = ref(0);

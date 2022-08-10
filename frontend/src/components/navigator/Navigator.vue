@@ -100,12 +100,12 @@
                         <div class="icon">
                             <i
                                 v-if="isEn"
-                                class="iconfont icon-language-english"
+                                class="iconfont icon-language-chinese1"
                                 @click="onChangeLanguage"
                             ></i>
                             <i
                                 v-else
-                                class="iconfont icon-language-chinese"
+                                class="iconfont icon-language-english1"
                                 @click="onChangeLanguage"
                             ></i>
                         </div>

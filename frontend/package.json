@@ -23,6 +23,7 @@
         "highlight.js": "^11.5.0",
         "lodash-es": "^4.17.21",
         "normalize.css": "^8.0.1",
+        "quill-image-uploader": "^1.2.2",
         "showdown": "^2.0.3",
         "vant": "^3.2.8",
         "vue": "^3.2.16",

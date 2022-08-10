@@ -1,41 +1,45 @@
 <template>
     <div class="follow-us-container">
-        <a class="icon-link" target="blank" href="https://t.me/">
-            <i class="iconfont icon-telegram"></i>
-        </a>
+        <b>©</b>
+        <b class="copyright">&nbsp;RightsDao</b>
+        <!--<a class="icon-link" target="blank" href="https://t.me/">-->
+            <!--<i class="iconfont icon-telegram"></i>-->
+        <!--</a>-->
         <a class="icon-link" target="blank" href="https://github.com/dfinity">
             <i class="iconfont icon-github"></i>
         </a>
-        <a class="icon-link" target="blank" href="https://twitter.com/">
+        <a class="icon-link" target="blank" href="https://twitter.com/Rights_DAO">
             <i class="iconfont icon-twitter"></i>
         </a>
-        <a class="icon-link" target="blank" href="https://medium.com/">
-            <i class="iconfont icon-medium"></i>
+        <a class="icon-link" target="blank" href="https://discord.gg/3ZUUaaWrSE">
+            <i class="iconfont icon-discord"></i>
         </a>
     </div>
 </template>
 <script lang="ts" setup></script>
 <style lang="scss">
 .follow-us-container {
-    background-color: black;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    /*justify-content: center;*/
     align-items: center;
+    .copyright{
+        font-size: 15px;
+        margin-right: 10px;
+    }
     .icon-link {
-        margin-left: 50px;
-        margin-right: 50px;
+        margin-right: 10px;
         text-decoration: none;
-        color: white;
+        color: rgb(113,113,122);
         > img {
-            width: 44px;
-            height: 44px;
+            width: 22px;
+            height: 22px;
             cursor: pointer;
         }
         > i {
-            font-size: 44px;
+            font-size: 22px;
             &:hover {
-                color: #0fb8e0;
+                filter: drop-shadow(0 0 0 black);
             }
         }
     }

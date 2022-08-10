@@ -2,7 +2,7 @@
     <div class="post-detail-timeline-container" v-if="showList.length!==0 || isOwner">
         <div class="container">
             <el-row>
-                <el-col :span="16" :offset="4">
+                <el-col :sm={span:16,offset:4} :xs="24">
                     <el-card class="timeline-card">
                         <template #header>
                             <div style="display:flex;justify-content: space-between">

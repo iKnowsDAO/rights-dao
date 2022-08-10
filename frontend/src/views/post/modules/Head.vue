@@ -2,7 +2,7 @@
     <div class="post-detail-head-container">
         <div class="container">
             <el-row>
-                <el-col :span="16" :offset="4">
+                <el-col :sm={span:16,offset:4} :xs="24">
                     <div class="post-title">
                         <el-row justify="space-between">
                             <el-col :span="20" class="card-info">
@@ -161,6 +161,12 @@
 
 </script>
 <style lang="scss">
+    /* 当页面宽度小于426px*/
+    @media screen and (max-width:426px) {
+        .post-detail-head-container{
+            padding: 0 10px;
+        }
+    }
     .post-detail-head-container {
         background-color: white;
         -webkit-box-shadow: 0 1px 3px rgb(18 18 18 / 10%);

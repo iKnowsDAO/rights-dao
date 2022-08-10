@@ -1,6 +1,7 @@
 export default {
     welcome: "Welcome login",
     error: {
+        canister: "Canister have some problem.",
         login: "Login Failed",
         noLogin: "No login, please login first",
         noPost: "Can't Find Target",
@@ -11,6 +12,10 @@ export default {
             alreadyCompleted: "Timeline cannot be after posting close time."
         },
         notFound: "Sorry, the page you are visiting does not exist",
+        image: {
+            size: "Image size error",
+            format: "Image format error",
+        }
     },
     update: {
         success: "Information update successful."

@@ -2,7 +2,7 @@
     <div class="post-detail-reply-container" v-infinite-scroll="onScroll" :infinite-scroll-distance="200">
         <div class="container">
             <el-row>
-                <el-col :span="16" :offset="4">
+                <el-col :sm={span:16,offset:4} :xs="24">
                     <el-card>
                         <div class="head">
                             <b v-if="list.length === 0 || list.length === 1">

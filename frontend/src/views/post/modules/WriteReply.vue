@@ -2,7 +2,7 @@
     <div class="post-detail-write-reply-container">
         <div class="container">
             <el-row>
-                <el-col :span="16" :offset="4">
+                <el-col :sm={span:16,offset:4} :xs="24">
                     <el-card :class="{ isEditorError: isEditorErr }">
                         <h4>{{t('post.answer')}}</h4>
                         <QuillEditor
@@ -36,9 +36,10 @@
     import {ref, computed, defineEmits} from 'vue';
     import {ElRow, ElCol, ElButton, ElCard} from 'element-plus/es';
     import Avatar from '@/components/common/Avatar.vue';
-    import {QuillEditor} from '@vueup/vue-quill';
+    import {Quill, QuillEditor} from '@vueup/vue-quill';
+    import ImageUploader from "quill-image-uploader";
     import {t} from '@/locale';
-    import {calculatedICPIdLength} from "@/utils/images";
+    import {calculatedICPIdLength, uploadImage} from "@/utils/images";
     import {addPostReply} from "@/api/post";
     import {useRoute} from "vue-router";
     import {showMessageSuccess} from "@/utils/message";
@@ -64,6 +65,20 @@
                     // ["link", "image","video"], // 链接、图片、视频
                 ], //工具菜单栏配置
             },
+            imageUploader: {
+                upload: (file) => {
+                    return new Promise((resolve, reject) => {
+                        uploadImage(file).then(res => {
+                                if (res!=='') {
+                                    resolve(res)
+                                } else {
+                                    reject()
+                                }
+                            }
+                        )
+                    });
+                }
+            },
         },
         placeholder: '......',       //placeholder,在双语切换时不会即时响应
         readyOnly: false, //是否只读
@@ -76,6 +91,7 @@
     //编辑器是否发生变化
     const isEditorChange = ref(false);
     const isEditorErr = ref(false);
+    Quill.register("modules/imageUploader", ImageUploader);
     //限制输入长度10000个字
     const limitLength = 10000;
     // 直接取出，没有额外逻辑，用 computed 变成响应式值

@@ -1,6 +1,7 @@
 export default {
     welcome: "欢迎登录",
     error: {
+        canister: "服务器出现了问题。",
         login: "登录失败",
         noLogin: "没有登录，请先登录才能发贴",
         noPost: "找不到贴子",
@@ -11,6 +12,10 @@ export default {
             alreadyCompleted: "贴子已经完成，不能进行操作。"
         },
         notFound: "抱歉，您访问的页面不存在",
+        image: {
+            size: "图片大小错误",
+            format: "图片格式错误",
+        }
     },
     update: {
         success: "信息更新成功。"
