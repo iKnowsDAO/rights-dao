@@ -102,10 +102,11 @@ pub struct RichText {
     pub format: String,
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum  Category {
     Tech,
     Law,
+    Safeguard,
     Other,
 }   
 
@@ -116,6 +117,7 @@ impl FromStr for Category {
         match s.to_lowercase().as_str() {
             "law" => Ok(Category::Law),
             "tech" => Ok(Category::Tech),
+            "assure" => Ok(Category::Safeguard),
             _ => Ok(Category::Other)
         }
     }
@@ -277,6 +279,7 @@ pub struct PostPageQuery {
     pub page_size: usize,
     pub page_num: usize,
     pub querystring: String,
+    pub category: Option<String>,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]

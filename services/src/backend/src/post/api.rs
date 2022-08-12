@@ -264,6 +264,7 @@ fn other_posts(query: PostPageOtherQuery) -> Result<PostInfoPage, PostError> {
             page_size: query.page_size,
             page_num: query.page_num,
             querystring: query.querystring,
+            category: None
         };
 
         match Principal::from_text(query.other) {
@@ -282,6 +283,7 @@ fn other_post_comments(query: PostPageOtherQuery) -> Result<PostPage, PostError>
             page_size: query.page_size,
             page_num: query.page_num,
             querystring: query.querystring,
+            category: None,
         };
 
         match Principal::from_text(query.other) {
@@ -300,6 +302,7 @@ fn other_comments(query: PostPageOtherQuery) -> Result<CommentSummaryPage, PostE
             page_size: query.page_size,
             page_num: query.page_num,
             querystring: query.querystring,
+            category: None
         };
 
         match Principal::from_text(query.other) {

@@ -163,6 +163,14 @@ type PageQuery = record {
     querystring: text;
 };
 
+type PostPageQuery = record {
+    page_num: nat64;
+    page_size: nat64;
+    querystring: text;
+    category: opt text;
+};
+
+
 type PostPageOtherQuery = record {
     page_num: nat64;
     page_size: nat64;
@@ -465,7 +473,7 @@ service : {
     "get_post_info" : (PostIdCommand) -> (PostInfoResult);
     "get_post_comments" : (PostIdCommand) -> (PostCommentResult);
     "get_post_events" : (PostIdCommand) -> (PostEventResult);
-    "page_posts" : (PageQuery) -> (PostPageResult);
+    "page_posts" : (PostPageQuery) -> (PostPageResult);
 
     "my_posts" : (PageQuery) -> (PostInfoPageResult);
     "my_post_comments" : (PageQuery) -> (PostPageResult);
