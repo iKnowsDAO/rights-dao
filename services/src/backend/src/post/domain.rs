@@ -107,6 +107,7 @@ pub enum  Category {
     Tech,
     Law,
     Safeguard,
+    Blacklist,
     Other,
 }   
 
@@ -117,7 +118,8 @@ impl FromStr for Category {
         match s.to_lowercase().as_str() {
             "law" => Ok(Category::Law),
             "tech" => Ok(Category::Tech),
-            "assure" => Ok(Category::Safeguard),
+            "safeguard" => Ok(Category::Safeguard),
+            "blacklist" => Ok(Category::Blacklist),
             _ => Ok(Category::Other)
         }
     }
