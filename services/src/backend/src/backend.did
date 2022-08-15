@@ -115,6 +115,8 @@ type RichText = record {
 type Category = variant {
     Tech;
     Law;
+    Safeguard;
+    Blacklist;
     Other;
 };
 
