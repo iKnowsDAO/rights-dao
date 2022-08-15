@@ -5,15 +5,13 @@
                 <el-row :gutter="20">
                     <el-col :sm="4" :xs="24">
                         <el-menu
-                            default-active="1"
+                            default-active=""
                             class="left-menu"
                             :mode="isPhone ? 'horizontal' : 'vertical'"
-                            @open="handleOpen"
-                            @close="handleClose">
-                            <el-menu-item index="1">全部</el-menu-item>
-                            <el-menu-item index="2">技术</el-menu-item>
-                            <el-menu-item index="3">Law</el-menu-item>
-                            <el-menu-item index="4">维权</el-menu-item>
+                            @select="handleSelect"
+                        >
+                            <el-menu-item v-for="(item,index) in category" :index="item.value">{{item.label}}
+                            </el-menu-item>
                         </el-menu>
                     </el-col>
                     <el-col :sm="15" :xs="24">
@@ -25,7 +23,9 @@
                                 :prefix-icon="Search"
                                 clearable
                             />
-                            <el-button type="primary" @click="searchPage()" style="margin-left: 10px">{{t('common.search')}}</el-button>
+                            <el-button type="primary" @click="searchPage()" style="margin-left: 10px">
+                                {{t('common.search')}}
+                            </el-button>
                         </div>
                         <el-card class="post-card" v-for="(item,inex) in showList"
                                  @click="onClick(Number(item.id))">
@@ -117,7 +117,18 @@
 <script lang="ts" setup>
     import {ref, onMounted, computed} from 'vue';
     import {t} from '@/locale';
-    import {ElRow, ElCol, ElInput, ElButton, ElCard, ElTag, ElIcon, ElDivider, ElMenu, ElMenuItem} from 'element-plus/es';
+    import {
+        ElRow,
+        ElCol,
+        ElInput,
+        ElButton,
+        ElCard,
+        ElTag,
+        ElIcon,
+        ElDivider,
+        ElMenu,
+        ElMenuItem
+    } from 'element-plus/es';
     import {Search, Opportunity} from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
     import {useRoute, useRouter} from 'vue-router';
@@ -135,9 +146,31 @@
     const pageNum = ref(0);
     const totalCount = ref(0);
     const pageLoading = ref(false);
+    const board = ref("")
+    const category = computed(() => {
+        return [{
+            value: "",
+            label: t('post.help.category.all')
+        }, {
+            value: "Tech",
+            label: t('post.help.category.tech')
+        }, {
+            value: "Law",
+            label: t('post.help.category.law')
+        }, {
+            value: "Safeguard",
+            label: t('post.help.category.safeguard')
+        }, {
+            value: "Blacklist",
+            label: t('post.help.category.blacklist')
+        }, {
+            value: "Other",
+            label: t('post.help.category.other')
+        }]
+    });
     const list = ref<ApiPost[]>([]);
     //如果宽度小于426px则说明是移动端
-    const isPhone = ref(document.documentElement.clientWidth<426);
+    const isPhone = ref(document.documentElement.clientWidth < 426);
 
     const onClick = (id: number) => {
         router.push('/post/detail/' + id);
@@ -169,12 +202,21 @@
     const searchPage = () => {
         pageNum.value = 0;
         list.value = [];
-        init();
+    }
+
+    const handleSelect = (key: string, keyPath: string[]) => {
+        board.value = key;
+        init()
     }
 
     const init = () => {
+        list.value = [];
         pageLoading.value = true;
-        getPostPage(pageNum.value, pageSize.value, search.value).then(res => {
+        let category;
+        //当board=''时，加载[]，而不是['']
+        board.value ? category = [board.value] : category = [];
+        console.log("cate", category)
+        getPostPage(pageNum.value, pageSize.value, search.value, category).then(res => {
             console.log("page", pageNum.value, res)
             if (res.Ok) {
                 totalCount.value = Number(res.Ok.total_count);
@@ -205,23 +247,24 @@
 <style lang="scss">
     .post-list-container {
         width: 100%;
+        min-height: 100vh;
         background-color: rgb(246, 246, 246);
         display: flex;
         justify-content: center;
         position: relative;
         padding-top: 24px;
-        .left-menu{
+        .left-menu {
             border-radius: var(--el-card-border-radius);
             border-right: 0;
-            .el-menu-item.is-active{
+            .el-menu-item.is-active {
                 border-left: 3px solid var(--el-menu-active-color);
                 background-image: linear-gradient(to right, var(--el-menu-hover-bg-color), #f6f6f6);
             }
         }
         /* 当页面宽度小于426px*/
-        @media screen and (max-width:426px) {
-            .left-menu{
-                .el-menu-item.is-active{
+        @media screen and (max-width: 426px) {
+            .left-menu {
+                .el-menu-item.is-active {
                     border-left: 0;
                     background-image: linear-gradient(to right, var(--el-menu-hover-bg-color), #f6f6f6);
                 }

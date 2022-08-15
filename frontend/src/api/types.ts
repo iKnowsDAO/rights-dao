@@ -43,6 +43,8 @@ export type RichText = {
 export type PostCategory = {
     Tech?: null,
     Law?: null,
+    Safeguard?: null, //维权
+    Blacklist?: null, //黑名单
     Other?: null
 };
 

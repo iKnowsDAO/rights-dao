@@ -39,8 +39,11 @@ export default {
         category: {
             label: "提问分类：",
             placeholder: "请选择提问分类",
+            all: "全部",
             tech: "技术",
             law: "法律",
+            safeguard: "维权",
+            blacklist: "黑名单",
             other: "其他",
         },
         participants: {

@@ -3,6 +3,7 @@ import Home from '../views/home/Home.vue';
 import errors from './modules/errors';
 import persons from "./modules/person";
 import post from "./modules/post";
+import dao from "./modules/dao";
 
 const routes: Array<RouteRecordRaw> = [
     {
@@ -13,6 +14,7 @@ const routes: Array<RouteRecordRaw> = [
     ...errors,
     ...persons,
     ...post,
+    ...dao,
     {
         path: '/:catchAll(.*)',
         redirect: '/error/404',

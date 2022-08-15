@@ -15,21 +15,10 @@ import PostList from './modules/PostList.vue';
 
 <style lang="scss">
 .home-container {
-    background-color: rgb(246, 246, 246);
+    /*background-color: rgb(246, 246, 246);*/
     min-height: 100vh;
-    color: black;
-    width: 100%;
-    height: 100%;
-    .homeNav {
-        position: relative;
-        z-index: 1200;
-    }
-}
-@media screen and (max-width: 1100px) {
-    .home-container {
-        .dummy {
-            display: block;
-        }
-    }
+    /*color: black;*/
+    /*width: 100%;*/
+    /*height: 100%;*/
 }
 </style>

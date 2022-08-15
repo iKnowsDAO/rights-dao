@@ -40,9 +40,12 @@ export default {
         },
         category: {
             label: "Question Category：",
-            placeholder: "Please select Question Category",
+            placeholder: "Please Select Question Category",
+            all: "All",
             tech: "Technology",
             law: "Law",
+            safeguard: "Safeguard",
+            blacklist: "Blacklist",
             other: "Other",
         },
         participants: {

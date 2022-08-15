@@ -1,10 +1,10 @@
 <template>
-    <div class="post-submit-container">
+    <div class="dao-submit-container">
         <Navigator/>
         <div class="container">
             <div class="submit-title">
                 <h3 class="title">
-                    {{ $t('post.help.create') }}
+                    {{ $t('dao.proposal') }}
                     <div class="back-button" @click="$router.back()"
                     >{{ '<' }}{{ $t('common.back') }}
                     </div>
@@ -14,21 +14,21 @@
                 <el-col :sm={span:16,offset:4} :xs="24">
                     <el-form :model="form" hide-required-asterisk
                              ref="ruleFormRef">
-                        <el-form-item prop="title" :label="$t('post.help.title.label')"
+                        <el-form-item prop="title" :label="$t('dao.form.title.label')"
                                       :rules="[{
                                         required: true,
-                                        message: $t('post.help.title.placeholder'),
+                                        message: $t('dao.form.title.placeholder'),
                                         trigger: 'blur'}]"
                         >
                             <el-input v-model="form.title"
                                       maxlength="200"
                                       show-word-limit
-                                      :placeholder="$t('post.help.title.placeholder')"/>
+                                      :placeholder="$t('dao.form.title.placeholder')"/>
                         </el-form-item>
-                        <el-form-item :label="$t('post.help.content.label')"
+                        <el-form-item :label="$t('dao.form.content.label')"
                                       :rules="[{
                                         required: true,
-                                        message: $t('post.help.content.placeholder'),
+                                        message: $t('dao.form.content.placeholder'),
                                         trigger: 'blur'}]"
                                       :class="{ isEditorError: isEditorErr }"
                                       prop="content.content">
@@ -43,16 +43,16 @@
                             {{ showEditorLength }} / {{ limitLength }}
                         </span>
                         </el-form-item>
-                        <el-form-item :label="$t('post.help.category.label')"
+                        <el-form-item :label="$t('dao.form.category.label')"
                                       :rules="[{
                                         required: true,
-                                        message: $t('post.help.category.placeholder'),
+                                        message: $t('dao.form.category.placeholder'),
                                         trigger: 'blur'}]"
                                       prop="category">
                             <el-select class="i-select"
                                        popper-class="i-select-pop"
                                        v-model="form.category"
-                                       :placeholder="$t('post.help.category.placeholder')"
+                                       :placeholder="$t('dao.form.category.placeholder')"
                             >
                                 <el-option
                                     v-for="item in category"
@@ -84,18 +84,6 @@
                                 </template>
                             </el-input>
                         </el-form-item>
-                        <!--<el-form-item :label="$t('post.help.endTime.label')">-->
-                        <!--<el-config-provider :locale="elementPlusLocale">-->
-                        <!--<el-date-picker-->
-                        <!--v-model="form.end_time[0]"-->
-                        <!--type="datetime"-->
-                        <!--:placeholder="$t('post.help.endTime.placeholder')"-->
-                        <!--popper-class="i-date-pop"-->
-                        <!--:editable="false"-->
-                        <!--value-format="x"-->
-                        <!--/>-->
-                        <!--</el-config-provider>-->
-                        <!--</el-form-item>-->
                     </el-form>
                     <div style="display: flex;justify-content: space-between">
                         <el-button @click="addParticipants">{{t('post.help.participants.add')}}</el-button>
@@ -112,14 +100,14 @@
 
 <script lang="ts" setup>
     import {ref, onMounted, computed, nextTick} from 'vue';
-    import Navigator from '@/components/navigator/Navigator.vue';
+    import Navigator from '../../components/navigator/Navigator.vue';
     import {
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
         ElDatePicker, ElLoading
     } from 'element-plus/es';
     import {Close} from '@element-plus/icons-vue';
     import type {FormInstance, FormRules} from 'element-plus'
-    import {SupportedLocale, t} from '@/locale';
+    import {SupportedLocale, t} from '../../locale';
     import {Quill, QuillEditor} from '@vueup/vue-quill';
     import ImageUploader from "quill-image-uploader";
     import {useRoute, useRouter} from 'vue-router';
@@ -135,9 +123,9 @@
     const router = useRouter();
     const route = useRoute();
 
-    // const locale = computed<SupportedLocale>(() => {
-    //     return store.state.user.locale
-    // });
+    const locale = computed<SupportedLocale>(() => {
+        return store.state.user.locale
+    });
     const currentUserPrincipal = computed<string>(() => store.state.user.principal);
     const loading = ref(false);
     //编辑器是否发生变化
@@ -162,21 +150,9 @@
         end_time: [] as number[],
     });
     const category = ref([{
-        value: "Tech",
-        label: t('post.help.category.tech')
-    }, {
-        value: "Law",
-        label: t('post.help.category.law')
-    },  {
-        value: "Safeguard",
-        label: t('post.help.category.safeguard')
-    },  {
-        value: "Blacklist",
-        label: t('post.help.category.blacklist')
-    }, {
-        value: "Other",
-        label: t('post.help.category.other')
-    }]);
+        value: "AddAdmin",
+        label: t('dao.form.category.addAdmin')
+    }])
     const editorOption = {
         modules: {
             toolbar: {
@@ -218,18 +194,17 @@
         theme: 'snow', //主题 snow/bubble
         syntax: true, //语法检测
     };
-    // 日期选择器需要用到的方法，目前不需要日期选择器，所以注释了
-    // const elementPlusLocale = computed(() => {
-    //     switch (locale.value) {
-    //         case SupportedLocale.zhCN:
-    //             return zhCn;
-    //         default:
-    //             return en;
-    //     }
-    // });
+    const elementPlusLocale = computed(() => {
+        switch (locale.value) {
+            case SupportedLocale.zhCN:
+                return zhCn;
+            default:
+                return en;
+        }
+    });
 
     onMounted(() => {
-        init()
+        // init()
     });
 
     const showEditorLength = computed(() => {
@@ -300,7 +275,7 @@
 </script>
 
 <style lang="scss">
-    .post-submit-container {
+    .dao-submit-container {
         /* 当页面宽度小于426px*/
         @media screen and (max-width:426px) {
             .container{

@@ -8,8 +8,9 @@ export async function submitPost(post: any | ApiPost): Promise<ApiResult<boolean
 }
 
 // 获取贴子详情，所有内容
-export async function getPostPage(pageNum: number, pageSize: number, query: string): Promise<ApiResultByPage<ApiPost>> {
-    return getBackend().page_posts({page_num: pageNum, page_size: pageSize, querystring: query});
+// category是opt text形式，传入空数组则查询所有板块内容
+export async function getPostPage(pageNum: number, pageSize: number, query: string, category: string[]): Promise<ApiResultByPage<ApiPost>> {
+    return getBackend().page_posts({page_num: pageNum, page_size: pageSize, querystring: query, category: category});
 }
 
 // 获取贴子详情，所有内容
