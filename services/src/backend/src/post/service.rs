@@ -1,6 +1,10 @@
 
 
-use std::{collections::BTreeMap, cmp::Ordering};
+use std::{
+    collections::BTreeMap, 
+    cmp::Ordering,
+    str::FromStr,
+};
 
 use candid::Principal;
 
@@ -84,8 +88,20 @@ impl PostService {
 
         let page_size= q.page_size;
         let page_num = q.page_num;
-        let filter = |p: &&PostProfile| q.querystring.is_empty() || 
-            (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring));
+        let category = q.category.clone();
+
+        let filter = |p: &&PostProfile| {
+            let match_category = match category.clone() {
+                Some(c) => {    
+                    Category::from_str(&c) == Ok(p.category)
+                },
+                None => true,
+            };
+            
+            match_category && (q.querystring.is_empty() || 
+                (p.title.contains(&q.querystring) || p.content.content.contains(&q.querystring)))
+        };
+
         let ps = &self.posts;
         let compare = |p1:&PostProfile, p2: &PostProfile| p2.updated_at.cmp(&p1.updated_at);
         paging(ps, page_size, page_num, filter, compare)
