@@ -183,7 +183,7 @@
                 ...item,
                 content: {
                     //移除html标签
-                    content: cleanHtml(item.content.content),
+                    content: item.content.content ? cleanHtml(item.content.content) : item.content.content,
                     format: "html"
                 }
             };
@@ -195,7 +195,7 @@
         //不能加载分页的时候停止请求博客列表，免得陷入死循环
         if (totalCount.value !== 0 && list.value.length !== totalCount.value) {
             pageNum.value++;
-            init()
+            init(false)
         }
     };
 
@@ -206,19 +206,29 @@
 
     const handleSelect = (key: string, keyPath: string[]) => {
         board.value = key;
-        init()
+        pageNum.value = 0;
+        list.value = [];
+        init(true)
     }
 
-    const init = () => {
-        list.value = [];
+    //isClean，是否在收集到返回值后，清空之前的list（用于切换板块）
+    const init = (isClean: boolean) => {
         pageLoading.value = true;
         let category;
         //当board=''时，加载[]，而不是['']
         board.value ? category = [board.value] : category = [];
-        console.log("cate", category)
         getPostPage(pageNum.value, pageSize.value, search.value, category).then(res => {
-            console.log("page", pageNum.value, res)
+            // console.log("page", pageNum.value, res)
             if (res.Ok) {
+                //防止用户快速切换板块，导致bug。只有在category（运行方法时的板块值）等于board.value（现在的板块值）相等时才清空
+                if (board.value ? category.toString() == [board.value].toString() : category.length == 0) {
+                    //分页加载时不执行清空list操作
+                    if(isClean){
+                        list.value = [];
+                    }
+                } else {
+                    return;
+                }
                 totalCount.value = Number(res.Ok.total_count);
                 const length = list.value.length;
                 list.value.push(...res.Ok.data);
@@ -240,7 +250,7 @@
     }
 
     onMounted(() => {
-        init();
+        init(false);
     });
 
 </script>
