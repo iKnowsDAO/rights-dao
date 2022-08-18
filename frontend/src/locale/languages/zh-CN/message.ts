@@ -32,6 +32,9 @@ export default {
     share: {
         success: "分享成功，已复制到粘贴板。"
     },
+    copy: {
+        success:"已将 {item} 复制到粘贴板。 "
+    },
     user: {
         notFound: "找不到目标用户信息。"
     },

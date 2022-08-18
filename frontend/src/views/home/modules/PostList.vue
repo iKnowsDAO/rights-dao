@@ -46,8 +46,9 @@
                                             <span class="post-status closed" v-else-if="item.status.Closed!==undefined">{{t('common.status.closed')}}</span>
                                         </div>
                                         <div class="info">
-                                            <span>{{item.authorData && item.authorData.name!=='' ? item.authorData.name:
-                                        item.author.toString()}}</span>
+                                            <Username :principalId="item.author.toString()"
+                                                      :username="item.authorData && item.authorData.name!==''
+                                                      ? item.authorData.name: ''"/>
                                             <span>|</span>
                                             <span class="createTime">{{getTimeF(Number(item.created_at))}}</span>
                                         </div>
@@ -131,6 +132,7 @@
     } from 'element-plus/es';
     import {Search, Opportunity} from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
+    import Username from '@/components/common/Username.vue';
     import {useRoute, useRouter} from 'vue-router';
     import {getTimeF} from "@/utils/dates";
     import {getPostPage} from "@/api/post";
@@ -218,7 +220,7 @@
         //当board=''时，加载[]，而不是['']
         board.value ? category = [board.value] : category = [];
         getPostPage(pageNum.value, pageSize.value, search.value, category).then(res => {
-            // console.log("page", pageNum.value, res)
+            console.log("page", pageNum.value, res)
             if (res.Ok) {
                 //防止用户快速切换板块，导致bug。只有在category（运行方法时的板块值）等于board.value（现在的板块值）相等时才清空
                 if (board.value ? category.toString() == [board.value].toString() : category.length == 0) {

@@ -25,7 +25,7 @@ export class UserState {
 }
 
 const getUserInfoByState = function (state: UserState): UserInfo {
-    console.log("getUserInfoByState",state.principal);
+    // console.log("getUserInfoByState",state.principal);
     if (!state.principal) return new UserInfo(); // 还没有设置 principal 就都给空
     if (state.user && state.user.owner == state.principal) return state.user;
     // 缓存中没有，就读取

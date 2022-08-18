@@ -20,8 +20,10 @@
                                         <span class="post-status closed" v-else-if="post.status.Closed!==undefined">{{t('common.status.closed')}}</span>
                                     </div>
                                     <div class="info">
-                                        <span v-if="author!==undefined && author.name!==''">{{author.name}} </span>
-                                        <span v-else>{{post.author.toString()}} </span>
+                                        <Username :principalId="post.author.toString()"
+                                                  :username="author!==undefined && author.name!==''
+                                                      ? author.name: ''"
+                                                :clickable="true"/>
                                         <span>|</span>
                                         <span class="createTime">{{getTimeF(Number(post.created_at))}}</span>
                                     </div>
@@ -97,6 +99,7 @@
     import {ElRow, ElCol, ElButton, ElCard, ElTag, ElIcon, ElDialog} from 'element-plus/es';
     import {Flag} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
+    import Username from '@/components/common/Username.vue';
     import {ApiPost, ApiUserInfo} from "@/api/types";
     import {getTargetUser} from "@/api/user";
     import {getTimeF} from "@/utils/dates";
@@ -125,6 +128,7 @@
     });
 
     onMounted(() => {
+        console.log("a",author.value)
         init();
     });
 

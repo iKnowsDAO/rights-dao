@@ -86,8 +86,8 @@ export function changeLanguage(locale: SupportedLocale) {
 
 // vue 文件里面 template 模板可以直接用 t('navbar.tabs.home') 显示
 // vue 代码部分显示多语言应当统一走这个方法
-export function parseLanguage(key: string): string {
-    const value = i18n.global.t(key);
+export function parseLanguage(key: string, msg?): string {
+    const value = i18n.global.t(key, msg);
     if (!value) {
         console.error(
             `can not find multi-language value for key '${key}' with ${i18n.global.locale} environment. Check it please.`,
@@ -96,6 +96,6 @@ export function parseLanguage(key: string): string {
     return value;
 }
 
-export function t(key: string): string {
-    return parseLanguage(key);
+export function t(key: string, msg?: object): string {
+    return parseLanguage(key, msg);
 }

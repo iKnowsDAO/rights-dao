@@ -24,12 +24,11 @@
                             </el-button>
                         </el-row>
                         <el-row>
-                            {{ targetPrincipal }}
+                            <span class="principal" @click="copyPrincipal">{{ targetPrincipal }}</span>
+                            <el-icon class="copy" @click="copyPrincipal"><CopyDocument /></el-icon>
                         </el-row>
                         <el-row v-if="user.location">
-                            <el-icon>
-                                <LocationFilled/>
-                            </el-icon>
+                            <el-icon><LocationFilled/></el-icon>
                             {{user.location}}
                         </el-row>
                         <el-row v-if="user.email">
@@ -173,12 +172,13 @@
         ElRow, ElCol, ElButton, ElDialog, ElForm, ElFormItem,
         ElInput, ElMessage, ElTag, ElIcon,ElTooltip
     } from 'element-plus/es';
-    import {UserFilled, Message, Comment, Close, StarFilled, LocationFilled} from '@element-plus/icons-vue';
+    import {UserFilled, Message, Comment, Close, StarFilled, LocationFilled, CopyDocument} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import Navigator from '@/components/navigator/Navigator.vue';
     import {formatDate} from '@/utils/dates';
     import {editUserSelf, getTargetUser, getTargetUserNewCache, getUserReputation} from "@/api/user";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
+    import {toClipboard} from "@soerenmartius/vue3-clipboard";
 
     const store = useStore();
     const router = useRouter();
@@ -224,6 +224,15 @@
                 reputation.value = Number(res.Ok.amount);
             }
         })
+    }
+
+    const copyPrincipal = async () => {
+        try {
+            await toClipboard(targetPrincipal.value)
+            showMessageSuccess(t('message.copy.success',{item:"Principal"}))
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     const initPrincipal = () => {
@@ -349,6 +358,13 @@
                 .el-row {
                     margin-bottom: 5px;
                     align-items: center;
+                }
+                .principal{
+                    cursor: pointer;
+                }
+                .copy{
+                    margin-left: 5px;
+                    cursor: pointer;
                 }
                 .el-icon {
                     margin-right: 4px;

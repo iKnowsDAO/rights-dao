@@ -32,6 +32,9 @@ export default {
     share: {
         success: "Share Success, Copied to the pasteboard"
     },
+    copy: {
+        success:"Copied {item} to pasteboard. "
+    },
     user: {
         notFound: "Target user information not found."
     },

@@ -24,8 +24,11 @@
                                             :principalId=item.author.toString()
                                             :size="38"/>
                                     <div class="authorName">
-                                        <b>{{item.authorData && item.authorData.name!=='' ? item.authorData.name:
-                                            item.author.toString()}}</b>
+                                        <b>
+                                            <Username :principalId="item.author.toString()"
+                                                      :username="item.authorData && item.authorData.name!==''
+                                                      ? item.authorData.name: ''"/>
+                                        </b>
                                         <div class="sign" v-if="item.authorData && item.authorData.biography!==''">
                                             {{item.authorData.biography}}
                                         </div>
@@ -94,6 +97,7 @@
     import {ElRow, ElCol, ElButton, ElCard, ElIcon, ElPopconfirm, ElTag} from 'element-plus/es';
     import {Medal, Flag} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
+    import Username from '@/components/common/Username.vue';
     import ReplyReply from './ReplyReply.vue';
     import {ApiPostComments} from "@/api/types";
     import {getTargetUser} from "@/api/user";
@@ -252,6 +256,9 @@
                     justify-content: space-between;
                     .authorName {
                         margin-left: 10px;
+                        display: flex;
+                        justify-content: center;
+                        flex-direction: column;
                     }
                 }
                 .owner-div {

@@ -17,3 +17,17 @@ export function showAvatarName(username: string, principalId: string) {
     //没有名字返回principalId首字母作为名字
     return principalId ? principalId.substring(0, 1).toUpperCase() : '';
 }
+
+// 处理用户名字显示的逻辑
+export function showUsername(username: string, principalId: string) {
+    if (username) {
+        const MAX_LENGTH = 15; // 显示的最长字符
+        if (username.length >= MAX_LENGTH) {
+            return username.substring(0, MAX_LENGTH - 3) + '...';
+        }
+        return username;
+    }
+    //没有名字返回principalId作为名字，保留前5位，后3位
+    return principalId ? principalId.substring(0, 5) + "..." + principalId.substring(principalId.length - 3, principalId.length)
+        : "";
+}
