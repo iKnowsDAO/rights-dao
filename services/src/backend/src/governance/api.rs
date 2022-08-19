@@ -4,7 +4,7 @@ use std::collections::BTreeSet;
 use candid::Principal;
 use ic_cdk_macros::*;
 
-use crate::CONTEXT;
+use crate::{CONTEXT, common::times::days_to_ns};
 use super::{
     domain::*, 
     error:: GovernanceError,
@@ -17,39 +17,50 @@ fn submit_add_governance_member_proposal(cmd: GovernanceMemberAddCommand) -> Res
         let id = ctx.id;
         let caller = ctx.env.caller();
         let now = ctx.env.now();
-        let candidate = Principal::from_text(cmd.id).or(Err(GovernanceError::MemberPrincipalWrongFormat))?;
-        let args = GovernanceMemberAddArgs { id: candidate };
+
+        // 判断提案的截止时间是否在范围之内
+        if ((now + days_to_ns(MIN_VOTE_DATE)) > cmd.deadline) || ((now + days_to_ns(MAX_VOTE_DATE)) < cmd.deadline) {
+            return Err(GovernanceError::ProposalDeadlineOutOfDate);
+        }
+
+        let candidate = Principal::from_text(cmd.id.clone()).or(Err(GovernanceError::MemberPrincipalWrongFormat))?;
+
+        let args: Result<GovernanceMemberAddArgs, GovernanceError> = cmd.try_into();
+       
+        args
+            .and_then(|args| {
+                // let canister_id = ctx.env.canister_id();
+                // let execute_method = "insert_govenan
+
+                // 如果被提案人不是 注册用户，返回 UserNotFound
+                if ctx.user_service.get_user(&candidate).is_none() {
+                    return Err(GovernanceError::UserNotFound);
+                }
+                // 只有 governance member 才能发起 proposal
+                if ctx.governance_service.get_member(&caller).is_none() {
+                    return Err(GovernanceError::ProposalUnAuthorized);
+                }
+
+                // 如果被提案者已经是 governance member，返回无效提案
+                if ctx.governance_service.get_member(&candidate).is_some() {
+                    return Err(GovernanceError::MemberAlreadyExists);
+                }
+
+                // 获取 所有 member 的积分，再计算投票通过阀值, 超过半数
+                let members: BTreeSet<Principal> = ctx.governance_service.members.keys().cloned().collect();
+                let member_reputations_sum: u64 = ctx.reputation_service.get_reputations(&members).iter().map(|rs| rs.amount).sum();
+                let payload = args.build_proposal_payload();
+                let vote_threshold = Weights { amount: member_reputations_sum / 2 + 1 };
+                let proposal = payload.build_proposal(id, caller, vote_threshold, now);
+
+                ctx.governance_service
+                    .insert_proposal(proposal)   
+                    .map(|id| {
+                        ctx.id += 1;
+                        id
+                    })   
+            })
         
-        // let canister_id = ctx.env.canister_id();
-        // let execute_method = "insert_govenan
-
-        // 如果被提案人不是 注册用户，返回 UserNotFound
-        if ctx.user_service.get_user(&candidate).is_none() {
-            return Err(GovernanceError::UserNotFound);
-        }
-        // 只有 governance member 才能发起 proposal
-        if ctx.governance_service.get_member(&caller).is_none() {
-            return Err(GovernanceError::ProposalUnAuthorized);
-        }
-
-        // 如果被提案者已经是 governance member，返回无效提案
-        if ctx.governance_service.get_member(&candidate).is_some() {
-            return Err(GovernanceError::MemberAlreadyExists);
-        }
-
-        // 获取 所有 member 的积分，再计算投票通过阀值, 超过半数
-        let members: BTreeSet<Principal> = ctx.governance_service.members.keys().cloned().collect();
-        let member_reputations_sum: u64 = ctx.reputation_service.get_reputations(&members).iter().map(|rs| rs.amount).sum();
-        let payload = args.build_proposal_payload();
-        let vote_threshold = Weights { amount: member_reputations_sum / 2 + 1 };
-        let proposal = payload.build_proposal(id, caller, vote_threshold, now);
-
-        ctx.governance_service
-            .insert_proposal(proposal)   
-            .map(|id| {
-                ctx.id += 1;
-                id
-            })   
     })
 }
 

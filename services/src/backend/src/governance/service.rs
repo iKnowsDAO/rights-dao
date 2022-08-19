@@ -90,6 +90,10 @@ impl GovernanceService {
     pub fn insert_member(&mut self, member: GovernanceMember) {
         self.members.insert(member.id, member);
     }
+
+    pub fn delete_member(&mut self, member: GovernanceMember) {
+        self.members.remove(&member.id);
+    }
     
     pub fn get_member(&self, id: &Principal) -> Option<GovernanceMember> {
         self.members.get(id).cloned()

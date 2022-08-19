@@ -15,4 +15,7 @@ pub enum GovernanceError {
     ExecutingProposalUnAuthorized,
     MemberAlreadyExists,
     UserNotFound, // 提案不存在的用户成为 Governance member
+    CandidatePrincipalFormatInvalid,    // 提案候选人的 Principal 格式无效
+    GovernanaceMemberActionFormatInvalid,
+    ProposalDeadlineOutOfDate,
 }

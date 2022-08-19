@@ -411,6 +411,10 @@ type GovernanceProposalResult = variant {
 
 type GovernanceMemberAddCommand = record {
     id: text;
+    title: text;
+    content: RichText;
+    deadline: nat64;
+    action: text;
 };
 
 type ProposalSubmitResult = variant {
@@ -431,6 +435,9 @@ type GovernanceError = variant {
     ExecutingProposalUnAuthorized;
     MemberAlreadyExists;
     UserNotFound;
+    CandidatePrincipalFormatInvalid;
+    GovernanaceMemberActionFormatInvalid;
+    ProposalDeadlineOutOfDate;
 };
 
 type GovernanceProposalPage = record {

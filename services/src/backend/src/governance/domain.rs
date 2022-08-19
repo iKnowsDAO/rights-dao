@@ -1,12 +1,21 @@
 
-use std::ops::{Add, AddAssign, SubAssign, Mul};
+use std::{ops::{Add, AddAssign, SubAssign, Mul}, str::FromStr};
 
 
 use candid::{CandidType, Deserialize, Principal};
 
+use crate::domain::RichText;
+
+use super::error::GovernanceError;
+
 pub type ProposalId = u64;
 
 pub type Timestamp = u64;
+
+/// 最短的投票周期天数 2 天
+pub const MIN_VOTE_DATE: u64 = 2;
+/// 最长的投票周期天数 7 天
+pub const MAX_VOTE_DATE: u64 = 7;
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct GovernanceMember {
@@ -17,13 +26,60 @@ pub struct GovernanceMember {
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct GovernanceMemberAddCommand {
     pub id: String,
+    pub title: String,
+    pub content: RichText,
+    pub deadline: u64,
+    pub action: String,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct GovernanceMemberAddArgs {
     pub id: Principal,
+    pub title: String,
+    pub content: RichText,
+    pub deadline: u64,
+    pub action: GovernanceMemberAction,
 }
 
+#[derive(Debug, Clone, CandidType, Deserialize)] 
+pub enum GovernanceMemberAction {
+    Add,
+    Delete,
+}
+
+impl FromStr for GovernanceMemberAction {
+
+    type Err = GovernanceError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "add" => Ok(GovernanceMemberAction::Add),
+            "delete" => Ok(GovernanceMemberAction::Delete),
+            _ => Err(GovernanceError::GovernanaceMemberActionFormatInvalid),
+        }
+    }
+}
+
+impl TryFrom<GovernanceMemberAddCommand> for GovernanceMemberAddArgs {
+
+    type Error = GovernanceError;
+
+    fn try_from(cmd: GovernanceMemberAddCommand) -> Result<Self, Self::Error> {
+
+        let candidate = Principal::from_text(cmd.id)
+            .map_err(|_| GovernanceError::CandidatePrincipalFormatInvalid)?;
+        
+        let action = cmd.action.parse()?;
+
+        Ok(Self { 
+            id: candidate, 
+            title: cmd.title, 
+            content: cmd.content, 
+            deadline: cmd.deadline,
+            action
+        })
+    }
+}
 
 impl ProposalPayloadBuilder for GovernanceMemberAddArgs {
     fn build_proposal_payload(self) -> ProposalPayload {

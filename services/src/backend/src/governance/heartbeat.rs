@@ -3,7 +3,7 @@ use ic_cdk_macros::heartbeat;
 
 use crate::CONTEXT;
 
-use super::domain::{GovernanceProposal, ProposalState, ProposalExecuteArgs, GovernanceMember};
+use super::domain::{GovernanceProposal, ProposalState, ProposalExecuteArgs, GovernanceMember, GovernanceMemberAction};
 
 #[heartbeat]
 async fn heartbeat() {
@@ -55,10 +55,14 @@ async fn execute_governance_member_proposal(proposal: GovernanceProposal) -> Res
         let ProposalExecuteArgs::AddGovernanceMember(cmd) = args;
         let member = GovernanceMember {
             id: cmd.id,
-            created_at: ctx.env.now()
+            created_at: ctx.env.now(),
         };
         
-        ctx.governance_service.insert_member(member);
+        match cmd.action {
+            GovernanceMemberAction::Add => ctx.governance_service.insert_member(member),
+            GovernanceMemberAction::Delete => ctx.governance_service.delete_member(member),
+        }
+        
         Ok(())
     })
 }
