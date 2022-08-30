@@ -383,6 +383,10 @@ type ProposalExecuteArgs = variant {
 
 type GovernanceMemberAddArgs = record {
     id: principal;
+    title: text;
+    content: RichText;
+    deadline: nat64;
+    action: text;
 };
 
 type Vote = variant {
