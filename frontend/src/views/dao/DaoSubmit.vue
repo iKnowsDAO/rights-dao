@@ -43,51 +43,55 @@
                             {{ showEditorLength }} / {{ limitLength }}
                         </span>
                         </el-form-item>
-                        <el-form-item :label="$t('dao.form.category.label')"
+                        <el-form-item :label="$t('dao.form.action.label')"
                                       :rules="[{
                                         required: true,
-                                        message: $t('dao.form.category.placeholder'),
+                                        message: $t('dao.form.action.placeholder'),
                                         trigger: 'blur'}]"
-                                      prop="category">
+                                      prop="action">
                             <el-select class="i-select"
                                        popper-class="i-select-pop"
-                                       v-model="form.category"
-                                       :placeholder="$t('dao.form.category.placeholder')"
+                                       v-model="form.action"
+                                       :placeholder="$t('dao.form.action.placeholder')"
                             >
                                 <el-option
-                                    v-for="item in category"
+                                    v-for="item in action"
                                     :key="item.value"
                                     :label="item.label"
                                     :value="item.value"
                                 />
                             </el-select>
                         </el-form-item>
-                        <el-form-item v-for="(item, index) in form.participants"
-                                      :key="index"
-                                      label-width="110px"
-                                      :prop="'participants.' + index"
+                        <el-form-item v-if="form.action"
+                                      :label="$t('dao.form.related.label')"
                                       :rules="[{
                                         required: true,
-                                        message: $t('post.help.participants.placeholder'),
+                                        message: $t('dao.form.related.placeholder'),
                                         trigger: 'blur'}]"
-                                      prop="participants[0]">
-                            <template #label>
-                                <span v-if="index===0">{{$t('post.help.participants.label')}}</span>
-                                <span v-else></span>
-                            </template>
-                            <el-input v-model="form.participants[index]"
-                                      maxlength="30"
+                                      prop="related">
+                            <el-input v-model="form.related"
+                                      maxlength="63"
                                       show-word-limit
-                                      :placeholder="$t('post.help.participants.placeholder')">
-                                <template #append>
-                                    <el-button :icon="Close" @click.prevent="removeItem(index)"></el-button>
-                                </template>
+                                      :placeholder="$t('dao.form.related.placeholder')">
                             </el-input>
+                            <span>{{ $t('dao.form.action.tips') }}</span>
+                        </el-form-item>
+                        <el-form-item :label="$t('post.help.endTime.label')">
+                            <el-config-provider :locale="elementPlusLocale">
+                                <el-date-picker
+                                    v-model="form.deadline"
+                                    type="datetime"
+                                    :placeholder="$t('post.help.endTime.placeholder')"
+                                    popper-class="i-date-pop"
+                                    :editable="false"
+                                    value-format="x"
+                                    :disabledDate="disabledDateFun"
+                                />
+                            </el-config-provider>
+                            <br/>
+                            <span>{{ $t('dao.form.deadline.tips') }}</span>
                         </el-form-item>
                     </el-form>
-                    <div style="display: flex;justify-content: space-between">
-                        <el-button @click="addParticipants">{{t('post.help.participants.add')}}</el-button>
-                    </div>
                 </el-col>
             </el-row>
             <div style="text-align: center" class="form-footer">
@@ -100,24 +104,24 @@
 
 <script lang="ts" setup>
     import {ref, onMounted, computed, nextTick} from 'vue';
-    import Navigator from '../../components/navigator/Navigator.vue';
+    import Navigator from '@/components/navigator/Navigator.vue';
     import {
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
         ElDatePicker, ElLoading
     } from 'element-plus/es';
     import {Close} from '@element-plus/icons-vue';
     import type {FormInstance, FormRules} from 'element-plus'
-    import {SupportedLocale, t} from '../../locale';
+    import {SupportedLocale, t} from '@/locale';
     import {Quill, QuillEditor} from '@vueup/vue-quill';
     import ImageUploader from "quill-image-uploader";
     import {useRoute, useRouter} from 'vue-router';
     import en from 'element-plus/lib/locale/lang/en';
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
     import {useStore} from "vuex";
-    import {submitPost} from "@/api/post";
     import {goBack} from "@/router/routers";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {calculatedICPIdLength, uploadImage} from "@/utils/images";
+    import {addDaoProposal} from "@/api/dao";
 
     const store = useStore();
     const router = useRouter();
@@ -144,14 +148,13 @@
             content: "",
             format: "html"
         },
-        photos: [],
-        category: "",
-        participants: [] as string[],//期待参与者
-        end_time: [] as number[],
+        action: "",
+        related: "",// 提案目标的principalId，每次提案只能有一个人
+        deadline: Object.create(null) as number,
     });
-    const category = ref([{
-        value: "AddAdmin",
-        label: t('dao.form.category.addAdmin')
+    const action = ref([{
+        value: "Add",
+        label: t('dao.form.action.addAdmin')
     }])
     const editorOption = {
         modules: {
@@ -213,15 +216,10 @@
         return length;
     });
 
-    const addParticipants = () => {
-        form.value.participants.push("");
-    }
-
-
-    const removeItem = (index) => {
-        if (index !== -1) {
-            form.value.participants.splice(index, 1)
-        }
+    const disabledDateFun = (time) => {
+        let oneDay = 24 * 3600 * 1000;
+        //管理员提案时间应只能最短2天，最长7天
+        return !(time.getTime() < Date.now() + 7 * oneDay && time.getTime() > Date.now() + 2 * oneDay);
     }
 
     const submit = async (formEl: FormInstance | undefined) => {
@@ -235,16 +233,21 @@
                 });
                 loading.value = true;
                 console.log("form", form.value);
-                let post = {...form.value};
-                if (post.end_time[0]) {
-                    //结束时间，暂时没用了
-                    post.end_time[0] *= 1000 * 1000;
+                let dao = {
+                    id: form.value.related,
+                    ...form.value
+                };
+                // delete dao.related;
+                if (dao.deadline) {
+                    //结束时间，传到后端需要扩大一下位数
+                    dao.deadline *= 1000 * 1000;
                 }
-                submitPost(post).then(res => {
+                console.log("dao", dao);
+                addDaoProposal(dao).then(res => {
                     console.log(res);
                     if (res.Ok) {
                         showMessageSuccess(t('message.post.create'));
-                        router.push('/post/detail/' + Number(res.Ok));
+                        // router.push('/post/detail/' + Number(res.Ok));
                     }
                 }).finally(() => {
                     loading.value = false;
@@ -294,6 +297,9 @@
                 .ql-container {
                     border: 1px solid var(--el-color-danger);
                 }
+            }
+            .el-form-item__content{
+                display: unset!important;
             }
             .submit-title {
                 margin-top: 20px;

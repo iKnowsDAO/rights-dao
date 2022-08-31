@@ -59,13 +59,7 @@
                                     </div>
                                 </el-col>
                                 <el-col :span="4" class="flex-right">
-                                    <el-button type="primary" v-if="item.category.Tech!==undefined">
-                                        {{t('post.help.category.tech')}}
-                                    </el-button>
-                                    <el-button type="primary" v-else-if="item.category.Law!==undefined">
-                                        {{t('post.help.category.law')}}
-                                    </el-button>
-                                    <el-button type="primary" v-else>{{t('post.help.category.other')}}</el-button>
+                                    <CategoryButton :category="item.category"/>
                                 </el-col>
                             </el-row>
                             <div @click="onClick(Number(item.id))" class="content">
@@ -133,6 +127,7 @@
     import {Search, Opportunity} from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
+    import CategoryButton from '@/components/common/CategoryButton.vue';
     import {useRoute, useRouter} from 'vue-router';
     import {getTimeF} from "@/utils/dates";
     import {getPostPage} from "@/api/post";
@@ -219,8 +214,8 @@
         let category;
         //当board=''时，加载[]，而不是['']
         board.value ? category = [board.value] : category = [];
+        console.log("post",pageNum.value, pageSize.value, search.value, category)
         getPostPage(pageNum.value, pageSize.value, search.value, category).then(res => {
-            console.log("page", pageNum.value, res)
             if (res.Ok) {
                 //防止用户快速切换板块，导致bug。只有在category（运行方法时的板块值）等于board.value（现在的板块值）相等时才清空
                 if (board.value ? category.toString() == [board.value].toString() : category.length == 0) {

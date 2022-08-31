@@ -7,10 +7,9 @@
 </template>
 
 <script lang="ts" setup>
-    import { PropType, defineProps, ref, computed, watch, onMounted } from 'vue';
+    import { defineProps, computed, watch, onMounted } from 'vue';
     import { showUsername } from '@/utils/avatars';
     import { openTab } from '@/router/routers';
-    import {t} from "@/locale";
 
     const props = defineProps({
         // 必要的内容，显示哪些

@@ -34,13 +34,7 @@
                                 </div>
                             </el-col>
                             <el-col :span="4" class="flex-right">
-                                <el-button type="primary" v-if="post.category.Tech!==undefined">
-                                    {{t('post.help.category.tech')}}
-                                </el-button>
-                                <el-button type="primary" v-else-if="post.category.Law!==undefined">
-                                    {{t('post.help.category.law')}}
-                                </el-button>
-                                <el-button type="primary" v-else>{{t('post.help.category.other')}}</el-button>
+                                <CategoryButton :category="post.category"/>
                             </el-col>
                         </el-row>
                         <div class="content ql-snow">
@@ -100,6 +94,7 @@
     import {Flag} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
+    import CategoryButton from '@/components/common/CategoryButton.vue';
     import {ApiPost, ApiUserInfo} from "@/api/types";
     import {getTargetUser} from "@/api/user";
     import {getTimeF} from "@/utils/dates";

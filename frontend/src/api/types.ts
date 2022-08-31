@@ -10,6 +10,11 @@ export type ApiError = {
     UserEmailInvalid: null; // 用户的邮箱格式存在问题
     PostAlreadyCompleted: null; //贴子已经进入完成状态，不能再修改
     PostNotFound: null; // 贴子找不到
+    ProposalUnAuthorized: null;
+    ProposalDeadlineOutOfDate: null;
+    MemberNotFound: null;
+    MemberAlreadyExists: null;
+    MemberPrincipalWrongFormat: null;
 };
 
 // 后端的返回结果
@@ -125,3 +130,4 @@ export type UserReputation = {
     user: Principal | string; // 用户principalID
     amount: bigint; //积分值
 }
+
