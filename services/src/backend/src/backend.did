@@ -386,7 +386,12 @@ type GovernanceMemberAddArgs = record {
     title: text;
     content: RichText;
     deadline: nat64;
-    action: text;
+    action: GovernanceMemberAction;
+};
+
+type GovernanceMemberAction = variant {
+    Add;
+    Delete;
 };
 
 type Vote = variant {
