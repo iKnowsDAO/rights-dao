@@ -97,7 +97,7 @@ pub struct GovernanceProposal {
     pub payload: ProposalPayload,
     pub proposer: Principal,
     pub state: ProposalState,
-    pub voters: Vec<Principal>,
+    pub voters: Vec<GovernanceVoteCommand>,
     pub votes_no: Weights,
     pub votes_yes: Weights,
     pub vote_threshold: Weights,
@@ -106,7 +106,7 @@ pub struct GovernanceProposal {
 
 impl GovernanceProposal {
 
-    pub fn calc(&mut self, vote: Vote, weights: Weights) {
+    pub fn calc(&mut self, vote: &Vote, weights: Weights) {
         match vote {
             Vote::Yes => self.votes_yes += weights,
             Vote::No => self.votes_no += weights,
@@ -119,6 +119,20 @@ impl GovernanceProposal {
         } else if self.votes_no > self.vote_threshold {
             self.state = ProposalState::Rejected;
         }
+    }
+
+    pub fn contains_voter(&self, voter: &Principal) -> bool {
+        self.get_weight_by_voter(voter).is_some()
+    }
+
+    pub fn get_weight_by_voter(&self, voter: &Principal) -> Option<u64> {
+        for pv in &self.voters {
+            if &pv.voter == voter {
+                return Some(pv.vote_weights.amount);
+            }
+        }
+
+        None
     }
 }
 
@@ -162,6 +176,7 @@ pub struct VoteArgs {
     pub vote: Vote,
 }
 
+#[derive(Clone, Debug, CandidType, Deserialize)]
 pub struct GovernanceVoteCommand {
     pub proposal_id: u64,
     pub vote: Vote,
@@ -174,6 +189,7 @@ pub enum Vote {
     Yes,
     No,
 }
+
 // The state of a Proposal
 #[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
 pub enum ProposalState {
@@ -231,6 +247,12 @@ impl Mul<u64> for Weights {
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct GovernanceProposalGetQuery {
     pub id: ProposalId,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct GovernanceProposalVoteGetQuery {
+    pub id: ProposalId,
+    pub voter: String,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]

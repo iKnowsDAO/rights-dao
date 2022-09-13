@@ -33,13 +33,13 @@ impl GovernanceService {
             return Err(GovernanceError::ProposalStateNotOpen);
         }
         
-        if proposal.voters.contains(&cmd.voter) {
+        if proposal.contains_voter(&cmd.voter) {
             return Err(GovernanceError::VoterAlreadyVoted);
         }
 
-        proposal.calc(cmd.vote, cmd.vote_weights);
+        proposal.calc(&cmd.vote, cmd.vote_weights);
 
-        proposal.voters.push(cmd.voter);
+        proposal.voters.push(cmd);
 
         proposal.refresh_state();
         
@@ -97,6 +97,13 @@ impl GovernanceService {
     
     pub fn get_member(&self, id: &Principal) -> Option<GovernanceMember> {
         self.members.get(id).cloned()
+    }
+
+    pub fn get_proposal_vote(&self, proposal_id: &u64, voter: &Principal) -> Result<u64, GovernanceError> {
+        match self.proposals.get(proposal_id) {
+            None => Err(GovernanceError::ProposalNotFound),
+            Some(p) => Ok(p.get_weight_by_voter(voter).unwrap_or(0)),
+        }
     }
 
 }

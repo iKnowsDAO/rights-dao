@@ -368,7 +368,7 @@ type GovernanceProposal = record {
     state: ProposalState;
     votes_yes: Weights;
     votes_no: Weights;
-    voters: vec principal;
+    voters: vec GovernanceVoteCommand;
     vote_threshold: Weights;
     created_at: nat64;
 };
@@ -379,6 +379,13 @@ type ProposalPayload = record {
 
 type ProposalExecuteArgs = variant {
     AddGovernanceMember : GovernanceMemberAddArgs;
+};
+
+type GovernanceVoteCommand = record {
+    proposal_id: nat64;
+    vote: Vote;
+    voter: principal;
+    vote_weights: Weights;
 };
 
 type GovernanceMemberAddArgs = record {
@@ -411,6 +418,11 @@ type VoteResult = variant {
 
 type GovernanceProposalGetQuery = record {
     id: nat64;
+};
+
+type GovernanceProposalVoteGetQuery = record {
+    id: nat64;
+    voter: text;
 };
 
 type GovernanceProposalResult = variant {
@@ -471,6 +483,11 @@ type GovernanceMemberResult = variant {
     Err: GovernanceError;
 };
 
+type BoolGovernanceResult = variant {
+    Ok: nat64;
+    Err: GovernanceError;
+};
+
 service : {
  
     "greet": (text) -> (text) query;
@@ -514,4 +531,5 @@ service : {
     "get_governance_proposal" : (GovernanceProposalGetQuery) -> (GovernanceProposalResult);
     "page_governance_proposals" : (PageQuery) -> (GovernanceProposalPageResult);
     "get_governance_member" : (text) -> (GovernanceMemberResult);
+    "get_governance_member_proposal_vote" : (GovernanceProposalVoteGetQuery) -> (BoolGovernanceResult);
 }

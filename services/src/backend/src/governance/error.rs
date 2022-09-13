@@ -18,4 +18,5 @@ pub enum GovernanceError {
     CandidatePrincipalFormatInvalid,    // 提案候选人的 Principal 格式无效
     GovernanaceMemberActionFormatInvalid,
     ProposalDeadlineOutOfDate,
+    VoterPrincipalWrongFormat,
 }

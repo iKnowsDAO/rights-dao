@@ -118,3 +118,9 @@ fn get_governance_member(user: String) -> Result<GovernanceMember, GovernanceErr
     let user = Principal::from_text(user).or(Err(GovernanceError::MemberPrincipalWrongFormat))?;
     CONTEXT.with(|c| c.borrow().governance_service.get_member(&user)).ok_or(GovernanceError::MemberNotFound)
 }
+
+#[query]
+fn get_governance_member_proposal_vote(q: GovernanceProposalVoteGetQuery) -> Result<u64, GovernanceError> {
+    let voter = Principal::from_text(q.voter).or(Err(GovernanceError::VoterPrincipalWrongFormat))?;
+    CONTEXT.with(|c| c.borrow().governance_service.get_proposal_vote(&q.id, &voter))
+}
