@@ -4,7 +4,7 @@ export default {
         canister: "服务器出现了问题。",
         login: "登录失败",
         noLogin: "没有登录，请先登录才能发贴",
-        noPost: "找不到贴子",
+        noTarget: "找不到目标",
         profile: {
             emailInvalid: "邮箱格式不正确，请输入正确的邮箱格式。"
         },
@@ -28,6 +28,9 @@ export default {
         reply: "回复成功",
         error: "发布格式存在问题",
         adopt: "采纳答案成功",
+    },
+    dao:{
+        create: "创建提案成功",
     },
     share: {
         success: "分享成功，已复制到粘贴板。"

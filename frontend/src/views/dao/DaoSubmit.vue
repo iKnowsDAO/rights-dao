@@ -150,7 +150,7 @@
         },
         action: "",
         related: "",// 提案目标的principalId，每次提案只能有一个人
-        deadline: Object.create(null) as number,
+        deadline: "",
     });
     const action = ref([{
         value: "Add",
@@ -207,7 +207,7 @@
     });
 
     onMounted(() => {
-        // init()
+        init()
     });
 
     const showEditorLength = computed(() => {
@@ -232,7 +232,6 @@
                     lock: true
                 });
                 loading.value = true;
-                console.log("form", form.value);
                 let dao = {
                     id: form.value.related,
                     ...form.value
@@ -240,14 +239,15 @@
                 // delete dao.related;
                 if (dao.deadline) {
                     //结束时间，传到后端需要扩大一下位数
-                    dao.deadline *= 1000 * 1000;
+                    //@ts-ignore
+                    dao.deadline = Number(dao.deadline)* 1000 * 1000;
                 }
                 console.log("dao", dao);
                 addDaoProposal(dao).then(res => {
                     console.log(res);
                     if (res.Ok) {
-                        showMessageSuccess(t('message.post.create'));
-                        // router.push('/post/detail/' + Number(res.Ok));
+                        showMessageSuccess(t('message.dao.create'));
+                        router.push('/dao/detail/' + Number(res.Ok));
                     }
                 }).finally(() => {
                     loading.value = false;

@@ -64,7 +64,6 @@
                         </el-form-item>
                         <el-form-item v-for="(item, index) in form.participants"
                                       :key="index"
-                                      label-width="110px"
                                       :prop="'participants.' + index"
                                       :rules="[{
                                         required: true,

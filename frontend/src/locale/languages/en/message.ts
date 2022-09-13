@@ -4,7 +4,7 @@ export default {
         canister: "Canister have some problem.",
         login: "Login Failed",
         noLogin: "No login, please login first",
-        noPost: "Can't Find Target",
+        noTarget: "Can't Find Target",
         profile: {
             emailInvalid: "The email format is not correct, please enter the correct email format."
         },
@@ -24,10 +24,13 @@ export default {
         success: "Delete Successful."
     },
     post: {
-        create: "Create question successfully",
+        create: "Create Question Successfully",
         reply: "Reply Success",
         error: "There Is A Problem With The Publishing Format",
         adopt: "Adopted Successfully",
+    },
+    dao:{
+        create: "Creating Proposal Successfully",
     },
     share: {
         success: "Share Success, Copied to the pasteboard"

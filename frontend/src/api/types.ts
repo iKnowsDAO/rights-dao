@@ -10,6 +10,8 @@ export type ApiError = {
     UserEmailInvalid: null; // 用户的邮箱格式存在问题
     PostAlreadyCompleted: null; //贴子已经进入完成状态，不能再修改
     PostNotFound: null; // 贴子找不到
+
+    ProposalNotFound: null;//提案找不到
     ProposalUnAuthorized: null;
     ProposalDeadlineOutOfDate: null;
     MemberNotFound: null;
@@ -39,6 +41,15 @@ export type ApiPostStatus = {
     Completed?: null,
     Closed?: null,
 };// 正常 | 完成 | 关闭
+
+export type ApiDaoState = {
+    Open?: null, //投票中
+    Accepted?: null, //yes的票数足够，已通过，待执行
+    Rejected?: null, //no的票数足够，未通过，不会执行
+    Executing?: null, //正在执行
+    Succeeded?: null, //成功执行
+    Failed?: string, //发生意外的故障，并且包含失败原因
+};
 
 export type RichText = {
     content: string; // 实际内容
@@ -98,7 +109,6 @@ export type ApiPostTimeline = {
     time?: string;
 }
 
-
 export type ApiPostComments = {
     author: Principal | string; // 作者principalID
     authorData?: ApiUserInfo; //作者详细资料 通过id获取对应资料
@@ -125,9 +135,37 @@ export type ApiProfilePost = {
     post_id?: bigint;
 }
 
-
 export type UserReputation = {
     user: Principal | string; // 用户principalID
     amount: bigint; //积分值
 }
 
+export type Weights = {
+    amount: number;
+}
+export type Execute_args = {
+    execute_args: execute_args;
+}
+export type execute_args = {
+    AddGovernanceMember: ApiDaoArgs;
+}
+export type ApiDaoProposal = {
+    id: bigint; //id
+    proposer: Principal | string; // 发起人
+    authorData?: ApiUserInfo;  //作者详细资料 通过id获取对应资料
+    payload: Execute_args; //额外参数
+    state: ApiDaoState;
+    votes_yes: Weights;
+    votes_no: Weights;
+    vote_threshold: Weights; //投票阈值
+    voters: Principal[] | string[];
+    created_at: number;
+};
+
+export type ApiDaoArgs = {
+    id: Principal | string; //被提案用户的id
+    title: string;
+    content: RichText;
+    deadline: number;
+    action: string; // action目前只有Add,Delete两个值，对应增加删除管理员
+};

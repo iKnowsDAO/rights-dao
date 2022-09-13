@@ -83,26 +83,7 @@
                         </el-row>
                     </el-col>
                     <el-col :sm="5" :xs="24">
-                        <el-card shadow="never">
-                            <el-button type="primary" class="create-button" @click="router.push('/post/submit')">
-                                {{t('post.help.create')}}
-                            </el-button>
-                            <div class="beta">
-                                <b class="flex-y-center">
-                                    <el-icon>
-                                        <Opportunity/>
-                                    </el-icon>
-                                    Beta Warning!</b>
-                                <span class="text">RightsDao is in the Beta phase, there may be issues.</span>
-                            </div>
-                            <el-divider/>
-                            <div class="public-item">
-                                <a href="https://dfinity.org/">
-                                    More about the Internet Computer
-                                </a>
-                            </div>
-                        </el-card>
-                        <Footer/>
+                        <RightMenu buttonType="post"/>
                     </el-col>
                 </el-row>
             </div>
@@ -128,13 +109,13 @@
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
     import CategoryButton from '@/components/common/CategoryButton.vue';
+    import RightMenu from '@/components/menu/RightMenu.vue';
     import {useRoute, useRouter} from 'vue-router';
     import {getTimeF} from "@/utils/dates";
     import {getPostPage} from "@/api/post";
     import {ApiPost} from "@/api/types";
     import {cleanHtml} from "@/common/utils";
     import {getTargetUser} from "@/api/user";
-    import Footer from '@/components/footer/Footer.vue';
 
     const router = useRouter();
 
@@ -216,6 +197,7 @@
         board.value ? category = [board.value] : category = [];
         console.log("post",pageNum.value, pageSize.value, search.value, category)
         getPostPage(pageNum.value, pageSize.value, search.value, category).then(res => {
+            console.log("post",res)
             if (res.Ok) {
                 //防止用户快速切换板块，导致bug。只有在category（运行方法时的板块值）等于board.value（现在的板块值）相等时才清空
                 if (board.value ? category.toString() == [board.value].toString() : category.length == 0) {
@@ -277,38 +259,12 @@
                 }
             }
         }
-        .beta {
-            margin-top: 24px;
-            padding: 8px 16px;
-            color: #e6a23c;
-            background-color: #faecd8;
-            border-color: #faecd8;
-            border-radius: 10px;
-            .text {
-                font-size: 14px;
-            }
-        }
-        .public-item {
-            font-size: 14px;
-            a {
-                color: black;
-                text-decoration: none;
-                &:hover {
-                    opacity: 0.8;
-                    text-decoration: underline;
-                }
-            }
-        }
         .empty {
             margin-top: 200px;
         }
         .loading-tip {
             margin-top: 30px;
             margin-bottom: 30px;
-        }
-        .create-button {
-            width: 100%;
-            min-height: 40px;
         }
         .container {
             .flex-right {

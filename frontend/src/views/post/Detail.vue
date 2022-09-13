@@ -63,7 +63,7 @@
                 post.value = res.Ok
                 console.log("detail", isOwner.value)
             } else if (res.Err && res.Err.PostNotFound !== undefined) {
-                showMessageError(t('message.error.noPost'));
+                showMessageError(t('message.error.noTarget'));
                 setTimeout(() => {
                     //等用户看清了错误提示再弹
                     goBack(router);

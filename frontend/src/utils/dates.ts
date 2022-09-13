@@ -24,6 +24,10 @@ const leftPaddingZero = (value: string, length: number): string => {
     }
     return value;
 };
+// 下边这个方法是判断时间是否小于10，小于10的数字 前边加0
+export const isAddZero = (time: number) => {
+    return time < 10 ? '0' + time : time.toString();
+}
 
 //将纳秒的时间戳转换为毫秒的日期类型，方便前端数据回显
 export const parseNs2Date = (time: number): Date => {
@@ -31,14 +35,26 @@ export const parseNs2Date = (time: number): Date => {
 };
 
 //直接将后端时间戳转换成yyyy-mm-dd格式的字符串
-export const formatDate = (value: number): string => {
-    let date = new Date(value / (1000 * 1000))
+export const formatDate = (value: bigint | number): string => {
+    const valueNumber = Number(value);
+    let date = new Date(valueNumber / (1000 * 1000))
     let y = date.getFullYear()  //获取年份
     let m = date.getMonth() + 1  //获取月份
     let month = m < 10 ? "0" + m : m  //月份不满10天显示前加0
     let d = date.getDate()  //获取日期
     const day = d < 10 ? "0" + d : d  //日期不满10天显示前加0
     return y + "-" + month + "-" + day
+};
+//直接将后端时间戳转换成yyyy-mm-dd HH:MM格式的字符串
+export const formatDateToMinutes = (value: bigint | number): string => {
+    const valueNumber = Number(value);
+    let date = new Date(valueNumber / (1000 * 1000));
+    let y = date.getFullYear();  //获取年份
+    let m = isAddZero(date.getMonth() + 1);  //获取月份
+    let d = isAddZero(date.getDate());  //获取日期
+    const H = isAddZero(date.getHours()); // 小时
+    const M = isAddZero(date.getMinutes()); // 分钟
+    return y + "-" + m + "-" + d + " " + H + ":" + M
 };
 
 //将后端时间戳转换成友好显示格式的字符串
@@ -58,7 +74,11 @@ export const getTimeF = (value: bigint | number): string => {
     const time = time1 - time2;
     let result = "";
     //太久了就直接显示日期吧
-    if (time / month >= 1) {
+    //time为负数，说明是之后的时间，暂时直接显示日期
+    if (time < 0) {
+        result = formatDate(valueNumber);
+        // result = "发布于" + parseInt(time / month + "") + "月前！";
+    } else if (time / month >= 1) {
         result = formatDate(valueNumber);
         // result = "发布于" + parseInt(time / month + "") + "月前！";
     } else if (time / week >= 1) {

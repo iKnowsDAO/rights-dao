@@ -195,7 +195,7 @@
     const pageIndex = ref(0);
     const pages = ref<{ text: string; action: string }[]>([
         { text: 'navbar.tabs.home', action: '/' },
-        { text: 'navbar.tabs.dao', action: '/' },
+        { text: 'navbar.tabs.dao', action: '/dao' },
     ]);
 
     // 多语言设置
