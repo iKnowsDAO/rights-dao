@@ -7,7 +7,7 @@ use ic_cdk::storage;
 
 use crate::context::{DaoContext, DaoDataStorage};
 
-use crate::{CONTEXT, GOVERNANACE_LSHOO, GOVERNANACE_CREATOR_REPUTATION};
+use crate::{CONTEXT, GOVERNANACE_LSHOO, GOVERNANACE_CREATOR_REPUTATION, GOVERNANACE_ZHOU};
 use crate::env::CanisterEnvironment;
 use crate::governance::domain::GovernanceMember;
 use crate::reputation::domain::ReputationSummary;
@@ -29,6 +29,11 @@ fn get_caller() -> String {
     caller().to_string()
 }
 
+#[query]
+fn now() -> u64 {
+    CONTEXT.with(|c| c.borrow().env.now())
+}
+
 #[init]
 fn init_canister() {
     ic_cdk::setup();
@@ -40,6 +45,7 @@ fn init_canister() {
     
     let now = context.env.now();
     let creator1 = GOVERNANACE_LSHOO.with(|g| g.clone());
+    let creator2 = GOVERNANACE_ZHOU.with(|g| g.clone());
     let creator_reputation = GOVERNANACE_CREATOR_REPUTATION.with(|cr| cr.clone());
     
     CONTEXT.with(|c| { 
@@ -52,6 +58,16 @@ fn init_canister() {
         });
         c.borrow_mut().reputation_service.insert_reputation(ReputationSummary {
             id: creator1,
+            amount: creator_reputation,
+        });
+
+        // 初始化创始人数据（治理委员会成员和声望值）
+        c.borrow_mut().governance_service.insert_member(GovernanceMember {
+            id: creator2,
+            created_at: now,
+        });
+        c.borrow_mut().reputation_service.insert_reputation(ReputationSummary {
+            id: creator2,
             amount: creator_reputation,
         })
     });

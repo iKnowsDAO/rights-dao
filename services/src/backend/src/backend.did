@@ -459,6 +459,7 @@ type GovernanceError = variant {
     CandidatePrincipalFormatInvalid;
     GovernanaceMemberActionFormatInvalid;
     ProposalDeadlineOutOfDate;
+    VoterPrincipalWrongFormat;
 };
 
 type GovernanceProposalPage = record {
@@ -483,7 +484,7 @@ type GovernanceMemberResult = variant {
     Err: GovernanceError;
 };
 
-type BoolGovernanceResult = variant {
+type U64GovernanceResult = variant {
     Ok: nat64;
     Err: GovernanceError;
 };
@@ -531,5 +532,5 @@ service : {
     "get_governance_proposal" : (GovernanceProposalGetQuery) -> (GovernanceProposalResult);
     "page_governance_proposals" : (PageQuery) -> (GovernanceProposalPageResult);
     "get_governance_member" : (text) -> (GovernanceMemberResult);
-    "get_governance_member_proposal_vote" : (GovernanceProposalVoteGetQuery) -> (BoolGovernanceResult);
+    "get_governance_member_proposal_vote" : (GovernanceProposalVoteGetQuery) -> (U64GovernanceResult);
 }
