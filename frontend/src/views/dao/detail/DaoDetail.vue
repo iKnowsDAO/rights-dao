@@ -18,7 +18,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, computed} from 'vue';
+    import {ref, onMounted} from 'vue';
     import Navigator from '@/components/navigator/Navigator.vue';
     import Head from './modules/Head.vue';
     import Information from './modules/Information.vue';
@@ -26,7 +26,6 @@
     import {ElRow, ElCol, ElLoading} from 'element-plus/es';
     import {useRoute, useRouter} from 'vue-router';
     import {ApiDaoProposal} from "@/api/types";
-    import {useStore} from "vuex";
     import {goBack} from "@/router/routers";
     import {showMessageError} from "@/utils/message";
     import {t} from "@/locale";
@@ -34,17 +33,7 @@
 
     const route = useRoute();
     const router = useRouter();
-    const store = useStore();
     const proposalId = Number(route.params.id);
-    const currentUserPrincipal = computed<string>(() => store.state.user.principal);
-    // 是否是本人。关联编辑按钮的显示与否
-    // 本地环境下，authorId和currentId会有冲突。
-    // const isOwner = computed(() => {
-    //     if (dao.value) {
-    //         return currentUserPrincipal.value === dao.value.author.toString()
-    //     }
-    //     return false;
-    // });
     const proposal = ref<ApiDaoProposal>();
     const reply = ref()
     const loading = ref(false);
@@ -83,6 +72,7 @@
 <style lang="scss">
     .dao-detail-container {
         background-color: rgb(246, 246, 246);
+        height: 100vh;
         .container{
             margin-top: 10px;
         }

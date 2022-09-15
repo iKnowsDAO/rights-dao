@@ -119,7 +119,7 @@
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
     import {useStore} from "vuex";
     import {goBack} from "@/router/routers";
-    import {showMessageError, showMessageSuccess} from "@/utils/message";
+    import {showMessageError, showMessageSuccess, showResultError} from "@/utils/message";
     import {calculatedICPIdLength, uploadImage} from "@/utils/images";
     import {addDaoProposal} from "@/api/dao";
 
@@ -244,10 +244,12 @@
                 }
                 console.log("dao", dao);
                 addDaoProposal(dao).then(res => {
-                    console.log(res);
+                    console.log("dao result:", res);
                     if (res.Ok) {
                         showMessageSuccess(t('message.dao.create'));
                         router.push('/dao/detail/' + Number(res.Ok));
+                    } else {
+                        showResultError(res);
                     }
                 }).finally(() => {
                     loading.value = false;

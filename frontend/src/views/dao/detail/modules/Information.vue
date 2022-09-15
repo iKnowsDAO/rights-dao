@@ -44,7 +44,7 @@
 </template>
 <script lang="ts" setup>
     import {ref, onMounted, computed, defineProps, PropType} from 'vue';
-    import {ElCard, ElTooltip,ElIcon} from 'element-plus/es';
+    import { ElCard, ElTooltip,ElIcon } from 'element-plus/es';
     import {QuestionFilled,Comment} from '@element-plus/icons-vue';
     import {t} from '@/locale';
     import {ApiDaoProposal, ApiUserInfo} from "@/api/types";

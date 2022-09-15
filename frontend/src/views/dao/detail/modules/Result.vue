@@ -10,7 +10,20 @@
                 <div class="dao-result">
                     <div class="percent">
                         <b>{{t('dao.result.yes')}}</b>
-                        <span>{{yesPercentage}}%</span>
+                        <el-tooltip>
+                            <template #content>
+                                <span v-if="calculateThresholdPercentage(yes)<100">
+                                    {{t('dao.result.distance',{amount:calculateThresholdPercentage(yes)})}}
+                                </span>
+                                <span v-else>
+                                    {{t('dao.result.complete')}}
+                                </span>
+                            </template>
+                            <span>
+                                {{yesPercentage}}%
+                                <el-icon><QuestionFilled/></el-icon>
+                            </span>
+                        </el-tooltip>
                     </div>
                     <el-progress :text-inside="true"
                                  :stroke-width="15"
@@ -19,7 +32,20 @@
                                  status="success"/>
                     <div class="percent">
                         <b>{{t('dao.result.no')}}</b>
-                        <span>{{noPercentage}}%</span>
+                        <el-tooltip>
+                            <template #content>
+                                <span v-if="calculateThresholdPercentage(no)<100">
+                                    {{t('dao.result.distance',{amount:calculateThresholdPercentage(no)})}}
+                                </span>
+                                <span v-else>
+                                    {{t('dao.result.complete')}}
+                                </span>
+                            </template>
+                            <span>
+                                {{noPercentage}}%
+                                <el-icon><QuestionFilled/></el-icon>
+                            </span>
+                        </el-tooltip>
                     </div>
                     <el-progress :text-inside="true"
                                  :stroke-width="15"
@@ -32,8 +58,9 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, defineProps, PropType} from 'vue';
-    import {ElCard,ElProgress} from 'element-plus/es';
+    import {ref, onMounted, defineProps} from 'vue';
+    import {ElCard,ElProgress,ElTooltip,ElIcon} from 'element-plus/es';
+    import {QuestionFilled} from '@element-plus/icons-vue';
     import {t} from '@/locale';
 
     const yesPercentage = ref(0);
@@ -54,16 +81,23 @@
     });
 
     const calculatePercentage = (number) => {
-        return number / props.threshold;
+        //要显示的是百分比，所以扩大100倍
+        if(props.yes===0 && props.no===0){
+            return 0
+        }
+        return Number(((number / (props.yes + props.no)) * 100).toFixed(2));
+    }
+    const calculateThresholdPercentage = (number) => {
+        //计算与阈值的百分比
+        return Number(((number / props.threshold) * 100).toFixed(2));
     }
 
     const init = () => {
-        yesPercentage.value = Number(calculatePercentage(props.yes).toFixed(2));
-        noPercentage.value = Number(calculatePercentage(props.no).toFixed(2));
+        yesPercentage.value = calculatePercentage(props.yes);
+        noPercentage.value = calculatePercentage(props.no);
     }
 
     onMounted(() => {
-        console.log("props",props)
         init()
     });
 

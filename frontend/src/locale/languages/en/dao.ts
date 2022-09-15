@@ -37,13 +37,21 @@ export default {
         end: "End date",
         threshold: {
             title: "Vote Threshold",
-            tips: "When the number of Votes reaches a Threshold, the Proposal is automatically executed"
+            tips: "When the number of Votes reaches a Threshold, the Proposal is Automatically Executed"
         },
+    },
+    vote: {
+        title: "Cast Your Vote",
+        dialogTitle: "Voting Confirmation",
+        yes: "Are you sure to Support Proposal {id} and Vote for {votePower} ?",
+        no: "Are you sure to Oppose Proposal {id} and Vote for {votePower} ?",
     },
     result: {
         title: "Results",
         yes: "Yes",
         no: "No",
+        distance: "{amount}% short of the voting threshold",
+        complete: "Voting threshold has been reached"
     },
     state: {
         open: "Open",

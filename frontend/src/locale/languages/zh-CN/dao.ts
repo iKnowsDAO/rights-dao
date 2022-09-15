@@ -43,13 +43,15 @@ export default {
     vote: {
         title: "投出您的票",
         dialogTitle: "投票确认",
-        yes: "您确认要支持 {id} 号提案吗？",
-        no: "您确认要反对 {id} 号提案吗？",
+        yes: "您确认要支持 {id} 号提案，并且投出 {votePower} 票吗？",
+        no: "您确认要反对 {id} 号提案，并且投出 {votePower} 票吗？",
     },
     result: {
         title: "结果",
         yes: "支持",
         no: "反对",
+        distance: "距离投票阈值还有 {amount}%",
+        complete: "已经达到投票阈值"
     },
     state: {
         open: "进行中",

@@ -19,8 +19,8 @@
         :title="t('dao.vote.dialogTitle')"
         width="30%"
     >
-        <span v-if="voteOption">{{t('dao.vote.yes',{ id: proposalId })}}</span>
-        <span v-else-if="!voteOption">{{t('dao.vote.no',{ id: proposalId })}}</span>
+        <span v-if="voteOption">{{t('dao.vote.yes',{ id: proposalId,votePower: votePower })}}</span>
+        <span v-else-if="!voteOption">{{t('dao.vote.no',{ id: proposalId,votePower: votePower })}}</span>
         <template #footer>
       <span class="dialog-footer">
         <el-button @click="dialogVisible = false">{{t('common.cancel')}}</el-button>
@@ -30,19 +30,26 @@
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref} from 'vue';
+    import {ref, defineProps, onMounted} from 'vue';
     import {ElCard, ElButton, ElDialog} from 'element-plus/es';
     import {t} from '@/locale';
-    import {useRoute} from "vue-router";
-    import {voteProposal} from "@/api/dao";
-    import {showMessageError, showMessageSuccess} from "@/utils/message";
+    import {getMemberVote, getMyVotePower, voteProposal} from "@/api/dao";
+    import {showMessageSuccess, showResultError} from "@/utils/message";
 
-    const route = useRoute();
-
-    const proposalId = Number(route.params.id);
+    const votePower = ref(0);
     const dialogVisible = ref(false);
     const voteOption = ref(false);
     const loading = ref(false);
+    const props = defineProps({
+        principalId: {
+            type: String,
+            required: true,
+        },
+        proposalId: {
+            type: Number,
+            required: true,
+        },
+    });
 
     const openVote = (vote: boolean) => {
         dialogVisible.value = true;
@@ -57,17 +64,32 @@
         } else {
             vote = {No: null}
         }
-        voteProposal(proposalId, vote).then(res => {
+        voteProposal(props.proposalId, vote).then(res => {
             console.log("res",res)
             if (res.Ok) {
                 showMessageSuccess(t('message.delete.success'))
             } else {
-                showMessageError(JSON.stringify(res.Err))
+                showResultError(res)
             }
         }).finally(() => {
             loading.value = false
         })
     }
+    const init = () => {
+        getMemberVote(props.proposalId, props.principalId).then(res => {
+            console.log("getVote", res)
+        })
+        getMyVotePower().then(res => {
+            if (res.Ok) {
+                votePower.value = Number(res.Ok.amount)
+            }
+            console.log("getVotePower", res)
+        })
+    }
+
+    onMounted(() => {
+        init()
+    });
 
 </script>
 <style lang="scss">

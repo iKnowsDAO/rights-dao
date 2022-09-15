@@ -1,5 +1,5 @@
 <template>
-    <div class="dao-list-container">
+    <div class="dao-list-container" v-infinite-scroll="onScroll">
         <div class="container">
             <div class="post-list">
                 <el-row :gutter="20">

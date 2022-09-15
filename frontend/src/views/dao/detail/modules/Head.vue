@@ -48,7 +48,9 @@
                                 <!--<span class="fold" @click="dialogVisible=true">{{t('common.delete.title')}}</span>-->
                             <!--</div>-->
                         </div>
-                        <Vote/>
+                        <Vote v-if="proposal.state.Open!==undefined && currentUserPrincipal"
+                              :principalId="currentUserPrincipal"
+                              :proposalId="proposalId"/>
                     </div>
                 </el-col>
             </el-row>
@@ -69,7 +71,7 @@
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, defineProps, PropType} from 'vue';
+    import {ref, onMounted, defineProps, PropType, computed} from 'vue';
     import {ElRow, ElCol, ElButton, ElCard, ElTag, ElIcon, ElDialog} from 'element-plus/es';
     import {Flag} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
@@ -85,13 +87,16 @@
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {goHome} from "@/router/routers";
     import {useRoute, useRouter} from "vue-router";
+    import {useStore} from "vuex";
 
+    const store = useStore();
     const router = useRouter();
     const route = useRoute();
     const author = ref<ApiUserInfo>();
 
     const isFold = ref(true);
     const proposalId = Number(route.params.id);
+    const currentUserPrincipal = computed<string>(() => store.state.user.principal);
     const dialogVisible = ref(false);
     const loading = ref(false);
 
