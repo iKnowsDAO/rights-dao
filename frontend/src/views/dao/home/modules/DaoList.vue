@@ -19,7 +19,7 @@
                         <el-card class="post-card" v-for="(item,inex) in showList"
                                  @click="onClick(Number(item.id))">
                             <el-row justify="space-between">
-                                <el-col :span="20" class="card-info">
+                                <el-col :span="24" class="card-info">
                                     <Avatar :username="item.authorData && item.authorData.name!=='' ?
                                                 item.authorData.name : item.proposer.toString()"
                                             :principalId=item.proposer.toString()
@@ -39,17 +39,31 @@
                                         </div>
                                     </div>
                                 </el-col>
-                                <el-col :span="4" class="flex-right">
-                                   <span>category</span>
-                                </el-col>
                             </el-row>
                             <div @click="onClick(Number(item.id))" class="content">
                                 {{item.content.content}}
                             </div>
                             <div class="footer">
-                                <!--<div class="reply">-->
-                                    <!--{{t('post.reply')+" "+item.comments.length}}-->
-                                <!--</div>-->
+                                <div class="vote" v-if="item.state.Open===undefined">
+                                    <div class="percent">
+                                        <b>{{t('dao.result.yes')}}</b>
+                                        <span>{{calculatePercentage(item,true)}}%</span>
+                                    </div>
+                                    <el-progress :text-inside="true"
+                                                 :stroke-width="15"
+                                                 :percentage="calculatePercentage(item,true)"
+                                                 :show-text="false"
+                                                 status="success"/>
+                                    <div class="percent">
+                                        <b>{{t('dao.result.no')}}</b>
+                                        <span>{{calculatePercentage(item,false)}}%</span>
+                                    </div>
+                                    <el-progress :text-inside="true"
+                                                 :stroke-width="15"
+                                                 :percentage="calculatePercentage(item,false)"
+                                                 :show-text="false"
+                                                 status="success"/>
+                                </div>
                             </div>
                         </el-card>
                         <el-row :class="{ empty: list.length === 0 }" justify="center" class="loading-tip">
@@ -82,7 +96,8 @@
         ElIcon,
         ElDivider,
         ElMenu,
-        ElMenuItem
+        ElMenuItem,
+        ElProgress
     } from 'element-plus/es';
     import {Search, Opportunity} from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
@@ -133,6 +148,16 @@
             init(false)
         }
     };
+
+    const calculatePercentage = (item: any | ApiDaoProposal, yesPer: boolean) => {
+        const yes = Number(item.votes_yes.amount);
+        const no = Number(item.votes_no.amount);
+        if (yesPer) {
+            return Number(((yes / (yes + no)) * 100).toFixed(2))
+        } else {
+            return Number(((no / (yes + no)) * 100).toFixed(2))
+        }
+    }
 
     const searchPage = () => {
         pageNum.value = 0;
@@ -232,12 +257,19 @@
                     }
                 }
                 .footer {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
                     margin-top: 25px;
-                    .reply {
-                        color: rgb(133, 144, 166);
+                    .vote {
+                        width: 80%;
+                        .el-progress {
+                            margin-top: 4px;
+                            margin-bottom: 14px;
+                        }
+                        b {
+                            /*color: #8590a6;*/
+                        }
+                        span {
+                            float: right;
+                        }
                     }
                 }
             }

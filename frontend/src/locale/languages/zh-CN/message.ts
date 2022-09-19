@@ -29,14 +29,15 @@ export default {
         error: "发布格式存在问题",
         adopt: "采纳答案成功",
     },
-    dao:{
+    dao: {
         create: "创建提案成功",
+        vote: "投票成功"
     },
     share: {
         success: "分享成功，已复制到粘贴板。"
     },
     copy: {
-        success:"已将 {item} 复制到粘贴板。 "
+        success: "已将 {item} 复制到粘贴板。 "
     },
     user: {
         notFound: "找不到目标用户信息。"

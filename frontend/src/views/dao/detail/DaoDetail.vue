@@ -4,7 +4,8 @@
         <div class="container" v-if="proposal!==undefined">
             <el-row class="main" :gutter="20">
                 <el-col class="main-content" :sm="16" :xs="24">
-                    <Head :proposal="proposal" v-if="proposal!==undefined"/>
+                    <Head :proposal="proposal" v-if="proposal!==undefined"
+                          @voteSuccess="init"/>
                 </el-col>
                 <el-col class="sub-content" :sm="8" :xs="24">
                     <Information :proposal="proposal" v-if="proposal!==undefined"/>

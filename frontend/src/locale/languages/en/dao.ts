@@ -50,6 +50,7 @@ export default {
         title: "Results",
         yes: "Yes",
         no: "No",
+        cost:"You have voted, number of votes: ",
         distance: "{amount}% short of the voting threshold",
         complete: "Voting threshold has been reached"
     },

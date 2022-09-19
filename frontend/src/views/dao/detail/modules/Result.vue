@@ -12,7 +12,7 @@
                         <b>{{t('dao.result.yes')}}</b>
                         <el-tooltip>
                             <template #content>
-                                <span v-if="calculateThresholdPercentage(yes)<100">
+                                <span v-if="calculateThresholdPercentage(yes)>0">
                                     {{t('dao.result.distance',{amount:calculateThresholdPercentage(yes)})}}
                                 </span>
                                 <span v-else>
@@ -34,7 +34,7 @@
                         <b>{{t('dao.result.no')}}</b>
                         <el-tooltip>
                             <template #content>
-                                <span v-if="calculateThresholdPercentage(no)<100">
+                                <span v-if="calculateThresholdPercentage(no)>0">
                                     {{t('dao.result.distance',{amount:calculateThresholdPercentage(no)})}}
                                 </span>
                                 <span v-else>
@@ -89,7 +89,7 @@
     }
     const calculateThresholdPercentage = (number) => {
         //计算与阈值的百分比
-        return Number(((number / props.threshold) * 100).toFixed(2));
+        return  Number(((1 - number / props.threshold) * 100).toFixed(2));
     }
 
     const init = () => {

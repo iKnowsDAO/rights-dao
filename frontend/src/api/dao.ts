@@ -23,7 +23,7 @@ export async function voteProposal(proposalId: number, vote): Promise<ApiResult<
 }
 
 // 获取目标对某个提案的投票情况,如果返回结果为0，则说明未投票
-export async function getMemberVote(proposalId: number, voter: string): Promise<ApiResult<number>> {
+export async function getMemberVote(proposalId: number, voter: string): Promise<ApiResult<bigint>> {
     return getBackend().get_governance_member_proposal_vote({
         id: proposalId,
         voter: voter

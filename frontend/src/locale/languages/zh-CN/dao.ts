@@ -50,6 +50,7 @@ export default {
         title: "结果",
         yes: "支持",
         no: "反对",
+        cost:"您已投票，票数：",
         distance: "距离投票阈值还有 {amount}%",
         complete: "已经达到投票阈值"
     },

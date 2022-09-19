@@ -50,7 +50,8 @@
                         </div>
                         <Vote v-if="proposal.state.Open!==undefined && currentUserPrincipal"
                               :principalId="currentUserPrincipal"
-                              :proposalId="proposalId"/>
+                              :proposalId="proposalId"
+                              @voteSuccess="voteSuccess"/>
                     </div>
                 </el-col>
             </el-row>
@@ -71,7 +72,7 @@
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, defineProps, PropType, computed} from 'vue';
+    import {ref, onMounted, defineProps, PropType, computed, defineEmits} from 'vue';
     import {ElRow, ElCol, ElButton, ElCard, ElTag, ElIcon, ElDialog} from 'element-plus/es';
     import {Flag} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
@@ -110,6 +111,12 @@
     onMounted(() => {
         init();
     });
+
+    const emit = defineEmits(['voteSuccess'])
+
+    const voteSuccess =() =>{
+        emit('voteSuccess');
+    }
 
     const fold = () => {
         isFold.value = !isFold.value;
