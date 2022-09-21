@@ -69,12 +69,19 @@ impl GovernanceService {
 
     // 分页查询 proposal
     pub fn page_proposals(&self, q: GovernanceProposalPageQuery) -> GovernanceProposalPage {
-        let data: Vec<GovernanceProposal> = self.proposals
+        let mut data: Vec<GovernanceProposal> = self.proposals
             .iter()
             .filter(|(_, p)| p.proposer.to_string().contains(q.querystring.as_str()))
+            .map(|(_, q)| q.clone())
+            .collect();
+
+        data.sort_by(|c1, c2| c2.created_at.cmp(&c1.created_at));
+            
+        let data = data
+            .iter()
             .skip(q.page_num * q.page_size)
             .take(q.page_size)
-            .map(|(_, q)| q.clone())
+            .cloned()
             .collect();
 
         let total_count = self.proposals.len();
