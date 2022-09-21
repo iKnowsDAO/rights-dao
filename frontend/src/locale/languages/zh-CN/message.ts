@@ -5,6 +5,9 @@ export default {
         login: "登录失败",
         noLogin: "没有登录，请先登录才能发贴",
         noTarget: "找不到目标",
+        network: {
+            timeout: "网络连接超时"
+        },
         profile: {
             emailInvalid: "邮箱格式不正确，请输入正确的邮箱格式。"
         },

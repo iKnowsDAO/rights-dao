@@ -144,6 +144,7 @@
     import {clearCurrentIdentity, setCurrentIdentity} from "@/api/canister_pool";
     import {UserInfoElement} from "@/types/user";
     import {showUsername} from "@/common/utils";
+    import {showAdmin} from "@/common/auth";
     const store = useStore();
     const router = useRouter();
     const props = defineProps({
@@ -270,6 +271,8 @@
                 if (info.Ok) {
                     let user = info.Ok;
                     user.owner = user.owner.toString();
+                    //查询用户是否为管理员
+                    showAdmin()
                     // 设置用户信息
                     refreshUserInfo({
                         name: user.name,

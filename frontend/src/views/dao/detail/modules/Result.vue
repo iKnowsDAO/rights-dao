@@ -20,14 +20,14 @@
                                 </span>
                             </template>
                             <span>
-                                {{yesPercentage}}%
+                                {{calculatePercentage(yes)}}%
                                 <el-icon><QuestionFilled/></el-icon>
                             </span>
                         </el-tooltip>
                     </div>
                     <el-progress :text-inside="true"
                                  :stroke-width="15"
-                                 :percentage="yesPercentage"
+                                 :percentage="calculatePercentage(yes)"
                                  :show-text="false"
                                  status="success"/>
                     <div class="percent">
@@ -42,14 +42,14 @@
                                 </span>
                             </template>
                             <span>
-                                {{noPercentage}}%
+                                {{calculatePercentage(no)}}%
                                 <el-icon><QuestionFilled/></el-icon>
                             </span>
                         </el-tooltip>
                     </div>
                     <el-progress :text-inside="true"
                                  :stroke-width="15"
-                                 :percentage="noPercentage"
+                                 :percentage="calculatePercentage(no)"
                                  :show-text="false"
                                  status="exception"/>
                 </div>
@@ -58,7 +58,7 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, defineProps} from 'vue';
+    import {ref, onMounted, defineProps,computed} from 'vue';
     import {ElCard,ElProgress,ElTooltip,ElIcon} from 'element-plus/es';
     import {QuestionFilled} from '@element-plus/icons-vue';
     import {t} from '@/locale';
@@ -80,21 +80,20 @@
         }
     });
 
-    const calculatePercentage = (number) => {
+    const calculatePercentage = computed(()=> (number) => {
         //要显示的是百分比，所以扩大100倍
         if(props.yes===0 && props.no===0){
             return 0
         }
         return Number(((number / (props.yes + props.no)) * 100).toFixed(2));
-    }
-    const calculateThresholdPercentage = (number) => {
+    })
+    const calculateThresholdPercentage = computed(()=> (number) => {
         //计算与阈值的百分比
         return  Number(((1 - number / props.threshold) * 100).toFixed(2));
-    }
+    })
 
     const init = () => {
-        yesPercentage.value = calculatePercentage(props.yes);
-        noPercentage.value = calculatePercentage(props.no);
+
     }
 
     onMounted(() => {

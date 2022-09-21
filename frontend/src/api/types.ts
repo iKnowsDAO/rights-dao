@@ -139,6 +139,11 @@ export type UserReputation = {
     user: Principal | string; // 用户principalID
     amount: bigint; //积分值
 }
+//DAO成员信息
+export type GovernanceMember = {
+    user: Principal | string; // 用户principalID
+    created_at: bigint; //创建时间
+}
 
 export type Weights = {
     amount: number;

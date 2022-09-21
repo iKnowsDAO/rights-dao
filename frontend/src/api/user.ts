@@ -107,11 +107,20 @@ export async function editUserSelf(user: any | ApiUserInfo): Promise<ApiResult<b
     return getBackend().edit_user(user);
 }
 
-
 // 获取目标用户声望值（积分）
 export async function getUserReputation(principalId: string): Promise<ApiResult<UserReputation>> {
     return getBackend().get_reputation({
         // user: "2vxsx-fae"
         user: principalId
     })
+}
+
+// 获取用户是否为管理员，直接返回Boolean变量
+export async function getUserIsAdmin(principalId: string): Promise<boolean> {
+    const res = await getBackend().get_governance_member(principalId)
+    if (res.Ok) {
+        return res.Ok.id.toString() === getCurrentPrincipal();
+    } else {
+        return false;
+    }
 }

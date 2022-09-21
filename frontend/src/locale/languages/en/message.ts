@@ -5,6 +5,9 @@ export default {
         login: "Login Failed",
         noLogin: "No login, please login first",
         noTarget: "Can't Find Target",
+        network: {
+            timeout: "Network Connection Timeout"
+        },
         profile: {
             emailInvalid: "The email format is not correct, please enter the correct email format."
         },
@@ -29,14 +32,14 @@ export default {
         error: "There Is A Problem With The Publishing Format",
         adopt: "Adopted Successfully",
     },
-    dao:{
+    dao: {
         create: "Creating Proposal Successfully",
     },
     share: {
         success: "Share Success, Copied to the pasteboard"
     },
     copy: {
-        success:"Copied {item} to pasteboard. "
+        success: "Copied {item} to pasteboard. "
     },
     user: {
         notFound: "Target user information not found."

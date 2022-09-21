@@ -61,6 +61,7 @@
     });
 
     const openVote = (vote: boolean) => {
+        //vote控制投票赞成还是反对。
         dialogVisible.value = true;
         voteOption.value = vote;
     }
@@ -77,6 +78,7 @@
         voteProposal(props.proposalId, vote).then(res => {
             if (res.Ok) {
                 showMessageSuccess(t('message.dao.vote'))
+                dialogVisible.value = false;
                 init()
                 emit('voteSuccess');
             } else {

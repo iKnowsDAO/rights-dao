@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-    import { defineProps, PropType, onMounted } from 'vue';
+    import { defineProps, PropType } from 'vue';
     import {t} from '@/locale';
     import {ApiDaoState} from "@/api/types";
 
@@ -17,10 +17,6 @@
             type: Object as PropType<ApiDaoState>,
             required: true,
         },
-    });
-
-    onMounted(() => {
-
     });
 
 </script>
