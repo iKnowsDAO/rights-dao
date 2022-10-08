@@ -141,7 +141,7 @@ export type UserReputation = {
 }
 //DAO成员信息
 export type GovernanceMember = {
-    user: Principal | string; // 用户principalID
+    user: Principal; // 用户principalID
     created_at: bigint; //创建时间
 }
 

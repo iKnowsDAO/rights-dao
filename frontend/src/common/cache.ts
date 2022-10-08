@@ -26,13 +26,14 @@ export class TTL {
 // execute: 传入执行方法
 // ttl: Time To Live 过期时长，秒为单位，比如xx秒以后过期
 // isLocal: true为LocalStorage，false为非LocalStorage
+// 方法返回值必须是res.Ok才会激活本地缓存
 export async function getCache(info: {
     key: string;
     execute: () => Promise<any>;
     ttl?: number;
     isLocal?: boolean;
     timeout?: number; // 超时限制，如果网络请求时间实在太长，就提示错误吧
-    cache?: boolean; // 是否不读取旧缓存，而是加载新的数据，再将新的数据缓存
+    cache?: boolean; // 是否读取旧缓存，而是加载新的数据，再将新的数据缓存，如果设置 cache 是 false，那么表明不使用缓存
     notice?: (_fromCaching: boolean) => void; // 万一上级需要判断是否从缓存中读取，因此需要额外通知数据
     update?: boolean; // 是否需要异步跟新
     updatedCallback?: (_data: any) => void; // 异步更新成功是否需要回调
@@ -116,11 +117,22 @@ const setExpiredData = (key: string, value: any, ttl: number, isLocal: boolean):
     };
     // 2. 将数据存在内存变量里，以便不用每次从 localStorage 中读取
     CACHE_DATA[key] = item;
+    //定义即将存入localStorage里的对象中每个value的替换方法，setItem时使用
+    function replacer(key, value) {
+        if (typeof value === "bigint") {
+            return Number(value) ;
+        } else if(typeof value === "object" && value.constructor.name==='Principal'){
+            // 将Principal格式的value转换为字符串储存
+            // 以免JSON.stringify深拷贝时破坏Principal的constructor，导致无法转换成字符串
+            return value.toString();
+        }
+        return value;
+    }
     // 3. 如果需要存储至 localStorage
     if (isLocal) {
         localStorage.setItem(
             key,
-            JSON.stringify(item, (_, v) => (typeof v === 'bigint' ? Number(v) : v)),
+            JSON.stringify(item, replacer),
         );
     }
 };

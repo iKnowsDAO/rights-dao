@@ -1,6 +1,6 @@
 import {clearCacheData, getCache, TTL} from '@/common/cache';
 import {getCurrentPrincipal, getBackend} from './canister_pool';
-import {ApiProfilePost, ApiResult, ApiResultByPage, ApiUserInfo, UserReputation} from "@/api/types";
+import {ApiProfilePost, ApiResult, ApiResultByPage, ApiUserInfo, GovernanceMember, UserReputation} from "@/api/types";
 import {Principal} from "@dfinity/principal/lib/cjs";
 
 // 注册用户接口，将当前登录用户 id 登记在后端 应当有缓存 不需要返回值
@@ -116,11 +116,6 @@ export async function getUserReputation(principalId: string): Promise<ApiResult<
 }
 
 // 获取用户是否为管理员，直接返回Boolean变量
-export async function getUserIsAdmin(principalId: string): Promise<boolean> {
-    const res = await getBackend().get_governance_member(principalId)
-    if (res.Ok) {
-        return res.Ok.id.toString() === getCurrentPrincipal();
-    } else {
-        return false;
-    }
+export async function getUserIsAdmin(principalId: string): Promise<ApiResult<GovernanceMember>> {
+    return await getBackend().get_governance_member(principalId)
 }

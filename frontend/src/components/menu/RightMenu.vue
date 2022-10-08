@@ -2,9 +2,13 @@
     <div class="right-menu-container">
         <el-card shadow="never">
             <el-button type="primary" class="create-button" @click="onClick()"
-                :disabled="isDisabled">
-                <span v-if="buttonType==='post'">{{t('post.help.create')}}</span>
-                <span v-else-if="buttonType==='dao'">{{t('dao.create')}}</span>
+                       v-if="buttonType==='post'">
+                {{t('post.help.create')}}
+            </el-button>
+            <el-button type="primary" class="create-button" @click="onClick()"
+                       v-else-if="buttonType==='dao'"
+                       :disabled="isDisabled">
+                {{t('dao.create')}}
             </el-button>
             <div class="beta">
                 <b class="flex-y-center">

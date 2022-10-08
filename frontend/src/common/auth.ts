@@ -1,15 +1,25 @@
 import {getUserIsAdmin} from "@/api/user";
 import {getCache, TTL} from "@/common/cache";
 import {getBackend, getCurrentPrincipal} from "@/api/canister_pool";
+import {Principal} from "@dfinity/principal/lib/cjs";
 
 // 鉴别管理员
 export async function showAdmin() {
-    return await getCache({
-        key: 'IsAdmin_' + getCurrentPrincipal().toUpperCase(),
+    //如果没有登录，直接返回false
+    if (!getCurrentPrincipal()) {
+        return false;
+    }
+    const res = await getCache({
+        key: 'Admin_' + getCurrentPrincipal().toUpperCase(),
         execute: () => getUserIsAdmin(getCurrentPrincipal()),
         ttl: TTL.minute30,
         isLocal: true, // 需要本地存储
     });
+    if (res.Ok) {
+        return res.Ok.id.toString() === getCurrentPrincipal();
+    } else {
+        return false;
+    }
 }
 
 // 查询是否有管理员cookie

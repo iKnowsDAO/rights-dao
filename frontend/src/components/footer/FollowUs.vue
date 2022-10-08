@@ -5,9 +5,9 @@
         <!--<a class="icon-link" target="blank" href="https://t.me/">-->
             <!--<i class="iconfont icon-telegram"></i>-->
         <!--</a>-->
-        <a class="icon-link" target="blank" href="https://github.com/dfinity">
-            <i class="iconfont icon-github"></i>
-        </a>
+        <!--<a class="icon-link" target="blank" href="https://github.com/dfinity">-->
+            <!--<i class="iconfont icon-github"></i>-->
+        <!--</a>-->
         <a class="icon-link" target="blank" href="https://twitter.com/Rights_DAO">
             <i class="iconfont icon-twitter"></i>
         </a>
