@@ -97,7 +97,7 @@ fn submit_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
                 let res = ctx.post_service.update_post_answer(cmd.clone(), now);
 
                 if res.is_ok() {
-                    if let Some(comment) = p.comments.iter().find(|c| c.id == cmd.comment_id) {
+                    if let Some(comment) = p.comments.iter().find(|c| c.id == cmd.answer_id) {
                         if comment.author != p.author {
                             let re = ReputationEvent::new(ctx.id, comment.author, ReputationAction::SelectedPostAnswer, 1, now);
                             ctx.reputation_service.handle_reputation_event(re);
@@ -191,6 +191,20 @@ fn add_post_event(cmd: PostEventCommand) -> Result<bool, PostError> {
         let caller = ctx.env.caller();
         let now = ctx.env.now();
         ctx.post_service.add_post_event(cmd, caller, now)
+    })
+}
+
+#[update]
+fn delete_post_answer_comment(cmd: PostAnswerCommentCommand) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let post_id = cmd.post_id;
+        let answer_id = cmd.answer_id;
+        let comment_id = cmd.comment_id;
+
+        ctx.post_service.delete_post_answer_comment(post_id, answer_id, comment_id);
+
+        Ok(true)
     })
 }
 

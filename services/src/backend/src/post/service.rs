@@ -65,7 +65,7 @@ impl PostService {
     pub fn update_post_answer(&mut self, cmd: PostAnswerCommand, now: Timestamp) -> Result<bool, PostError> {
         if let Some(profile) = self.posts.get_mut(&cmd.post_id) {
             
-            profile.answer = Some(cmd.comment_id);
+            profile.answer = Some(cmd.answer_id);
             profile.updated_at = now;
 
             Ok(true)
@@ -78,6 +78,15 @@ impl PostService {
         self.posts.remove(&id).map(|_| true)
     }
     
+    /// 删除符合指定回答id和评论id的评论
+    pub fn delete_post_answer_comment(&mut self, post_id: PostId, answer_id: u64, comment_id: u64) -> bool {
+        if let Some(p) = self.posts.get_mut(&post_id) {
+            p.delete_answer_comment(answer_id, comment_id);
+        } 
+
+        true
+    }
+
     pub fn get_post(&self, id: PostId) -> Option<PostProfile> {
         self.posts
             .get(&id)

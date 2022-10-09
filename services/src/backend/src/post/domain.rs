@@ -55,6 +55,16 @@ impl PostProfile {
     pub fn is_active(&self) -> bool {
         self.status == PostStatus::Enable
     }
+
+    pub fn delete_answer_comment(&mut self, answer_id: u64, comment_id: u64) {
+        for answer in &mut self.comments {
+            if answer.comment_id == Some(answer_id) {
+                let comments = &mut answer.comments;
+                
+                comments.retain(|c| c.comment_id == Some(answer_id) && c.quote_id != Some(comment_id))
+            }
+        }
+    }
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -396,5 +406,12 @@ impl PostEventCommand {
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct PostAnswerCommand {
     pub post_id: u64,
-    pub comment_id: u64,
+    pub answer_id: u64,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostAnswerCommentCommand {
+    pub post_id: u64,
+    pub answer_id: u64,
+    pub comment_id: u64
 }
