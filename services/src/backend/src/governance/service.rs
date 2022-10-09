@@ -52,8 +52,16 @@ impl GovernanceService {
         self.proposals.get(id).cloned()
     }
 
-    // 执行 Accepted 的提案，并修改 state
-    pub fn get_executing_accepted_proposals(&mut self) -> Vec<GovernanceProposal> {
+    // 查询已经过期但还没有状态还是 open 的提案
+    pub fn set_expired_open_proposals_rejected(&mut self, current_time: u64) {
+        self.proposals
+            .values_mut()
+            .filter(|p| p.state == ProposalState::Open && p.get_deadline() < current_time)
+            .for_each(|p| p.state = ProposalState::Rejected );
+    }
+
+    // 获取 被接受的提案列表
+    pub fn executing_accepted_and_get_proposals(&mut self) -> Vec<GovernanceProposal> {
         self.proposals
             .values_mut()
             .filter(|p| p.state == ProposalState::Accepted)
@@ -61,6 +69,7 @@ impl GovernanceService {
             .collect()
     }
 
+    // 执行 Accepted 的提案，并修改 state
     pub fn update_proposal_state(&mut self, proposal_id: u64, state: ProposalState) {
         if let Some(p) = self.proposals.get_mut(&proposal_id) {
             p.state = state;

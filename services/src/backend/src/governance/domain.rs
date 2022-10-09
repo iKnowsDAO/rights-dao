@@ -134,6 +134,12 @@ impl GovernanceProposal {
 
         None
     }
+
+    pub fn get_deadline(&self) -> u64 {
+        match &self.payload.execute_args {
+            ProposalExecuteArgs::AddGovernanceMember(add) => add.deadline
+        }
+    }
 }
 
 /// The data needed to call a given method on a given canister with given args
@@ -191,7 +197,7 @@ pub enum Vote {
 }
 
 // The state of a Proposal
-#[derive(Clone, Debug, CandidType, Deserialize, PartialEq)]
+#[derive(Clone, Debug, CandidType, Deserialize, PartialEq, Eq)]
 pub enum ProposalState {
     // The proposal is open for voting
     Open,
@@ -212,7 +218,7 @@ pub enum ProposalState {
     Failed(String),
 }
 
-#[derive(Clone, Copy, Debug, Default, CandidType, Deserialize, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Debug, Default, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Weights {
     pub amount: u64,
 }

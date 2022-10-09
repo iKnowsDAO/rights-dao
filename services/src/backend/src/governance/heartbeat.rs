@@ -7,7 +7,11 @@ use super::domain::{GovernanceProposal, ProposalState, ProposalExecuteArgs, Gove
 
 #[heartbeat]
 async fn heartbeat() {
+    // 执行接受状态的提案
     execute_accepted_governance_member_proposals().await;
+
+    // 清理过期的提案
+    execute_expired_governance_member_proposals().await;
 }
 
 /// Execute all claim proposal
@@ -15,7 +19,7 @@ async fn execute_accepted_governance_member_proposals() {
     let accepted_proposals: Vec<GovernanceProposal> = CONTEXT.with(|c| {
         c.borrow_mut()
             .governance_service
-            .get_executing_accepted_proposals()
+            .executing_accepted_and_get_proposals()
     });
 
     for proposal in accepted_proposals {
@@ -64,5 +68,13 @@ async fn execute_governance_member_proposal(proposal: GovernanceProposal) -> Res
         }
         
         Ok(())
+    })
+}
+
+async fn execute_expired_governance_member_proposals() {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let current_time = ctx.env.now();
+        ctx.governance_service.set_expired_open_proposals_rejected(current_time);
     })
 }
