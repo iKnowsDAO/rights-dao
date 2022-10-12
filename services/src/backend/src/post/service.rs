@@ -79,6 +79,15 @@ impl PostService {
     }
     
     /// 删除符合指定回答id和评论id的评论
+    pub fn delete_post_answer(&mut self, post_id: PostId, answer_id: u64) -> bool {
+        if let Some(p) = self.posts.get_mut(&post_id) {
+            p.delete_answer(answer_id);
+        } 
+
+        true
+    }
+
+    /// 删除符合指定回答id和评论id的评论
     pub fn delete_post_answer_comment(&mut self, post_id: PostId, answer_id: u64, comment_id: u64) -> bool {
         if let Some(p) = self.posts.get_mut(&post_id) {
             p.delete_answer_comment(answer_id, comment_id);

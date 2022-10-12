@@ -529,6 +529,7 @@ service : {
     "add_comment_comment" : (CommentCommentCommand) -> (BoolPostResult);
     "add_post_event" : (PostEventCommand) -> (BoolPostResult);
     "submit_post_answer" : (PostAnswerCommand) -> (BoolPostResult);
+    "delete_post_answer" : (PostAnswerCommand) -> (BoolPostResult);
     "delete_post_answer_comment" : (PostAnswerCommentCommand) -> (BoolPostResult);
 
     "my_reputation" : () -> (ReputationSummaryResult);

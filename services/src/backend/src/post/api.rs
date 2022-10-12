@@ -195,6 +195,21 @@ fn add_post_event(cmd: PostEventCommand) -> Result<bool, PostError> {
 }
 
 #[update]
+fn delete_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let post_id = cmd.post_id;
+        let answer_id = cmd.answer_id;
+
+        // let caller = ctx.env.caller();
+
+        ctx.post_service.delete_post_answer(post_id, answer_id);
+
+        Ok(true)
+    })
+}
+
+#[update]
 fn delete_post_answer_comment(cmd: PostAnswerCommentCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();

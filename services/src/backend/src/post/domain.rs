@@ -56,12 +56,18 @@ impl PostProfile {
         self.status == PostStatus::Enable
     }
 
+    // 删除指定回答
+    pub fn delete_answer(&mut self, answer_id: u64) {
+        self.comments.retain(|c| c.id != answer_id)
+    }
+
+    // 删除指定回答的某个评论
     pub fn delete_answer_comment(&mut self, answer_id: u64, comment_id: u64) {
         for answer in &mut self.comments {
-            if answer.comment_id == Some(answer_id) {
+            if answer.id == answer_id {
                 let comments = &mut answer.comments;
                 
-                comments.retain(|c| c.comment_id == Some(answer_id) && c.quote_id != Some(comment_id))
+                comments.retain(|c| c.id != comment_id)
             }
         }
     }
