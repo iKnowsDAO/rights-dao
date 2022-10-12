@@ -242,6 +242,10 @@ type PostError = variant {
     PostUnAuthorizedOperation;
     PostCommentNotFound;
     UserNotFound;
+    PostWithCommentCantDelete;
+    UserNotAnswerAuthor;
+    AnswerWithCommentCantDelete;
+    UserNotCommentAuthor;
 };
 
 type BoolPostResult = variant {

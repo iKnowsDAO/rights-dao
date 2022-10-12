@@ -10,4 +10,8 @@ pub enum PostError {
     PostUnAuthorizedOperation,
     PostCommentNotFound,
     UserNotFound,
+    PostWithCommentCantDelete,
+    UserNotAnswerAuthor,
+    AnswerWithCommentCantDelete,
+    UserNotCommentAuthor,
 }

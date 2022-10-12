@@ -123,9 +123,15 @@ fn delete_post(cmd: PostIdCommand) -> Result<bool, PostError> {
                 if p.author != caller {
                     return Err(PostError::PostUnAuthorizedOperation);
                 }
+
                 if p.status == PostStatus::Completed {
                     return Err(PostError::PostAlreadyCompleted);
                 }
+
+                if p.has_answer() {
+                    return Err(PostError::PostWithCommentCantDelete);
+                }
+
                 ctx.post_service.delete_post(post_id).ok_or(PostError::PostNotFound)
             },
             None => Err(PostError::PostNotFound),
@@ -201,11 +207,25 @@ fn delete_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
         let post_id = cmd.post_id;
         let answer_id = cmd.answer_id;
 
-        // let caller = ctx.env.caller();
+        let caller = ctx.env.caller();
 
-        ctx.post_service.delete_post_answer(post_id, answer_id);
+        match ctx.post_service.get_post(post_id) {
+            Some(p) => {     
+                
+                if p.answer_has_comment(answer_id) {
+                    return Err(PostError::AnswerWithCommentCantDelete);
+                }
 
-        Ok(true)
+                if !p.valid_answer_author(answer_id, caller) {
+                    return Err(PostError::UserNotAnswerAuthor);
+                }
+
+                Ok(ctx.post_service.delete_post_answer(post_id, answer_id))
+            },
+
+            None => Err(PostError::PostNotFound),
+        }
+
     })
 }
 
@@ -217,9 +237,20 @@ fn delete_post_answer_comment(cmd: PostAnswerCommentCommand) -> Result<bool, Pos
         let answer_id = cmd.answer_id;
         let comment_id = cmd.comment_id;
 
-        ctx.post_service.delete_post_answer_comment(post_id, answer_id, comment_id);
+        let caller = ctx.env.caller();
 
-        Ok(true)
+        match ctx.post_service.get_post(post_id) {
+            Some(p) => {     
+            
+                if !p.valid_answer_comment_author(answer_id, comment_id, caller) {
+                    return Err(PostError::UserNotCommentAuthor);
+                }
+
+                Ok(ctx.post_service.delete_post_answer_comment(post_id, answer_id, comment_id))
+            },
+
+            None => Err(PostError::PostNotFound),
+        }
     })
 }
 

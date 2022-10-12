@@ -56,6 +56,43 @@ impl PostProfile {
         self.status == PostStatus::Enable
     }
 
+    pub fn has_answer(&self) -> bool {
+        !self.comments.is_empty()
+    }
+
+    // 检查指定的 answer 是否有评论
+    pub fn answer_has_comment(&self, answer_id: u64) -> bool {
+        for answer in &self.comments {
+            if answer.id == answer_id && answer.has_comment() {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    // 检查指定的 caller 是否指定回答的 author
+    pub fn valid_answer_author(&self, answer_id: u64, caller: Principal) -> bool {
+        for answer in &self.comments {
+            if answer.id == answer_id && answer.is_answer_author(caller) {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    // 检查指定的 caller 是否指定回答中指定评论的 author
+    pub fn valid_answer_comment_author(&self, answer_id: u64, comment_id: u64, caller: Principal) -> bool {
+        for answer in &self.comments {
+            if answer.id == answer_id && answer.is_answer_comment_author(comment_id, caller) {
+                return true;
+            }
+        }
+
+        false
+    }
+
     // 删除指定回答
     pub fn delete_answer(&mut self, answer_id: u64) {
         self.comments.retain(|c| c.id != answer_id)
@@ -320,6 +357,27 @@ pub struct PostComment {
     pub created_at: Timestamp,
     pub updated_at: Timestamp,
     pub comments: Vec<PostComment>,
+}
+
+impl PostComment {
+
+    pub fn is_answer_author(&self, caller: Principal) -> bool {
+        self.author == caller
+    }
+
+    pub fn has_comment(&self) -> bool {
+        !self.comments.is_empty()
+    }
+
+    pub fn is_answer_comment_author(&self, comment_id: u64, caller: Principal) -> bool {
+        for comment in &self.comments {
+            if comment.id == comment_id && comment.author == caller {
+                return true;
+            }
+        }
+
+        false
+    }
 }
 
 #[derive(Debug, Clone, CandidType, PartialEq, Eq, Deserialize)]
