@@ -66,7 +66,7 @@
                                 <span v-else @click="isFold = !isFold" class="fold">{{t('common.fold')}}</span>
                             </div>
                             <div v-if="isOwner">
-                                <span class="fold" @click="dialogVisible=true">{{t('common.delete.title')}}</span>
+                                <DeleteButton :deleteFunction="deleteThisPost" :loading="loading"/>
                             </div>
                         </div>
                     </div>
@@ -74,33 +74,21 @@
             </el-row>
         </div>
     </div>
-    <el-dialog
-        v-model="dialogVisible"
-        :title="t('common.delete.title')"
-        width="30%"
-    >
-        <span>{{t('common.delete.text')}}</span>
-        <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">{{t('common.cancel')}}</el-button>
-        <el-button type="primary" @click="deleteThisPost()" :loading="loading">{{t('common.confirm')}}</el-button>
-      </span>
-        </template>
-    </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, defineProps, PropType, defineEmits} from 'vue';
+    import {ref, onMounted, defineProps, PropType, defineEmits, computed} from 'vue';
     import {ElRow, ElCol, ElButton, ElCard, ElTag, ElIcon, ElDialog} from 'element-plus/es';
     import {Flag} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
     import CategoryButton from '@/components/common/CategoryButton.vue';
+    import DeleteButton from '@/components/common/PostDeleteButton.vue';
     import {ApiPost, ApiUserInfo} from "@/api/types";
     import {getTargetUser} from "@/api/user";
     import {getTimeF} from "@/utils/dates";
     import {t} from '@/locale';
     import {deletePost} from "@/api/post";
-    import {showMessageError, showMessageSuccess} from "@/utils/message";
+    import {showMessageSuccess, showResultError} from "@/utils/message";
     import {goHome} from "@/router/routers";
     import {useRouter} from "vue-router";
 
@@ -121,9 +109,7 @@
             required: true,
         }
     });
-
     onMounted(() => {
-        console.log("a",author.value)
         init();
     });
 
@@ -131,15 +117,16 @@
         isFold.value = !isFold.value;
     }
 
-    const deleteThisPost = () => {
+    const deleteThisPost = (callback) => {
         loading.value = true;
         deletePost(Number(props.post.id)).then(res => {
             if (res.Ok) {
                 showMessageSuccess(t('message.delete.success'))
                 goHome(router)
             } else {
-                showMessageError(res.Err + "")
+                showResultError(res)
             }
+            callback(res);
         }).finally(() => {
             loading.value = false
         })

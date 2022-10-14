@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-    import { defineProps, PropType } from 'vue';
+    import {defineProps, PropType} from 'vue';
     import {t} from '@/locale';
     import {ApiDaoState} from "@/api/types";
 
@@ -34,10 +34,10 @@
         &.succeeded {
             background-color: #059669;
         }
-        &.rejected {
-            background-color: rgb(144, 147, 153);
-        }
-        &.failed {
+        /*&.rejected {*/
+        /*background-color: rgb(144, 147, 153);*/
+        /*}*/
+        &.failed, &.rejected {
             background-color: rgb(245, 108, 108);
         }
     }

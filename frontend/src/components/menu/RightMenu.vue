@@ -50,10 +50,10 @@
         },
     });
 
-    const init = () => {
+    const init = async () => {
         if (props.buttonType === 'dao') {
             //isDisabled为false时按钮启用，true时按钮禁用
-            isDisabled.value = !showAdmin();
+            isDisabled.value = !await showAdmin();
         } else {
             isDisabled.value = false;
         }

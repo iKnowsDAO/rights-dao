@@ -17,6 +17,7 @@ export type ApiError = {
     MemberNotFound: null;
     MemberAlreadyExists: null;
     MemberPrincipalWrongFormat: null;
+    AnswerWithCommentCantDelete: null; //有评论的回答不能删除
 };
 
 // 后端的返回结果

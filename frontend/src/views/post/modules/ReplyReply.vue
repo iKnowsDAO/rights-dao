@@ -34,6 +34,10 @@
                         {{item.content.content}}
                         <span class="reply-button" v-if="item.isReply" @click="replyOther(item)">{{t('post.cancelReply')}}</span>
                         <span class="reply-button" v-else @click="replyOther(item)">{{t('post.reply')}}</span>
+                        <DeleteButton v-if="props.currentUserPrincipal===item.author.toString()"
+                                      :id="Number(item.id)"
+                                      :deleteFunction="deleteComment"
+                                      :loading="deleteLoading"/>
                     </div>
                 </div>
                 <div class="dialog-pagination">
@@ -57,13 +61,14 @@
 <script lang="ts" setup>
     import {ref, onMounted, watch, defineProps, defineEmits, PropType} from 'vue';
     import {ElRow, ElCol, ElButton, ElCard, ElDialog, ElInput, ElPagination} from 'element-plus/es';
-    import {addPostReplyReply} from "@/api/post";
+    import {addPostReplyReply, deletePostComment} from "@/api/post";
     import {ApiPostComments} from "@/api/types";
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
+    import DeleteButton from '@/components/common/PostDeleteButton.vue';
     import {getTimeF} from "@/utils/dates";
     import {getTargetUser} from "@/api/user";
-    import {showMessageError, showMessageSuccess} from "@/utils/message";
+    import {showMessageError, showMessageSuccess, showResultError} from "@/utils/message";
     import {t} from "@/locale";
 
     const props = defineProps({
@@ -84,12 +89,22 @@
             type: Number,
             required: true,
         },
+        isOwner: {
+            type: Boolean,
+            required: true,
+        },
+        currentUserPrincipal: {
+            type: String,
+            required: true,
+        }
     });
     const dialogVisible = ref(false);
     const loading = ref(false);
+    const deleteLoading = ref(false);
     const replyReply = ref("")
     const placeholder = ref(t('post.commentPlaceholder'))
     const quoteId = ref([] as number[])
+    const deleteCommentId = ref(0)
     const showList = ref<ApiPostComments[]>([])
     const itemList = ref<ApiPostComments[]>([])
     const emit = defineEmits(['update:visible', 'refreshCallback'])
@@ -110,6 +125,25 @@
         itemList.value.reverse();
         paging();
         console.log("showList.value", showList.value)
+    }
+
+    const deleteComment = (commentId: number, callback) => {
+        deleteLoading.value = true;
+        deletePostComment(props.postId, props.replyId, commentId).then(res => {
+            console.log("deletePostComment", props.postId, props.replyId, commentId)
+            console.log("deletePostComment res", res)
+            if (res.Ok) {
+                showMessageSuccess(t('message.delete.success'))
+                //删除成功后将此评论直接移除，并且将总数减1。
+                showList.value = showList.value.filter(item => Number(item.id) !== commentId)
+                total.value = total.value - 1;
+            } else {
+                showResultError(res)
+            }
+            callback(res);
+        }).finally(() => {
+            deleteLoading.value = false
+        })
     }
 
     const paging = () => {
@@ -218,6 +252,9 @@
             padding-top: 12px;
             padding-bottom: 10px;
             border-top: 1px solid rgb(246, 246, 246);
+            .delete-button {
+                margin-left: 10px;
+            }
             .head {
                 display: flex;
                 align-items: center;

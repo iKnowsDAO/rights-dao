@@ -15,8 +15,8 @@ export async function showAdmin() {
         ttl: TTL.minute30,
         isLocal: true, // 需要本地存储
     });
-    if (res.Ok) {
-        return res.Ok.id.toString() === getCurrentPrincipal();
+    if (res.Ok && res.Ok.id.toString() === getCurrentPrincipal()) {
+        return true;
     } else {
         return false;
     }

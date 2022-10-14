@@ -14,10 +14,13 @@
                     </div>
                     <div v-if="proposal.payload.execute_args.AddGovernanceMember.id">
                         <b>{{t('dao.information.target')}}</b>
-                        <Username :principalId="proposal.payload.execute_args.AddGovernanceMember.id.toString()"
-                                  :username="targetUser!==undefined && targetUser.name!==''
+                        <div class="user">
+                            <el-icon><UserFilled /></el-icon>
+                            <Username :principalId="proposal.payload.execute_args.AddGovernanceMember.id.toString()"
+                                      :username="targetUser!==undefined && targetUser.name!==''
                                                       ? targetUser.name: ''"
-                                  :clickable="true"/>
+                                      :clickable="true"/>
+                        </div>
                     </div>
                     <div>
                         <b>{{t('dao.information.start')}}</b>
@@ -44,8 +47,8 @@
 </template>
 <script lang="ts" setup>
     import {ref, onMounted, computed, defineProps, PropType} from 'vue';
-    import { ElCard, ElTooltip,ElIcon } from 'element-plus/es';
-    import {QuestionFilled,Comment} from '@element-plus/icons-vue';
+    import {ElCard, ElTooltip, ElIcon} from 'element-plus/es';
+    import {QuestionFilled, UserFilled, Comment} from '@element-plus/icons-vue';
     import {t} from '@/locale';
     import {ApiDaoProposal, ApiUserInfo} from "@/api/types";
     import Username from '@/components/common/Username.vue';
@@ -77,6 +80,11 @@
 <style lang="scss">
     .dao-detail-information-container {
         .dao-form{
+            .user{
+                float: right;
+                display: flex;
+                align-items: center;
+            }
             b{
                 color: #8590a6;
             }

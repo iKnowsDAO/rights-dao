@@ -5,15 +5,17 @@
                 <el-col :sm={span:16,offset:4} :xs="24">
                     <el-card>
                         <div class="head">
-                            <b v-if="list.length === 0 || list.length === 1">
-                                {{list.length+ " " + t('post.size') + t('post.answer')}}
+                            <b v-if="total === 0 || total === 1">
+                                {{total+ " " + t('post.size') + t('post.answer')}}
                             </b>
-                            <b v-else>{{list.length+ " " + t('post.size') + t('post.answers')}}</b>
+                            <b v-else>{{total+ " " + t('post.size') + t('post.answers')}}</b>
                         </div>
                         <div class="reply" v-for="(item,index) in showList">
                             <div v-if="props.answerId === Number(item.id)" style="margin-bottom: 5px">
                                 <el-tag type="success">
-                                    <el-icon><Flag /></el-icon>
+                                    <el-icon>
+                                        <Flag/>
+                                    </el-icon>
                                     {{t('post.adopt.down')}}
                                 </el-tag>
                             </div>
@@ -73,6 +75,10 @@
                                             </div>
                                         </template>
                                     </el-popconfirm>
+                                    <DeleteButton v-if="props.currentUserPrincipal===item.author.toString()"
+                                                  :id="Number(item.id)"
+                                                  :deleteFunction="deleteAnswer"
+                                                  :loading="deleteLoading"/>
                                 </div>
                                 <div>
                                     <span v-if="!foldIndex[index]" @click="fold(index)">{{t('common.expand')}}</span>
@@ -80,7 +86,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="reply" v-if="list.length===0">
+                        <div class="reply" v-if="total===0">
                             {{t('post.noAnswer')}}
                         </div>
                     </el-card>
@@ -89,7 +95,7 @@
         </div>
     </div>
     <ReplyReply v-if="showReplyReply" v-model:visible="showReplyReply" :comments="comments" :replyId="commentId"
-                :postId="props.postId"
+                :postId="props.postId" :isOwner="props.isOwner" :currentUserPrincipal="props.currentUserPrincipal"
                 @refreshCallback="init()"/>
 </template>
 <script lang="ts" setup>
@@ -98,13 +104,14 @@
     import {Medal, Flag} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
+    import DeleteButton from '@/components/common/PostDeleteButton.vue';
     import ReplyReply from './ReplyReply.vue';
     import {ApiPostComments} from "@/api/types";
     import {getTargetUser} from "@/api/user";
-    import {getPostComments, submitPostAnswer} from "@/api/post";
+    import {deletePostAnswer, getPostComments, submitPostAnswer} from "@/api/post";
     import {t} from '@/locale';
     import {toClipboard} from "@soerenmartius/vue3-clipboard";
-    import {showMessageSuccess} from "@/utils/message";
+    import {showMessageSuccess, showResultError} from "@/utils/message";
     import {getTimeF} from "@/utils/dates";
 
     const props = defineProps({
@@ -118,17 +125,22 @@
         isOwner: {
             type: Boolean,
             required: true,
+        },
+        currentUserPrincipal: {
+            type: String,
+            required: true,
         }
     });
-    const list = ref<ApiPostComments[]>([]);
-    const showList = ref<ApiPostComments[]>([]);
+    const list = ref<ApiPostComments[]>([]); //初始数据，可能会有很多数据量，所以需要分页成showList
+    const showList = ref<ApiPostComments[]>([]); //实际展示数据
     const answer = ref<ApiPostComments>();
     const showReplyReply = ref(false);
     const pageLoading = ref(false);
+    const deleteLoading = ref(false);
     const foldIndex = ref([false]);
     const pageSize = ref(5);
     const pageNum = ref(0);
-    const totalCount = ref(0);
+    const total = ref(0);
     const replyIndex = ref(-1);
     const commentId = ref(0);
     const comments = ref<any[]>([]);
@@ -137,7 +149,7 @@
         //初始化时会运行一次此方法
         //不能加载分页的时候停止请求博客列表，免得陷入死循环
         console.log("onScroll", pageNum.value)
-        if (totalCount.value !== 0 && showList.value.length !== totalCount.value) {
+        if (total.value !== 0 && showList.value.length !== total.value) {
             pageNum.value++;
             paging()
         }
@@ -164,6 +176,24 @@
         }
     }
 
+    const deleteAnswer = (answerId: number, callback) => {
+        deleteLoading.value = true;
+        deletePostAnswer(props.postId, answerId).then(res => {
+            console.log("deletePostComment res", res)
+            if (res.Ok) {
+                showMessageSuccess(t('message.delete.success'))
+                //删除成功后将此评论直接移除，并且将总数减1。
+                showList.value = showList.value.filter(item => Number(item.id) !== answerId)
+                total.value = total.value - 1;
+            } else {
+                showResultError(res)
+            }
+            callback(res);
+        }).finally(() => {
+            deleteLoading.value = false
+        })
+    }
+
     const submitAnswer = (postId: number, commentId: number) => {
         submitPostAnswer(postId, commentId).then(res => {
             console.log("res", res)
@@ -171,7 +201,7 @@
                 showMessageSuccess(t('message.post.adopt'))
                 //采纳完成后，重新加载页面
                 init();
-                pageNum.value=0;
+                pageNum.value = 0;
                 paging();
             } else {
                 console.error("submitPostAnswerFailed", res);
@@ -179,14 +209,14 @@
         })
     }
     //将指定的回答id置顶
-    const onTop = (commentId:number) => {
+    const onTop = (commentId: number) => {
         const index = list.value.findIndex(item => Number(item.id) === commentId)
         //将查到的答案移到数组第一位，得到置顶的效果。
-        list.value.unshift(list.value.splice(index,1)[0])
+        list.value.unshift(list.value.splice(index, 1)[0])
     }
 
     const paging = () => {
-        if (totalCount.value > 0) {
+        if (total.value > 0) {
             const length = showList.value.length;
             showList.value.push(...list.value.slice(pageSize.value * (pageNum.value - 1), pageSize.value * pageNum.value));
             console.log("ReplyShowList", showList.value)
@@ -210,9 +240,9 @@
                 console.log("getPostComments", res)
                 //由于按时间顺排序问题，需要倒序
                 list.value = res.Ok.reverse();
-                totalCount.value = list.value.length;
+                total.value = list.value.length;
                 if (props.answerId) {
-                    console.log("props.answerId",props.answerId)
+                    console.log("props.answerId", props.answerId)
                     onTop(props.answerId);
                 }
             }
@@ -229,7 +259,6 @@
     }
 
     onMounted(() => {
-        console.log("props",props.answerId)
         init();
     });
 
@@ -262,6 +291,9 @@
                     }
                 }
                 .owner-div {
+                    margin-left: 10px;
+                }
+                .delete-button{
                     margin-left: 10px;
                 }
                 .footer {

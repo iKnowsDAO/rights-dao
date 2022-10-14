@@ -24,6 +24,16 @@ export async function deletePost(id: number): Promise<ApiResult<boolean>> {
     return getBackend().delete_post({id: id});
 }
 
+// 删除贴子的回答，只有管理员可以操作
+export async function deletePostAnswer(post_id: number, answer_id: number): Promise<ApiResult<boolean>> {
+    return getBackend().delete_post_answer({post_id: post_id, answer_id: answer_id});
+}
+
+// 删除贴子的回答的评论，只有管理员可以操作
+export async function deletePostComment(post_id: number, answer_id: number, comment_id: number): Promise<ApiResult<boolean>> {
+    return getBackend().delete_post_answer_comment({post_id: post_id, answer_id: answer_id, comment_id: comment_id});
+}
+
 // 获取贴子详情，不获取时间线和回贴
 export async function getPostInfo(id: number): Promise<ApiResult<ApiPost>> {
     return getBackend().get_post_info({id: id});

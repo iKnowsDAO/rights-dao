@@ -15,6 +15,7 @@ export default {
             alreadyCompleted: "Timeline cannot be after posting close time."
         },
         notFound: "Sorry, the page you are visiting does not exist",
+        withOtherContent: "Content containing others cannot be delete.",
         image: {
             size: "Image size error",
             format: "Image format error",

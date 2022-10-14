@@ -6,7 +6,8 @@
         <div v-if="post!==undefined" style="min-height: 70vh">
             <TimeLine :postId="postId" @changeStatusSuccess="init" :isOwner="isOwner"/>
             <Reply :postId="postId" :answerId="post.answer.length>0 ? Number(post.answer[0]) : undefined" ref="reply"
-                   :isOwner="isOwner"/>
+                   :isOwner="isOwner"
+                   :currentUserPrincipal="currentUserPrincipal"/>
         </div>
     </div>
 </template>
@@ -31,7 +32,7 @@
     const store = useStore();
     const postId = Number(route.params.id);
     const currentUserPrincipal = computed<string>(() => store.state.user.principal);
-    // 是否是本人。关联编辑按钮的显示与否
+    // 是否是本人 或者是管理员。关联编辑，删除按钮的显示与否
     // 本地环境下，authorId和currentId会有冲突。
     const isOwner = computed(() => {
         if (post.value) {
