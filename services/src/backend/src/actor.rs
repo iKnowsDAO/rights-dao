@@ -89,6 +89,10 @@ fn pre_upgrade() {
             .iter()
             .map(|(_k, v)| (v.clone())));
 
+        let likes = Vec::from_iter(context.post_service.likes
+            .iter()
+            .map(|(_k, v)| v.clone()));
+            
         let reputation_summaries = Vec::from_iter(context.reputation_service.summaries
             .iter()
             .map(|(_, summary)| summary.clone())
@@ -104,7 +108,7 @@ fn pre_upgrade() {
             .iter()
             .map(|(_k, v)| (v.clone())));
         let payload: DaoDataStorage = DaoDataStorage {
-            id, users, posts, reputation_summaries, reputation_events, governance_proposals, governance_members,
+            id, users, posts, likes, reputation_summaries, reputation_events, governance_proposals, governance_members,
         };
         
         storage::stable_save((payload,))

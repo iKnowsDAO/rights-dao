@@ -1,7 +1,7 @@
 use std::{
     collections::VecDeque, 
     string::ParseError, 
-    str::FromStr
+    str::FromStr,
 };
 
 use candid::{CandidType, Deserialize, Principal};
@@ -60,6 +60,23 @@ impl PostProfile {
         !self.comments.is_empty()
     }
 
+    pub fn without_comments(self) -> Self {
+        Self {
+            comments: vec![],
+            ..self
+        }
+    }
+
+    pub fn contains_answer(&self, answer_id: &u64) -> bool {
+        for c in &self.comments {
+            if &c.id == answer_id {
+                return true;
+            }
+        }
+        
+        false
+    }
+
     // 检查指定的 answer 是否有评论
     pub fn answer_has_comment(&self, answer_id: u64) -> bool {
         for answer in &self.comments {
@@ -107,6 +124,16 @@ impl PostProfile {
                 comments.retain(|c| c.id != comment_id)
             }
         }
+    }
+
+    // 点赞加1
+    pub fn add_like_count_one(&mut self) {
+        self.likes_count += 1;
+    }
+
+    // 点赞加1
+    pub fn sub_like_count_one(&mut self) {
+        self.likes_count -= 1;
     }
 }
 
@@ -478,4 +505,48 @@ pub struct PostAnswerCommentCommand {
     pub post_id: u64,
     pub answer_id: u64,
     pub comment_id: u64
+}
+
+
+
+
+/// 点赞功能
+
+/// 点赞ID
+pub type LikeId = (PostId, Principal);
+
+/// 点赞数据体
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct LikeProfile {
+    pub post_id: PostId,
+    pub author: Principal,
+    pub answer_id: Option<u64>,
+    pub is_like: bool,      // true 表示点赞，false 表示取消点赞
+    pub created_at: u64,
+    pub updated_at: u64,
+}
+
+impl LikeProfile {
+    pub fn new(post_id: PostId, author: Principal, answer_id: Option<u64>, is_like: bool, now: u64) -> Self {
+        Self {
+            post_id,
+            author,
+            answer_id,
+            is_like,
+            created_at: now,
+            updated_at: now,
+        }
+    }
+}
+/// 点赞 问题
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostLikeCommand {
+    pub post_id: PostId,
+}
+
+/// 点赞问题的回答
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostAnswerLikeCommand {
+    pub post_id: PostId,
+    pub answer_id: u64,
 }

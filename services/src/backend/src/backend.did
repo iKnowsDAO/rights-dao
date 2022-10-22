@@ -499,6 +499,15 @@ type U64GovernanceResult = variant {
     Err: GovernanceError;
 };
 
+type PostLikeCommand = record {
+    post_id: nat64;
+};
+
+type PostAnswerLikeCommand = record {
+    post_id: nat64;
+    answer_id: nat64;
+};
+
 service : {
  
     "greet": (text) -> (text) query;
@@ -535,6 +544,12 @@ service : {
     "submit_post_answer" : (PostAnswerCommand) -> (BoolPostResult);
     "delete_post_answer" : (PostAnswerCommand) -> (BoolPostResult);
     "delete_post_answer_comment" : (PostAnswerCommentCommand) -> (BoolPostResult);
+
+    "like_post" : (PostLikeCommand) -> (BoolPostResult);
+    "cancel_like_post" : (PostLikeCommand) -> (BoolPostResult);
+    "like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
+    "cancel_like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
+    "is_like_post" : (PostLikeCommand) -> (BoolPostResult);
 
     "my_reputation" : () -> (ReputationSummaryResult);
     "get_reputation" : (ReputationGetQuery) -> (ReputationSummaryResult);

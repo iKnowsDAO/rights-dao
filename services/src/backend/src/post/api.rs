@@ -372,3 +372,73 @@ fn other_comments(query: PostPageOtherQuery) -> Result<CommentSummaryPage, PostE
         
     })
 }
+
+/// ---------- 点赞 ------------------------
+#[update]
+fn like_post(cmd: PostLikeCommand) -> Result<bool, PostError> {
+    like_post_(cmd, true)
+}
+
+#[update]
+fn cancel_like_post(cmd: PostLikeCommand) -> Result<bool, PostError> {
+    like_post_(cmd, true)
+}
+
+fn like_post_(cmd: PostLikeCommand, is_like: bool) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let caller = ctx.env.caller();
+        let now = ctx.env.now();
+        
+        match ctx.post_service.get_post(cmd.post_id) {
+            Some(_) => {
+                Ok(ctx.post_service.like_post(cmd.post_id, caller, None, is_like, now))
+            }
+            None => Err(PostError::PostNotFound)
+        }
+        
+    })
+}
+
+#[update]
+fn like_post_answer(cmd: PostAnswerLikeCommand) -> Result<bool, PostError> {
+    like_post_answer_(cmd, true)
+}
+
+#[update]
+fn cancel_like_post_answer(cmd: PostAnswerLikeCommand) -> Result<bool, PostError> {
+    like_post_answer_(cmd, false)
+}
+
+
+fn like_post_answer_(cmd: PostAnswerLikeCommand, is_like: bool) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let caller = ctx.env.caller();
+        let now = ctx.env.now();
+        let answer_id = cmd.answer_id;
+        
+        match ctx.post_service.get_post(cmd.post_id) {
+            Some(post) => {
+                if post.contains_answer(&answer_id) {
+                    Ok(ctx.post_service.like_post(cmd.post_id, caller, Some(answer_id), is_like, now))
+                } else {
+                    Err(PostError::PostCommentNotFound)
+                }
+                
+            }
+            None => Err(PostError::PostNotFound)
+        }
+        
+    })
+}
+
+#[query]
+fn is_like_post(q: PostLikeCommand) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let caller = ctx.env.caller();
+        let like_id = (q.post_id, caller);
+        Ok(ctx.post_service.get_like_by_id(&like_id).is_some())
+    })
+}

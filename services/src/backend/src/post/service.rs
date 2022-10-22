@@ -19,6 +19,7 @@ use super::{
 #[derive(Debug, Default)]
 pub struct PostService {
     pub posts: BTreeMap<PostId, PostProfile>,
+    pub likes: BTreeMap<LikeId, LikeProfile>,
 }
 
 impl PostService {
@@ -265,6 +266,38 @@ impl PostService {
             _ => Err(PostError::PostNotFound)
         }
     }
+
+    /// 点赞问题
+    pub fn like_post(&mut self, post_id: PostId, author: Principal, answer_id: Option<u64>, is_like: bool, now: Timestamp) -> bool {
+        
+        if is_like {
+            self.posts.get_mut(&post_id).map(|p| p.add_like_count_one());
+        } else {
+            self.posts.get_mut(&post_id).map(|p| p.sub_like_count_one());
+        }
+
+        match self.likes.get_mut(&(post_id, author)) {
+            Some(l) => {
+                l.is_like = is_like;
+                l.updated_at = now;           
+            }
+            None => {
+                if is_like {
+                    let like_id = (post_id, author);
+                    let profile = LikeProfile::new(post_id, author, answer_id, is_like, now);
+                    self.likes.insert(like_id, profile);
+                }              
+            }
+        }
+
+        true
+    }
+
+    /// 获取点赞
+    pub fn get_like_by_id(&self, id: &LikeId) -> Option<LikeProfile> {
+        self.likes.get(id).cloned()
+    }
+
 }
 
 fn paging(ps: &BTreeMap<u64, PostProfile>, page_size: usize, page_num: usize,
@@ -274,6 +307,7 @@ fn paging(ps: &BTreeMap<u64, PostProfile>, page_size: usize, page_num: usize,
         .values()
         .filter(ff)
         .cloned()
+        .map(|p| p.without_comments())
         .collect();
 
     ps.sort_by(compare);
@@ -343,4 +377,6 @@ mod tests {
         assert_eq!(res5.comments.first().unwrap().comments.len(), 1);
         assert_eq!(res5.comments.first().unwrap().comments.first().unwrap().content.content, "coment comment".to_string());
     }
+
+    
 }

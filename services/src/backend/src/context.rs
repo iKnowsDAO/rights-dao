@@ -3,6 +3,7 @@ use candid::{CandidType, Deserialize, Principal};
 use std::collections::BTreeMap;
 use std::iter::FromIterator;
 
+use crate::domain::LikeProfile;
 use crate::env::{Environment, CanisterEnvironment, EmptyEnvironment};
 
 use crate::governance::GovernanceService;
@@ -23,6 +24,7 @@ pub struct DaoDataStorage {
     pub id: u64,
     pub users: Vec<UserProfile>,
     pub posts: Vec<PostProfile>,
+    pub likes: Vec<LikeProfile>,
     pub reputation_summaries: Vec<ReputationSummary>,
     pub reputation_events: Vec<ReputationEvent>,
     pub governance_proposals: Vec<GovernanceProposal>,
@@ -38,6 +40,10 @@ impl From<DaoContext> for DaoDataStorage {
         let posts = Vec::from_iter(context.post_service.posts
             .iter()
             .map(|(_k, v)| v.clone()));   
+        let likes = Vec::from_iter(context.post_service.likes
+            .iter()
+            .map(|(_k, v)| v.clone()));  
+
         let reputation_summaries = Vec::from_iter(context.reputation_service.summaries
             .iter()
             .map(|(_, summary)| summary.clone())
@@ -52,10 +58,12 @@ impl From<DaoContext> for DaoDataStorage {
         let governance_members = Vec::from_iter(context.governance_service.members
             .iter()
             .map(|(_k, v)| (v.clone())));
+
         Self {
             id,
             users,
             posts,
+            likes,
             reputation_summaries,
             reputation_events,
             governance_proposals,
@@ -99,6 +107,12 @@ impl From<DaoDataStorage> for DaoContext {
             .map(|p| (p.id, p))
             .collect();
 
+        let likes: BTreeMap<(u64, Principal), LikeProfile>= payload
+        .likes
+        .into_iter()
+        .map(|p| ((p.post_id, p.author), p))
+        .collect();
+
         let reputation_summaries: BTreeMap<Principal, ReputationSummary> = payload
             .reputation_summaries
             .into_iter()
@@ -121,11 +135,12 @@ impl From<DaoDataStorage> for DaoContext {
             .into_iter()
             .map(|gm| (gm.id, gm))
             .collect();
+            
         Self {
             env: Box::new(CanisterEnvironment {}),
             id: payload.id,
             user_service: UserService { users },
-            post_service: PostService { posts },
+            post_service: PostService { posts, likes },
             reputation_service: ReputationService { summaries: reputation_summaries, events: reputation_events },
             governance_service: GovernanceService { proposals: governance_proposals, members: governance_members },
         }
