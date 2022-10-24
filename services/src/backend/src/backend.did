@@ -265,6 +265,11 @@ type PostPageResult = variant {
     Err: PostError;
 };
 
+type PostProfileListResult = variant {
+    Ok: vec PostProfile;
+    Err: PostError;
+};
+
 type PostResult = variant {
     Ok: PostProfile;
     Err: PostError;
@@ -508,6 +513,8 @@ type PostAnswerLikeCommand = record {
     answer_id: nat64;
 };
 
+
+
 service : {
  
     "greet": (text) -> (text) query;
@@ -550,6 +557,7 @@ service : {
     "like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
     "cancel_like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
     "is_like_post" : (PostLikeCommand) -> (BoolPostResult);
+    "get_top_likes_posts" : () -> (PostProfileListResult);
 
     "my_reputation" : () -> (ReputationSummaryResult);
     "get_reputation" : (ReputationGetQuery) -> (ReputationSummaryResult);

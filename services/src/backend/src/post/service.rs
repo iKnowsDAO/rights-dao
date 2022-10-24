@@ -298,6 +298,21 @@ impl PostService {
         self.likes.get(id).cloned()
     }
 
+    /// 获取点赞数最高的前几个问题列表
+    pub fn get_top_likes_posts(&self, num: u64) -> Vec<PostProfile> {
+        let compare = |p1: &&PostProfile, p2: &&PostProfile| p2.likes_count.cmp(&p1.likes_count);
+        let mut posts = self.posts
+            .values()
+            .collect::<Vec<_>>();
+
+        posts.sort_by(compare);
+
+        posts.into_iter()
+            .take(num as usize)
+            .cloned()
+            .collect()
+    }
+
 }
 
 fn paging(ps: &BTreeMap<u64, PostProfile>, page_size: usize, page_num: usize,

@@ -92,6 +92,7 @@ fn pre_upgrade() {
         let likes = Vec::from_iter(context.post_service.likes
             .iter()
             .map(|(_k, v)| v.clone()));
+        // let likes = vec![];
             
         let reputation_summaries = Vec::from_iter(context.reputation_service.summaries
             .iter()

@@ -19,6 +19,17 @@ use crate::post::{
     domain::PostProfile,
 };
 
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct DaoDataStoragePreUpdate {
+//     pub id: u64,
+//     pub users: Vec<UserProfile>,
+//     pub posts: Vec<PostProfile>,
+//     pub reputation_summaries: Vec<ReputationSummary>,
+//     pub reputation_events: Vec<ReputationEvent>,
+//     pub governance_proposals: Vec<GovernanceProposal>,
+//     pub governance_members: Vec<GovernanceMember>,
+// }
+
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct DaoDataStorage {
     pub id: u64,
@@ -30,6 +41,21 @@ pub struct DaoDataStorage {
     pub governance_proposals: Vec<GovernanceProposal>,
     pub governance_members: Vec<GovernanceMember>,
 }
+
+// impl From<DaoDataStoragePreUpdate> for DaoDataStorage {
+//     fn from(cp: DaoDataStoragePreUpdate) -> Self {
+//         Self {
+//             id: cp.id,
+//             users: cp.users,
+//             posts: cp.posts,
+//             likes: vec![],
+//             reputation_summaries: cp.reputation_summaries,
+//             reputation_events: cp.reputation_events,
+//             governance_proposals: cp.governance_proposals,
+//             governance_members: cp.governance_members
+//         }
+//     }
+// }
 
 impl From<DaoContext> for DaoDataStorage {
     fn from(context: DaoContext) -> Self {
@@ -112,6 +138,7 @@ impl From<DaoDataStorage> for DaoContext {
         .into_iter()
         .map(|p| ((p.post_id, p.author), p))
         .collect();
+        // let likes: BTreeMap<(u64, Principal), LikeProfile> = BTreeMap::new();
 
         let reputation_summaries: BTreeMap<Principal, ReputationSummary> = payload
             .reputation_summaries

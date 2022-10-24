@@ -442,3 +442,8 @@ fn is_like_post(q: PostLikeCommand) -> Result<bool, PostError> {
         Ok(ctx.post_service.get_like_by_id(&like_id).is_some())
     })
 }
+
+#[query]
+fn get_top_likes_posts() -> Result<Vec<PostProfile>, PostError> {
+    CONTEXT.with(|c| Ok(c.borrow().post_service.get_top_likes_posts(3)))
+}
