@@ -512,8 +512,8 @@ pub struct PostAnswerCommentCommand {
 
 /// 点赞功能
 
-/// 点赞ID
-pub type LikeId = (PostId, Principal);
+/// 点赞ID (问题ID，点赞人， 回答ID)， 如果回答ID为空，刚变回答ID为0
+pub type LikeId = (PostId, Principal, u64);
 
 /// 点赞数据体
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -536,6 +536,11 @@ impl LikeProfile {
             created_at: now,
             updated_at: now,
         }
+    }
+
+    pub fn generate_key(&self) -> LikeId {
+        let answer_id = self.answer_id.unwrap_or_default();
+        (self.post_id, self.author, answer_id)
     }
 }
 /// 点赞 问题

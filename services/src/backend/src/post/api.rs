@@ -438,7 +438,18 @@ fn is_like_post(q: PostLikeCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let caller = ctx.env.caller();
-        let like_id = (q.post_id, caller);
+        let like_id = (q.post_id, caller, u64::default());
+        Ok(ctx.post_service.get_like_by_id(&like_id).is_some())
+    })
+}
+
+#[query]
+fn is_like_post_answer(q: PostAnswerLikeCommand) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let caller = ctx.env.caller();
+        let like_id = (q.post_id, caller, q.answer_id);
+
         Ok(ctx.post_service.get_like_by_id(&like_id).is_some())
     })
 }

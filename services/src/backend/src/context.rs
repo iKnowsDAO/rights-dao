@@ -3,7 +3,7 @@ use candid::{CandidType, Deserialize, Principal};
 use std::collections::BTreeMap;
 use std::iter::FromIterator;
 
-use crate::domain::LikeProfile;
+use crate::domain::{LikeProfile, LikeId};
 use crate::env::{Environment, CanisterEnvironment, EmptyEnvironment};
 
 use crate::governance::GovernanceService;
@@ -133,10 +133,10 @@ impl From<DaoDataStorage> for DaoContext {
             .map(|p| (p.id, p))
             .collect();
 
-        let likes: BTreeMap<(u64, Principal), LikeProfile>= payload
+        let likes: BTreeMap<LikeId, LikeProfile>= payload
         .likes
         .into_iter()
-        .map(|p| ((p.post_id, p.author), p))
+        .map(|p| (p.generate_key(), p))
         .collect();
         // let likes: BTreeMap<(u64, Principal), LikeProfile> = BTreeMap::new();
 

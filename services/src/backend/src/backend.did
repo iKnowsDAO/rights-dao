@@ -557,6 +557,7 @@ service : {
     "like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
     "cancel_like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
     "is_like_post" : (PostLikeCommand) -> (BoolPostResult);
+    "is_like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
     "get_top_likes_posts" : () -> (PostProfileListResult);
 
     "my_reputation" : () -> (ReputationSummaryResult);

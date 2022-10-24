@@ -276,15 +276,15 @@ impl PostService {
             self.posts.get_mut(&post_id).map(|p| p.sub_like_count_one());
         }
 
-        match self.likes.get_mut(&(post_id, author)) {
+        match self.likes.get_mut(&(post_id, author, answer_id.unwrap_or_default())) {
             Some(l) => {
                 l.is_like = is_like;
                 l.updated_at = now;           
             }
             None => {
-                if is_like {
-                    let like_id = (post_id, author);
+                if is_like {               
                     let profile = LikeProfile::new(post_id, author, answer_id, is_like, now);
+                    let like_id = profile.generate_key();
                     self.likes.insert(like_id, profile);
                 }              
             }
@@ -297,6 +297,11 @@ impl PostService {
     pub fn get_like_by_id(&self, id: &LikeId) -> Option<LikeProfile> {
         self.likes.get(id).cloned()
     }
+
+    // /// 获取点赞
+    // pub fn get_like_by_id_answer(&self, id: &LikeId) -> Option<LikeProfile> {
+    //     self.likes.get(id).cloned()
+    // }
 
     /// 获取点赞数最高的前几个问题列表
     pub fn get_top_likes_posts(&self, num: u64) -> Vec<PostProfile> {
