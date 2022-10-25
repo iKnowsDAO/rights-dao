@@ -270,17 +270,18 @@ impl PostService {
     /// 点赞问题
     pub fn like_post(&mut self, post_id: PostId, author: Principal, answer_id: Option<u64>, is_like: bool, now: Timestamp) -> bool {
         
-        if is_like {
-            self.posts.get_mut(&post_id).map(|p| p.add_like_count_one());
-        } else {
-            self.posts.get_mut(&post_id).map(|p| p.sub_like_count_one());
-        }
-
         match self.likes.get_mut(&(post_id, author, answer_id.unwrap_or_default())) {
             Some(l) => {
+
+                // 更新 问题的点赞数
+                self.posts.get_mut(&post_id).into_iter().for_each(|p| 
+                    if is_like { p.add_like_count_one() } else { p.sub_like_count_one() }
+                );
+    
                 l.is_like = is_like;
                 l.updated_at = now;           
             }
+
             None => {
                 if is_like {               
                     let profile = LikeProfile::new(post_id, author, answer_id, is_like, now);
