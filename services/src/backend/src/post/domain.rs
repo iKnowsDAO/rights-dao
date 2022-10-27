@@ -135,6 +135,11 @@ impl PostProfile {
     pub fn sub_like_count_one(&mut self) {
         self.likes_count -= 1;
     }
+
+    // 修改 likes_count
+    pub fn mutate_likes_count(&mut self, is_like: bool) {
+        if is_like { self.add_like_count_one() } else { self.sub_like_count_one() }
+    }
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -541,6 +546,11 @@ impl LikeProfile {
     pub fn generate_key(&self) -> LikeId {
         let answer_id = self.answer_id.unwrap_or_default();
         (self.post_id, self.author, answer_id)
+    }
+
+    pub fn mutate_like(&mut self, is_like: bool, now: u64) {
+        self.is_like = is_like;
+        self.updated_at = now;    
     }
 }
 /// 点赞 问题

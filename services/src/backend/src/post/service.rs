@@ -273,13 +273,13 @@ impl PostService {
         match self.likes.get_mut(&(post_id, author, answer_id.unwrap_or_default())) {
             Some(l) => {
 
-                // 更新 问题的点赞数
-                self.posts.get_mut(&post_id).into_iter().for_each(|p| 
-                    if is_like { p.add_like_count_one() } else { p.sub_like_count_one() }
-                );
-    
-                l.is_like = is_like;
-                l.updated_at = now;           
+                // 如果最新的点赞动作和当前的不一样，就修改点赞数据
+                if l.is_like != is_like {
+                    // 更新 问题的点赞数
+                    self.posts.get_mut(&post_id).iter_mut().for_each(|p| p.mutate_likes_count(is_like));
+        
+                    l.mutate_like(is_like, now);
+                }               
             }
 
             None => {
