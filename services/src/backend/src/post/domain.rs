@@ -137,9 +137,23 @@ impl PostProfile {
     }
 
     // 修改 likes_count
-    pub fn mutate_likes_count(&mut self, is_like: bool) {
-        if is_like { self.add_like_count_one() } else { self.sub_like_count_one() }
+    pub fn mutate_likes_count(&mut self, answer_id: Option<u64>, is_like: bool) {
+        match answer_id {
+            Some(answer_id) => {
+                for answer in &mut self.comments {
+                    if answer.id == answer_id {
+                        answer.mutate_likes_count(is_like);
+
+                        return;
+                    }
+                }
+            },
+            None => {
+                if is_like { self.add_like_count_one() } else { self.sub_like_count_one() }
+            }
+        }
     }
+
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -389,6 +403,7 @@ pub struct PostComment {
     pub created_at: Timestamp,
     pub updated_at: Timestamp,
     pub comments: Vec<PostComment>,
+    pub likes_count: Option<u64>,
 }
 
 impl PostComment {
@@ -409,6 +424,20 @@ impl PostComment {
         }
 
         false
+    }
+
+    // 点赞加1
+    pub fn add_like_count_one(&mut self) {
+        self.likes_count.iter_mut().for_each(|c| *c += 1)
+    }
+
+    // 点赞加1
+    pub fn sub_like_count_one(&mut self) {
+        self.likes_count.iter_mut().for_each(|c| *c -= 1)
+    }
+
+    pub fn mutate_likes_count(&mut self, is_like: bool) {
+        if is_like { self.add_like_count_one() } else { self.sub_like_count_one() }
     }
 }
 
@@ -451,6 +480,7 @@ impl PostCommentCommand {
             created_at: now,
             updated_at: now,
             comments: vec![],
+            likes_count: None,
         }
     }
 }
@@ -475,7 +505,8 @@ impl CommentCommentCommand {
             status: CommentStatus::Enable,
             created_at: now,
             updated_at: now,
-            comments: vec![]
+            comments: vec![],
+            likes_count: None,
         }
     }
 }
@@ -511,9 +542,6 @@ pub struct PostAnswerCommentCommand {
     pub answer_id: u64,
     pub comment_id: u64
 }
-
-
-
 
 /// 点赞功能
 
