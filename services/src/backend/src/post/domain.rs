@@ -131,7 +131,9 @@ impl PostProfile {
 
     // 点赞加1
     pub fn sub_like_count_one(&mut self) {
-        self.likes_count -= 1;
+        if self.likes_count > 0 { 
+            self.likes_count -= 1; 
+        }
     }
 
     // 修改 likes_count
@@ -435,7 +437,7 @@ impl PostComment {
 
     // 点赞加1
     pub fn sub_like_count_one(&mut self) {
-        self.likes_count.iter_mut().for_each(|c| *c -= 1)
+        self.likes_count.iter_mut().for_each(|c| if *c > 0 { *c -= 1 })
     }
 
     pub fn mutate_likes_count(&mut self, is_like: bool) {

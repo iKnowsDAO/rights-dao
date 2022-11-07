@@ -303,10 +303,9 @@ impl PostService {
         self.likes.get(id).cloned()
     }
 
-    // /// 获取点赞
-    // pub fn get_like_by_id_answer(&self, id: &LikeId) -> Option<LikeProfile> {
-    //     self.likes.get(id).cloned()
-    // }
+    pub fn is_like_by_id(&self, id: &LikeId) -> bool {
+        self.get_like_by_id(id).map_or(false, |lp| lp.is_like)
+    }
 
     /// 获取点赞数最高的前几个问题列表
     pub fn get_top_likes_posts(&self, num: u64) -> Vec<PostProfile> {
@@ -380,6 +379,7 @@ mod tests {
         let lp = svc.get_like_by_id(&like_id);
         assert!(lp.is_some());
         assert!(lp.unwrap().is_like);
+        assert!(svc.is_like_by_id(&like_id));
         let pl = svc.get_post(post_id);
         assert!(pl.is_some());
         assert_eq!(pl.unwrap().likes_count, 1);
@@ -391,6 +391,7 @@ mod tests {
         let lp = svc.get_like_by_id(&like_id);
         assert!(lp.is_some());
         assert!(!lp.unwrap().is_like);
+        assert!(!svc.is_like_by_id(&like_id));
         let pl = svc.get_post(post_id);
         assert!(pl.is_some());
         assert_eq!(pl.unwrap().likes_count, 0);
@@ -417,6 +418,7 @@ mod tests {
         let lp = svc.get_like_by_id(&like_id);
         assert!(lp.is_some());
         assert!(lp.unwrap().is_like);
+        assert!(svc.is_like_by_id(&like_id));
         let pl = svc.get_post(post_id).and_then(|p| p.get_answer(&comment_id));
         assert!(pl.is_some());
         assert_eq!(pl.unwrap().likes_count.unwrap(), 1);
@@ -428,6 +430,7 @@ mod tests {
         let lp = svc.get_like_by_id(&like_id);
         assert!(lp.is_some());
         assert!(!lp.unwrap().is_like);
+        assert!(!svc.is_like_by_id(&like_id));
         let pl = svc.get_post(post_id).and_then(|p| p.get_answer(&comment_id));
         assert!(pl.is_some());
         assert_eq!(pl.unwrap().likes_count.unwrap(), 0);

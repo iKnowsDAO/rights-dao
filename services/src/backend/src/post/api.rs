@@ -439,7 +439,7 @@ fn is_like_post(q: PostLikeCommand) -> Result<bool, PostError> {
         let ctx = c.borrow();
         let caller = ctx.env.caller();
         let like_id = (q.post_id, caller, u64::default());
-        Ok(ctx.post_service.get_like_by_id(&like_id).is_some())
+        Ok(ctx.post_service.is_like_by_id(&like_id))
     })
 }
 

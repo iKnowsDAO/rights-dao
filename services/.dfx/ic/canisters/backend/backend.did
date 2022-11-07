@@ -1,0 +1,584 @@
+type UserRegisterCommand = record {
+    email: text;
+    name: text;
+    memo: text;
+};
+
+type RegisterUserResult = variant {
+    Ok: text;
+    Err: UserError;
+};
+
+type UserResult = variant {
+    Ok: UserProfile;
+    Err: UserError;
+};
+
+type UserError = variant {
+    UserNotFound;
+    UserAlreadyExists;
+    UserAlreadyDisable;
+    UserNameTooLong;
+    UserEmailInvalid;
+    UserBiographyTooLong;
+    UserLocationTooLong;
+    AnonymousNotAllowRegistering;
+};
+
+type UserProfile = record {
+    id : nat64;
+    owner : principal;
+    email : text;
+    name : text;
+    avatar_id: nat64;
+    avatar_uri: text;
+    biography: text;
+    interests: vec text;
+    location: text;
+    memo : text;
+    status : UserStatus;
+    created_at : nat64;
+};
+
+type UserStatus = variant {
+    Enable;
+    Disable;
+};
+
+type UserEditCommand = record {
+    email: text;
+    name: text;
+    avatar_id: nat64;
+    avatar_uri: text;
+    biography: text;
+    interests: vec text;
+    location: text;
+    memo: text;
+    status: UserStatus;
+};
+
+type BoolUserResult = variant {
+    Ok: bool;
+    Err: UserError;
+};
+
+type PostProfile = record {
+    id: nat64;
+    author: principal;
+    title: text;
+    content: RichText;
+    category: Category;
+    photos: vec nat64;
+    participants: vec text;
+    end_time: opt nat64;
+    likes_count : nat64;
+    ask_for_money : Currency;
+    events: vec PostEvent;
+    comments: vec PostComment;
+    answer: opt nat64;
+    status: PostStatus;
+    created_at: nat64;
+    updated_at: nat64;
+};
+
+type PostInfo = record {
+    id: nat64;
+    author: principal;
+    title: text;
+    content: RichText;
+    category: Category;
+    photos: vec nat64;
+    participants: vec text;
+    end_time: opt nat64;
+    likes_count : nat64;
+    ask_for_money : Currency;
+    answer: opt nat64;
+    status: PostStatus;
+    created_at: nat64;
+    updated_at: nat64;
+};
+
+type PostCreateCommand = record {
+    title: text;
+    content: RichText;
+    category: text;
+    photos: vec nat64;
+    participants: vec text;
+    end_time: opt nat64;
+};
+
+type RichText = record {
+    content: text;
+    format: text;
+};
+
+type Category = variant {
+    Tech;
+    Law;
+    Safeguard;
+    Blacklist;
+    Other;
+};
+
+type Currency = record {
+    amount : nat64;
+    unit: CurrencyUnit;
+    decimals : nat8;
+};
+
+type CurrencyUnit = variant {
+    USDT;
+    ICP;
+    BTC;
+    ETH;
+};
+
+type PostStatus = variant {
+    Enable;
+    Completed;
+    Closed;
+};
+
+type PostComment = record {
+    id: nat64;
+    post_id: nat64;
+    comment_id: opt nat64;
+    quote_id: opt nat64;
+    content: RichText;
+    author: principal;
+    status: CommentStatus;
+    created_at: nat64;
+    comments: vec PostComment;
+    likes_count: opt nat64;
+};
+
+type PostEvent = record {
+    post_id: nat64;
+    event_time: nat64;
+    description: text;
+    author: principal;
+    created_at: nat64;
+};
+
+type PageQuery = record {
+    page_num: nat64;
+    page_size: nat64;
+    querystring: text;
+};
+
+type PostPageQuery = record {
+    page_num: nat64;
+    page_size: nat64;
+    querystring: text;
+    category: opt text;
+};
+
+
+type PostPageOtherQuery = record {
+    page_num: nat64;
+    page_size: nat64;
+    querystring: text;
+    other: text;
+};
+
+type PostEditCommand = record {
+    id: nat64;
+    title: text;
+    content: RichText;
+    category: text;
+    photos: vec nat64;
+    participants: vec text;
+    end_time: opt nat64;
+    status: text;
+};
+
+type PostCommentCommand = record {
+    post_id: nat64;
+    content: RichText;
+};
+
+type CommentCommentCommand = record {
+    post_id: nat64;
+    comment_id: nat64;
+    quote_id:  opt nat64;
+    content: RichText;
+};
+
+type PostEventCommand = record {
+    post_id: nat64;
+    event_time: nat64;
+    description: text;
+};
+
+type PostIdCommand = record {
+    id: nat64;
+};
+
+type PostAnswerCommand = record {
+    post_id: nat64;
+    answer_id: nat64;
+};
+
+type PostAnswerCommentCommand = record {
+    post_id: nat64;
+    answer_id: nat64;
+    comment_id: nat64;
+};
+
+type PostChangeStatusCommand = record {
+    id: nat64;
+    status: text;
+    description: text;
+};
+
+type CreatePostResult = variant {
+    Ok: nat64;
+    Err: PostError;
+};
+
+type PostError = variant {
+    PostAlreadyExists;
+    PostNotFound;
+    PostAlreadyCompleted;
+    PostUnAuthorizedOperation;
+    PostCommentNotFound;
+    UserNotFound;
+    PostWithCommentCantDelete;
+    UserNotAnswerAuthor;
+    AnswerWithCommentCantDelete;
+    UserNotCommentAuthor;
+};
+
+type BoolPostResult = variant {
+    Ok: bool;
+    Err: PostError;
+};
+
+type PostPage = record {
+   data: vec PostProfile;
+   page_num: nat64;
+   page_size: nat64;
+   total_count: nat64
+};
+
+type PostPageResult = variant {
+    Ok: PostPage;
+    Err: PostError;
+};
+
+type PostProfileListResult = variant {
+    Ok: vec PostProfile;
+    Err: PostError;
+};
+
+type PostResult = variant {
+    Ok: PostProfile;
+    Err: PostError;
+};
+
+type PostInfoResult = variant {
+    Ok: PostInfo;
+    Err: PostError;
+};
+
+type PostInfoPage = record {
+    data: vec PostInfo;
+    page_num: nat64;
+    page_size: nat64;
+    total_count: nat64
+};
+
+type PostInfoPageResult = variant {
+    Ok: PostInfoPage;
+    Err: PostError;
+};
+
+type PostEventResult = variant {
+    Ok: vec PostEvent;
+    Err: PostError;
+};
+
+type PostCommentResult = variant {
+    Ok: vec PostComment;
+    Err: PostError;
+};
+
+type CommentSumary = record {
+    id: nat64;
+    post_id: nat64;
+    post_title: text;
+    comment_id: opt nat64;
+    quote_id: opt nat64;
+    content: RichText;
+    author: principal;
+    status: CommentStatus;
+    created_at: nat64;
+    updated_at: nat64
+};
+
+type CommentStatus = variant {
+    Enable;
+    Disable;
+};
+
+type CommentSummaryPage = record {
+    data: vec CommentSumary;
+    page_num: nat64;
+    page_size: nat64;
+    total_count: nat64
+};
+
+type CommentSummaryPageResult = variant {
+    Ok: CommentSummaryPage;
+    Err: PostError;
+};
+
+
+type ReputationSummary = record {
+    id: principal;
+    amount: nat64;
+};
+
+type ReputationError = variant {
+    ReputationNotFound;
+    UserPrincipalInvalid;
+};
+
+type ReputationSummaryResult = variant {
+    Ok: ReputationSummary;
+    Err: ReputationError;
+};
+
+type ReputationGetQuery = record {
+    user: text;
+};
+
+type Weights = record {
+    amount: nat64;
+};
+
+type ProposalState = variant {
+    // The proposal is open for voting
+    Open;
+
+    // Enough "yes" votes have been cast to accept the proposal, and it will soon be executed
+    Accepted;
+
+    // Enough "no" votes have been cast to reject the proposal, and it will not be executed
+    Rejected;
+
+    // The proposal is currently being executed
+    Executing;
+
+    // The proposal has been successfully executed
+    Succeeded;
+
+    // A failure occurred while executing the proposal
+    Failed: text;
+};
+
+type GovernanceProposal = record {
+    id: nat64;
+    proposer: principal;
+    payload: ProposalPayload;
+    state: ProposalState;
+    votes_yes: Weights;
+    votes_no: Weights;
+    voters: vec GovernanceVoteCommand;
+    vote_threshold: Weights;
+    created_at: nat64;
+};
+
+type ProposalPayload = record {
+    execute_args: ProposalExecuteArgs;
+};
+
+type ProposalExecuteArgs = variant {
+    AddGovernanceMember : GovernanceMemberAddArgs;
+};
+
+type GovernanceVoteCommand = record {
+    proposal_id: nat64;
+    vote: Vote;
+    voter: principal;
+    vote_weights: Weights;
+};
+
+type GovernanceMemberAddArgs = record {
+    id: principal;
+    title: text;
+    content: RichText;
+    deadline: nat64;
+    action: GovernanceMemberAction;
+};
+
+type GovernanceMemberAction = variant {
+    Add;
+    Delete;
+};
+
+type Vote = variant {
+    Yes;
+    No;
+};
+
+type VoteArgs = record {
+    proposal_id: nat64;
+    vote: Vote;
+};
+
+type VoteResult = variant {
+    Ok: ProposalState;
+    Err: GovernanceError;
+};
+
+type GovernanceProposalGetQuery = record {
+    id: nat64;
+};
+
+type GovernanceProposalVoteGetQuery = record {
+    id: nat64;
+    voter: text;
+};
+
+type GovernanceProposalResult = variant {
+    Ok: GovernanceProposal;
+    Err: GovernanceError;
+};
+
+type GovernanceMemberAddCommand = record {
+    id: text;
+    title: text;
+    content: RichText;
+    deadline: nat64;
+    action: text;
+};
+
+type ProposalSubmitResult = variant {
+    Ok: nat64;
+    Err: GovernanceError;
+};
+
+type GovernanceError = variant {
+    ProposalNotFound;
+    ProposalAlreadyExists;
+    ProposalStateNotOpen;
+    ProposalUnAuthorized;
+    VoterAlreadyVoted;
+    VoterNotFound;
+    VotingUnAuthorized;
+    MemberPrincipalWrongFormat;
+    MemberNotFound;
+    ExecutingProposalUnAuthorized;
+    MemberAlreadyExists;
+    UserNotFound;
+    CandidatePrincipalFormatInvalid;
+    GovernanaceMemberActionFormatInvalid;
+    ProposalDeadlineOutOfDate;
+    VoterPrincipalWrongFormat;
+};
+
+type GovernanceProposalPage = record {
+   data: vec GovernanceProposal;
+   page_num: nat64;
+   page_size: nat64;
+   total_count: nat64
+};
+
+type GovernanceProposalPageResult = variant {
+    Ok: GovernanceProposalPage;
+    Err: GovernanceError;
+};
+
+type GovernanceMember = record {
+    id: principal;
+    created_at: nat64;
+};
+
+type GovernanceMemberResult = variant {
+    Ok: GovernanceMember;
+    Err: GovernanceError;
+};
+
+type U64GovernanceResult = variant {
+    Ok: nat64;
+    Err: GovernanceError;
+};
+
+type PostLikeCommand = record {
+    post_id: nat64;
+};
+
+type PostAnswerLikeCommand = record {
+    post_id: nat64;
+    answer_id: nat64;
+};
+
+type LikeProfileOption = opt LikeProfile;
+
+type LikeProfile = record {
+    post_id: nat64;
+    author: principal;
+    answer_id: opt nat64;
+    is_like: bool;
+    created_at: nat64;
+    updated_at: nat64;
+};
+
+service : {
+ 
+    "greet": (text) -> (text) query;
+
+    "register_user": (UserRegisterCommand) -> (RegisterUserResult);
+    "auto_register_user" : () -> (UserResult);
+    "edit_user" : (UserEditCommand) -> (BoolUserResult);
+    "enable_user" : (principal) -> (BoolUserResult);
+    "disable_user" : (principal) -> (BoolUserResult);
+    "get_user" : (principal) -> (UserResult);
+    "get_self" : () -> (UserResult);
+
+    "create_post" : (PostCreateCommand) -> (CreatePostResult);
+    "edit_post" : (PostEditCommand) -> (BoolPostResult);
+    "change_post_status" : (PostChangeStatusCommand) -> (BoolPostResult);
+    "delete_post" : (PostIdCommand) -> (BoolPostResult);
+    "get_post" : (PostIdCommand) -> (PostResult);
+    "get_post_info" : (PostIdCommand) -> (PostInfoResult);
+    "get_post_comments" : (PostIdCommand) -> (PostCommentResult);
+    "get_post_events" : (PostIdCommand) -> (PostEventResult);
+    "page_posts" : (PostPageQuery) -> (PostPageResult);
+
+    "my_posts" : (PageQuery) -> (PostInfoPageResult);
+    "my_post_comments" : (PageQuery) -> (PostPageResult);
+    "my_comments" : (PageQuery) -> (CommentSummaryPageResult);
+
+    "other_posts" : (PostPageOtherQuery) -> (PostInfoPageResult);
+    "other_post_comments" : (PostPageOtherQuery) -> (PostPageResult);
+    "other_comments" : (PostPageOtherQuery) -> (CommentSummaryPageResult);
+
+    "add_post_comment" : (PostCommentCommand) -> (BoolPostResult);
+    "add_comment_comment" : (CommentCommentCommand) -> (BoolPostResult);
+    "add_post_event" : (PostEventCommand) -> (BoolPostResult);
+    "submit_post_answer" : (PostAnswerCommand) -> (BoolPostResult);
+    "delete_post_answer" : (PostAnswerCommand) -> (BoolPostResult);
+    "delete_post_answer_comment" : (PostAnswerCommentCommand) -> (BoolPostResult);
+
+    "like_post" : (PostLikeCommand) -> (BoolPostResult);
+    "cancel_like_post" : (PostLikeCommand) -> (BoolPostResult);
+    "like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
+    "cancel_like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
+    "is_like_post" : (PostLikeCommand) -> (BoolPostResult);
+    "is_like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
+    "get_like_post" : (PostLikeCommand) -> (LikeProfileOption);
+    "get_like_post_answer" : (PostAnswerLikeCommand) -> (LikeProfileOption);
+    "get_top_likes_posts" : () -> (PostProfileListResult);
+
+    "my_reputation" : () -> (ReputationSummaryResult);
+    "get_reputation" : (ReputationGetQuery) -> (ReputationSummaryResult);
+
+    "submit_add_governance_member_proposal" : (GovernanceMemberAddCommand) -> (ProposalSubmitResult);
+    "vote_governance_proposal" : (VoteArgs) -> (VoteResult);
+    "get_governance_proposal" : (GovernanceProposalGetQuery) -> (GovernanceProposalResult);
+    "page_governance_proposals" : (PageQuery) -> (GovernanceProposalPageResult);
+    "get_governance_member" : (text) -> (GovernanceMemberResult);
+    "get_governance_member_proposal_vote" : (GovernanceProposalVoteGetQuery) -> (U64GovernanceResult);
+}
