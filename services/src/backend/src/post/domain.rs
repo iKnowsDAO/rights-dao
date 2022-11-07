@@ -67,14 +67,12 @@ impl PostProfile {
         }
     }
 
+    pub fn get_answer(&self, answer_id: &u64) -> Option<PostComment> {
+        self.comments.iter().find(|c| c.id == *answer_id).cloned()
+    }
+
     pub fn contains_answer(&self, answer_id: &u64) -> bool {
-        for c in &self.comments {
-            if &c.id == answer_id {
-                return true;
-            }
-        }
-        
-        false
+        self.get_answer(answer_id).is_some()
     }
 
     // 检查指定的 answer 是否有评论
@@ -428,7 +426,11 @@ impl PostComment {
 
     // 点赞加1
     pub fn add_like_count_one(&mut self) {
-        self.likes_count.iter_mut().for_each(|c| *c += 1)
+        match &mut self.likes_count {
+            Some(lc) => *lc += 1,
+            None => self.likes_count = Some(1)
+        }
+        // self.likes_count.iter_mut().for_each(|c| *c += 1)
     }
 
     // 点赞加1
@@ -592,4 +594,19 @@ pub struct PostLikeCommand {
 pub struct PostAnswerLikeCommand {
     pub post_id: PostId,
     pub answer_id: u64,
+}
+
+#[cfg(test)]
+mod tests {
+    use candid::Principal;
+
+    use super::LikeProfile;
+
+    #[test]
+    fn test_mutate_like_should_work() {
+        let mut lp = LikeProfile::new(10001, Principal::anonymous(), None, true, 200000);
+        lp.mutate_like(false, 300000);
+        assert_eq!(lp.updated_at, 300000);
+        assert!(!lp.is_like);
+    }
 }

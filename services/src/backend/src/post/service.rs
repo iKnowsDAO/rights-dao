@@ -279,6 +279,7 @@ impl PostService {
                     self.posts.get_mut(&post_id).iter_mut().for_each(|p| p.mutate_likes_count(answer_id, is_like));
         
                     l.mutate_like(is_like, now);
+
                 }               
             }
 
@@ -287,6 +288,9 @@ impl PostService {
                     let profile = LikeProfile::new(post_id, author, answer_id, is_like, now);
                     let like_id = profile.generate_key();
                     self.likes.insert(like_id, profile);
+
+                    // 更新 问题的点赞数
+                    self.posts.get_mut(&post_id).iter_mut().for_each(|p| p.mutate_likes_count(answer_id, is_like));
                 }              
             }
         }
@@ -316,6 +320,7 @@ impl PostService {
         posts.into_iter()
             .take(num as usize)
             .cloned()
+            .map(|p| p.without_comments())
             .collect()
     }
 
@@ -363,10 +368,34 @@ mod tests {
             end_time: None,
         };
         let post = create_cmd.build_profile(id, caller, PostStatus::Enable, now);
-        let res1 = svc.create_post(post);
+        let post_id = svc.create_post(post).unwrap(); 
 
-        assert_eq!(res1.unwrap(), 10001u64);
+        assert_eq!(post_id, 10001u64);
 
+        // 点赞 问题
+        let like_res = svc.like_post(post_id, Principal::anonymous(), None, true, 2000);
+        
+        assert!(like_res);
+        let like_id = (post_id, Principal::anonymous(), 0);
+        let lp = svc.get_like_by_id(&like_id);
+        assert!(lp.is_some());
+        assert!(lp.unwrap().is_like);
+        let pl = svc.get_post(post_id);
+        assert!(pl.is_some());
+        assert_eq!(pl.unwrap().likes_count, 1);
+
+        // 取消点赞
+        let like_res2 = svc.like_post(post_id, Principal::anonymous(), None, false, 3000);
+        assert!(like_res2);
+        
+        let lp = svc.get_like_by_id(&like_id);
+        assert!(lp.is_some());
+        assert!(!lp.unwrap().is_like);
+        let pl = svc.get_post(post_id);
+        assert!(pl.is_some());
+        assert_eq!(pl.unwrap().likes_count, 0);
+
+        // 增加回答
         let add_comment_cmd = PostCommentCommand {
             post_id: id,
             content: RichText { content: "coment james".to_string(), format: "md".to_string() },
@@ -381,6 +410,29 @@ mod tests {
         assert_eq!(res3.comments.len(), 1);
         assert_eq!(res3.comments.first().unwrap().content, RichText { content: "coment james".to_string(), format: "md".to_string() });
 
+        // 点赞回答
+        let like_res3 = svc.like_post(post_id, Principal::anonymous(), Some(comment_id), true, 2000);
+        assert!(like_res3);
+        let like_id = (post_id, Principal::anonymous(), comment_id);
+        let lp = svc.get_like_by_id(&like_id);
+        assert!(lp.is_some());
+        assert!(lp.unwrap().is_like);
+        let pl = svc.get_post(post_id).and_then(|p| p.get_answer(&comment_id));
+        assert!(pl.is_some());
+        assert_eq!(pl.unwrap().likes_count.unwrap(), 1);
+
+        // 取消点赞回答
+        let like_res3 = svc.like_post(post_id, Principal::anonymous(), Some(comment_id), false, 3000);
+        assert!(like_res3);
+        let like_id = (post_id, Principal::anonymous(), comment_id);
+        let lp = svc.get_like_by_id(&like_id);
+        assert!(lp.is_some());
+        assert!(!lp.unwrap().is_like);
+        let pl = svc.get_post(post_id).and_then(|p| p.get_answer(&comment_id));
+        assert!(pl.is_some());
+        assert_eq!(pl.unwrap().likes_count.unwrap(), 0);
+
+        // 增加回答的评论
         let add_cc_cmd = CommentCommentCommand {
             post_id: id,
             comment_id,

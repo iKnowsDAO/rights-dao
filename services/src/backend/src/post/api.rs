@@ -381,7 +381,7 @@ fn like_post(cmd: PostLikeCommand) -> Result<bool, PostError> {
 
 #[update]
 fn cancel_like_post(cmd: PostLikeCommand) -> Result<bool, PostError> {
-    like_post_(cmd, true)
+    like_post_(cmd, false)
 }
 
 fn like_post_(cmd: PostLikeCommand, is_like: bool) -> Result<bool, PostError> {
@@ -444,6 +444,16 @@ fn is_like_post(q: PostLikeCommand) -> Result<bool, PostError> {
 }
 
 #[query]
+fn get_like_post(q: PostLikeCommand) -> Option<LikeProfile> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let caller = ctx.env.caller();
+        let like_id = (q.post_id, caller, u64::default());
+        ctx.post_service.get_like_by_id(&like_id)
+    })
+}
+
+#[query]
 fn is_like_post_answer(q: PostAnswerLikeCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
@@ -453,6 +463,17 @@ fn is_like_post_answer(q: PostAnswerLikeCommand) -> Result<bool, PostError> {
         Ok(ctx.post_service.get_like_by_id(&like_id).is_some())
     })
 }
+
+#[query]
+fn get_like_post_answer(q: PostAnswerLikeCommand) -> Option<LikeProfile> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let caller = ctx.env.caller();
+        let like_id = (q.post_id, caller, q.answer_id);
+        ctx.post_service.get_like_by_id(&like_id)
+    })
+}
+    
 
 #[query]
 fn get_top_likes_posts() -> Result<Vec<PostProfile>, PostError> {
