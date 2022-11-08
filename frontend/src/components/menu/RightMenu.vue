@@ -19,6 +19,16 @@
                 </b>
                 <span class="text">RightsDao is in the Beta phase, there may be issues.</span>
             </div>
+            <div class="post-top-like" v-if="list.length>0">
+                <el-divider content-position="left">
+                    <i class="iconfont icon-fire-fill"></i>
+                    {{t('common.hot')}}
+                </el-divider>
+                <span v-for="item in list" :key="Number(item.id)" @click="goDetail(Number(item.id))"
+                      class="post-title">
+                    {{item.title}}
+                </span>
+            </div>
             <el-divider/>
             <div class="public-item">
                 <a href="https://dfinity.org/">
@@ -31,17 +41,19 @@
 </template>
 
 <script lang="ts" setup>
-    import {defineProps, onMounted, ref} from 'vue';
+    import {defineProps, computed, onMounted, ref} from 'vue';
     import {ElButton, ElCard, ElIcon, ElDivider} from 'element-plus/es';
     import {Opportunity} from '@element-plus/icons-vue';
     import Footer from '@/components/footer/Footer.vue';
     import {t} from '@/locale';
-    import {ElAvatar} from 'element-plus/es';
     import {useRouter} from 'vue-router';
-    import {openTab} from '@/router/routers';
-    import router from "@/router";
+    import {useStore} from "vuex";
     import {showAdmin} from "@/common/auth";
+    import {getTopLikePosts} from "@/api/post";
+    import {ApiPost} from "@/api/types";
 
+    const store = useStore();
+    const router = useRouter();
     const isDisabled = ref(true);
     const props = defineProps({
         buttonType: {
@@ -49,17 +61,40 @@
             required: true,
         },
     });
+    const list = ref<ApiPost[]>([]);
+    const currentUserPrincipal = computed<string>(() => {
+        return store.state.user.principal
+    });
+
+    const getTopLikePost = () => {
+        getTopLikePosts().then((res) => {
+            console.log("getTopLikePosts", res)
+            if (res.Ok) {
+                list.value = res.Ok;
+            }
+        })
+    }
 
     const init = async () => {
         if (props.buttonType === 'dao') {
             //isDisabled为false时按钮启用，true时按钮禁用
             isDisabled.value = !await showAdmin();
         } else {
+            //未登录禁用发贴
+            if (!currentUserPrincipal.value) {
+                isDisabled.value = true;
+            }
             isDisabled.value = false;
         }
     }
 
+    const goDetail = (postId: number) => {
+        router.push('/post/detail/' + postId);
+    }
+
+
     onMounted(() => {
+        getTopLikePost();
         init()
     });
 
@@ -84,6 +119,21 @@
             border-radius: 10px;
             .text {
                 font-size: 14px;
+            }
+        }
+        .post-top-like {
+            .post-title {
+                display: block;
+                font-size: 15px;
+                cursor: pointer;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                &:hover {
+                    text-decoration: underline;
+                }
             }
         }
         .public-item {

@@ -1,7 +1,7 @@
 <template>
     <div class="post-detail-container">
         <Navigator/>
-        <Head :post="post" :isOwner="isOwner" @showWrite="showWriteReply()" v-if="post!==undefined"/>
+        <Head :post="post" :isOwner="isOwner" :currentUserPrincipal="currentUserPrincipal" @showWrite="showWriteReply()" v-if="post!==undefined"/>
         <WriteReply @foldWrite="foldWrite(false)" @replySuccess="replyInit" v-show="showWrite"/>
         <div v-if="post!==undefined" style="min-height: 70vh">
             <TimeLine :postId="postId" @changeStatusSuccess="init" :isOwner="isOwner"/>
@@ -41,9 +41,9 @@
         return false;
     });
     const post = ref<ApiPost>();
-    const reply = ref()
+    const reply = ref();
     const loading = ref(false);
-    const showWrite = ref(false)
+    const showWrite = ref(false);
 
     onMounted(() => {
         init();
@@ -51,7 +51,7 @@
 
     const replyInit = () => {
         reply.value.init();
-    }
+    };
 
     const init = () => {
         const fullLoading = ElLoading.service({
@@ -59,9 +59,9 @@
         });
         loading.value = true;
         getPostInfo(postId).then(res => {
-            console.log("getPostInfo", res)
+            console.log("getPostInfo", res);
             if (res.Ok) {
-                post.value = res.Ok
+                post.value = res.Ok;
                 console.log("detail", isOwner.value)
             } else if (res.Err && res.Err.PostNotFound !== undefined) {
                 showMessageError(t('message.error.noTarget'));

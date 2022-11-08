@@ -67,6 +67,7 @@
                             </div>
                             <div class="footer">
                                 <div>
+                                    <LikeButton :postId="Number(item.id)" :likeCount="Number(item.likes_count)"/>
                                 </div>
                                 <div class="reply">
                                     {{t('post.reply')+" "+item.comments.length}}
@@ -109,6 +110,7 @@
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
     import CategoryButton from '@/components/common/CategoryButton.vue';
+    import LikeButton from '@/components/common/LikeButton.vue';
     import RightMenu from '@/components/menu/RightMenu.vue';
     import {useRoute, useRouter} from 'vue-router';
     import {getTimeF} from "@/utils/dates";

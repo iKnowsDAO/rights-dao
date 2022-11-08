@@ -56,16 +56,16 @@
                             {{t('post.adopt.already')}}
                         </div>
                         <div class="footer">
-                            <div>
-                                <el-button type="primary" style="margin-right: 5px" @click="writeAnswer">
+                            <div class="left flex-y-center">
+                                <el-button v-if="props.currentUserPrincipal" type="primary" style="margin-right: 10px" @click="writeAnswer">
                                     {{t('post.writeAnswer')}}
                                 </el-button>
-                                <!--<el-button type="primary" style="margin-right: 5px">发起提案</el-button>-->
+                                <LikeButton :postId="Number(post.id)" :likeCount="Number(post.likes_count)"/>
                                 <!--<span style="margin: 5px;">{{post.comments.length}} 条回复</span>-->
+                            </div>
+                            <div class="right flex-y-center" v-if="isOwner">
                                 <span v-if="isFold" @click="isFold = !isFold" class="fold">{{t('common.expand')}}</span>
                                 <span v-else @click="isFold = !isFold" class="fold">{{t('common.fold')}}</span>
-                            </div>
-                            <div v-if="isOwner">
                                 <DeleteButton :deleteFunction="deleteThisPost" :loading="loading"/>
                             </div>
                         </div>
@@ -83,6 +83,7 @@
     import Username from '@/components/common/Username.vue';
     import CategoryButton from '@/components/common/CategoryButton.vue';
     import DeleteButton from '@/components/common/PostDeleteButton.vue';
+    import LikeButton from '@/components/common/LikeButton.vue';
     import {ApiPost, ApiUserInfo} from "@/api/types";
     import {getTargetUser} from "@/api/user";
     import {getTimeF} from "@/utils/dates";
@@ -106,6 +107,10 @@
         },
         isOwner: {
             type: Boolean,
+            required: true,
+        },
+        currentUserPrincipal:{
+            type: String,
             required: true,
         }
     });
@@ -162,7 +167,6 @@
         }
         .fold {
             color: rgb(133, 144, 166);
-            margin-left: 10px;
             &:hover {
                 cursor: pointer;
             }

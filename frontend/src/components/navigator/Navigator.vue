@@ -41,7 +41,7 @@
                     </ul>
                 </div>
                 <!-- logo -->
-                <div class="icon">
+                <div class="logo">
                     <div>
                         <img src="@/assets/images/RightsDaoText.png" @click="onHome" />
                     </div>
@@ -390,7 +390,7 @@
                 .adaptation-show-1100 {
                     display: none;
                 }
-                > .icon {
+                .logo {
                     position: absolute;
                     left: -150px;
                     /*top: 52px;*/
@@ -544,7 +544,7 @@
         @media screen and (max-width: 1615px) {
             .navbar {
                 .container-fluid {
-                    > .icon {
+                    .logo {
                         left: -60px;
                     }
                     .content > .tabs > ul > li {
@@ -672,7 +672,7 @@
                         }
                     }
                 }
-                .icon {
+                .logo {
                     position: static;
                 }
                 .adaptation-hidden-1100 {

@@ -93,7 +93,7 @@ export type ApiPost = {
     participants: string[];//期待参与的人
     end_time: [number]; //结束时间  opt格式，类似于[1000]，数组中只有一个数据。
     events?: ApiPostTimeline[];
-    likes_count: number;
+    likes_count: number; //点赞数
     ask_for_money: any;
     status: ApiPostStatus;
     created_at: number;
@@ -122,6 +122,7 @@ export type ApiPostComments = {
     id: bigint;
     post_id: bigint;
     isReply?: boolean; //是否被回复
+    likes_count: number;
 }
 
 export type ApiProfilePost = {

@@ -23,7 +23,7 @@
                                 <span class="editorCalculate">
                                     {{ showEditorLength }} / {{ limitLength }}
                                 </span>
-                                <el-button @click="submit()" :loading="loading">{{t('post.answerSubmit')}}</el-button>
+                                <el-button type="primary" @click="submit()" :loading="loading">{{t('post.answerSubmit')}}</el-button>
                             </div>
                         </div>
                     </el-card>

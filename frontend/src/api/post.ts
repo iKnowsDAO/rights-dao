@@ -35,18 +35,18 @@ export async function deletePostComment(post_id: number, answer_id: number, comm
 }
 
 // 获取贴子详情，不获取时间线和回贴
-export async function getPostInfo(id: number): Promise<ApiResult<ApiPost>> {
-    return getBackend().get_post_info({id: id});
+export async function getPostInfo(postId: number): Promise<ApiResult<ApiPost>> {
+    return getBackend().get_post_info({id: postId});
 }
 
 // 获取贴子相关时间线
-export async function getPostTimeLine(id: number): Promise<ApiResult<ApiPostTimeline[]>> {
-    return getBackend().get_post_events({id: id});
+export async function getPostTimeLine(postId: number): Promise<ApiResult<ApiPostTimeline[]>> {
+    return getBackend().get_post_events({id: postId});
 }
 
 // 获取贴子相关回帖
-export async function getPostComments(id: number): Promise<ApiResult<ApiPostComments[]>> {
-    return getBackend().get_post_comments({id: id});
+export async function getPostComments(postId: number): Promise<ApiResult<ApiPostComments[]>> {
+    return getBackend().get_post_comments({id: postId});
 }
 
 // 增加贴子的时间线
@@ -89,4 +89,56 @@ export async function submitPostAnswer(postId: number, commentId: number): Promi
         post_id: postId,
         comment_id: commentId,
     });
+}
+
+// 点赞贴子或者回答
+export async function likePost(postId: number, isPost: boolean, commentId?: number): Promise<ApiResult<boolean>> {
+    if (isPost) {
+        //是问题
+        return getBackend().like_post({
+            post_id: postId,
+        });
+    } else {
+        //是回答。
+        return getBackend().like_post_answer({
+            post_id: postId,
+            comment_id: commentId,
+        });
+    }
+}
+
+// 取消点赞贴子或者回答
+export async function cancelLike(postId: number, isPost: boolean, commentId?: number): Promise<ApiResult<boolean>> {
+    if (isPost) {
+        //是问题
+        return getBackend().cancel_like_post({
+            post_id: postId,
+        });
+    } else {
+        //是回答
+        return getBackend().cancel_like_post_answer({
+            post_id: postId,
+            comment_id: commentId,
+        });
+    }
+}
+
+// 是否点赞过问题或回答
+export async function isLikedPost(postId: number, isPost: boolean, commentId?: number): Promise<ApiResult<boolean>> {
+    if (isPost) {
+        return getBackend().is_like_post({
+            post_id: postId,
+        });
+    } else {
+        //是回答
+        return getBackend().is_like_post_answer({
+            post_id: postId,
+            comment_id: commentId,
+        });
+    }
+}
+
+// 获得3个点赞数最高的回答
+export async function getTopLikePosts(): Promise<ApiResult<ApiPost[]>> {
+    return getBackend().get_top_likes_posts();
 }

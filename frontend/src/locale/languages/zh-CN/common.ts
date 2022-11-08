@@ -4,6 +4,7 @@ export default {
     cancel: "取消",
     edit: "编辑",
     search: "搜索",
+    hot: "热门",
     delete: {
         title: "删除",
         text: "你确认要删除吗？一经删除，无法找回。"

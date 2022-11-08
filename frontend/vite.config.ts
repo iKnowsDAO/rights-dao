@@ -89,7 +89,7 @@ export default defineConfig(({ command, mode }) => {
                 },
             },
             rollupOptions: {
-                // external: ["element-plus"], //! 天坑的，因为这个配置耗费了好几个小时，我白白的睡眠时间啊
+                // external: ["element-plus"],
                 output: {
                     manualChunks: {
                         vue: ['vue', 'vue-router', 'vuex'], // 目前打包还是这个最小，还没有 bug
@@ -102,7 +102,7 @@ export default defineConfig(({ command, mode }) => {
                     //     // if (
                     //     //     id.includes("node_modules") &&
                     //     //     id.match(/element-plus|legacy/)
-                    //     // ) { // TODO 本来是想解决打包过大问题，但是现在发现，打的包会失效无法线上运行，得嘞，虽然不报 charset 的错误了，但是不能运行也太坑了
+                    //     // ) { // TODO 本来是想解决打包过大问题，但是现在发现，打的包会失效无法线上运行
                     //     //     return id
                     //     //         .toString()
                     //     //         .split("node_modules/")[1]

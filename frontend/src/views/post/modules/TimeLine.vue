@@ -8,7 +8,7 @@
                             <div style="display:flex;justify-content: space-between">
                                 <h4>{{t('post.timeline.new')}}</h4>
                                 <div v-if="isOwner">
-                                    <el-button type="primary" @click="statusFormVisible=true">
+                                    <el-button type="warning" @click="statusFormVisible=true">
                                         {{t('post.status.title')}}
                                     </el-button>
                                     <el-button type="primary" @click="timelineFormVisible=true">

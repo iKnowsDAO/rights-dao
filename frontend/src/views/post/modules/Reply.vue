@@ -51,7 +51,7 @@
                                 </div>
                             </div>
                             <div class="footer">
-                                <div class="flex">
+                                <div class="left flex-y-center">
                                     <span v-if="item.comments.length===0 || item.comments.length===1"
                                           @click="openReplyReply(index)">
                                         {{item.comments.length+ " " + t('post.item') + t('post.comment')}}
@@ -75,12 +75,15 @@
                                             </div>
                                         </template>
                                     </el-popconfirm>
+                                    <LikeButton :postId="Number(props.postId)" :commentId="Number(item.id)"
+                                                :likeCount="Number(item.likes_count)"
+                                                style="margin-left:10px"/>
                                     <DeleteButton v-if="props.currentUserPrincipal===item.author.toString()"
                                                   :id="Number(item.id)"
                                                   :deleteFunction="deleteAnswer"
                                                   :loading="deleteLoading"/>
                                 </div>
-                                <div>
+                                <div class="right">
                                     <span v-if="!foldIndex[index]" @click="fold(index)">{{t('common.expand')}}</span>
                                     <span v-else @click="fold(index)">{{t('common.fold')}}</span>
                                 </div>
@@ -105,6 +108,7 @@
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
     import DeleteButton from '@/components/common/PostDeleteButton.vue';
+    import LikeButton from '@/components/common/LikeButton.vue';
     import ReplyReply from './ReplyReply.vue';
     import {ApiPostComments} from "@/api/types";
     import {getTargetUser} from "@/api/user";
@@ -293,7 +297,7 @@
                 .owner-div {
                     margin-left: 10px;
                 }
-                .delete-button{
+                .delete-button {
                     margin-left: 10px;
                 }
                 .footer {
