@@ -79,6 +79,7 @@ type PostProfile = record {
     status: PostStatus;
     created_at: nat64;
     updated_at: nat64;
+    comment_count: opt nat64;
 };
 
 type PostInfo = record {

@@ -257,6 +257,7 @@ export interface PostProfile {
   'updated_at' : bigint,
   'participants' : Array<string>,
   'content' : RichText,
+  'comment_count' : [] | [bigint],
   'created_at' : bigint,
   'end_time' : [] | [bigint],
   'answer' : [] | [bigint],

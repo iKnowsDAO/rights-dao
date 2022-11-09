@@ -187,6 +187,15 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : GovernanceProposal,
     'Err' : GovernanceError,
   });
+  const LikeProfile = IDL.Record({
+    'is_like' : IDL.Bool,
+    'updated_at' : IDL.Nat64,
+    'post_id' : IDL.Nat64,
+    'answer_id' : IDL.Opt(IDL.Nat64),
+    'created_at' : IDL.Nat64,
+    'author' : IDL.Principal,
+  });
+  const LikeProfileOption = IDL.Opt(LikeProfile);
   const PostStatus = IDL.Variant({
     'Enable' : IDL.Null,
     'Closed' : IDL.Null,
@@ -232,6 +241,7 @@ export const idlFactory = ({ IDL }) => {
       'quote_id' : IDL.Opt(IDL.Nat64),
       'comments' : IDL.Vec(PostComment),
       'comment_id' : IDL.Opt(IDL.Nat64),
+      'likes_count' : IDL.Opt(IDL.Nat64),
     })
   );
   const PostProfile = IDL.Record({
@@ -241,6 +251,7 @@ export const idlFactory = ({ IDL }) => {
     'updated_at' : IDL.Nat64,
     'participants' : IDL.Vec(IDL.Text),
     'content' : RichText,
+    'comment_count' : IDL.Opt(IDL.Nat64),
     'created_at' : IDL.Nat64,
     'end_time' : IDL.Opt(IDL.Nat64),
     'answer' : IDL.Opt(IDL.Nat64),
@@ -431,6 +442,12 @@ export const idlFactory = ({ IDL }) => {
     'get_governance_proposal' : IDL.Func(
         [GovernanceProposalGetQuery],
         [GovernanceProposalResult],
+        [],
+      ),
+    'get_like_post' : IDL.Func([PostLikeCommand], [LikeProfileOption], []),
+    'get_like_post_answer' : IDL.Func(
+        [PostAnswerLikeCommand],
+        [LikeProfileOption],
         [],
       ),
     'get_post' : IDL.Func([PostIdCommand], [PostResult], []),

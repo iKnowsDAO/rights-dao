@@ -79,6 +79,7 @@ type PostProfile = record {
     status: PostStatus;
     created_at: nat64;
     updated_at: nat64;
+    comment_count: opt nat64;
 };
 
 type PostInfo = record {
@@ -149,6 +150,7 @@ type PostComment = record {
     status: CommentStatus;
     created_at: nat64;
     comments: vec PostComment;
+    likes_count: opt nat64;
 };
 
 type PostEvent = record {
@@ -513,7 +515,16 @@ type PostAnswerLikeCommand = record {
     answer_id: nat64;
 };
 
+type LikeProfileOption = opt LikeProfile;
 
+type LikeProfile = record {
+    post_id: nat64;
+    author: principal;
+    answer_id: opt nat64;
+    is_like: bool;
+    created_at: nat64;
+    updated_at: nat64;
+};
 
 service : {
  
@@ -558,6 +569,8 @@ service : {
     "cancel_like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
     "is_like_post" : (PostLikeCommand) -> (BoolPostResult);
     "is_like_post_answer" : (PostAnswerLikeCommand) -> (BoolPostResult);
+    "get_like_post" : (PostLikeCommand) -> (LikeProfileOption);
+    "get_like_post_answer" : (PostAnswerLikeCommand) -> (LikeProfileOption);
     "get_top_likes_posts" : () -> (PostProfileListResult);
 
     "my_reputation" : () -> (ReputationSummaryResult);

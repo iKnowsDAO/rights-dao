@@ -116,6 +116,15 @@ export interface GovernanceVoteCommand {
   'vote' : Vote,
   'proposal_id' : bigint,
 }
+export interface LikeProfile {
+  'is_like' : boolean,
+  'updated_at' : bigint,
+  'post_id' : bigint,
+  'answer_id' : [] | [bigint],
+  'created_at' : bigint,
+  'author' : Principal,
+}
+export type LikeProfileOption = [] | [LikeProfile];
 export interface PageQuery {
   'page_size' : bigint,
   'querystring' : string,
@@ -146,6 +155,7 @@ export interface PostComment {
   'quote_id' : [] | [bigint],
   'comments' : Array<PostComment>,
   'comment_id' : [] | [bigint],
+  'likes_count' : [] | [bigint],
 }
 export interface PostCommentCommand { 'post_id' : bigint, 'content' : RichText }
 export type PostCommentResult = { 'Ok' : Array<PostComment> } |
@@ -247,6 +257,7 @@ export interface PostProfile {
   'updated_at' : bigint,
   'participants' : Array<string>,
   'content' : RichText,
+  'comment_count' : [] | [bigint],
   'created_at' : bigint,
   'end_time' : [] | [bigint],
   'answer' : [] | [bigint],
@@ -366,6 +377,10 @@ export interface _SERVICE {
     ) => Promise<U64GovernanceResult>,
   'get_governance_proposal' : (arg_0: GovernanceProposalGetQuery) => Promise<
       GovernanceProposalResult
+    >,
+  'get_like_post' : (arg_0: PostLikeCommand) => Promise<LikeProfileOption>,
+  'get_like_post_answer' : (arg_0: PostAnswerLikeCommand) => Promise<
+      LikeProfileOption
     >,
   'get_post' : (arg_0: PostIdCommand) => Promise<PostResult>,
   'get_post_comments' : (arg_0: PostIdCommand) => Promise<PostCommentResult>,

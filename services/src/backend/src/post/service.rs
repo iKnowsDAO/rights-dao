@@ -319,7 +319,7 @@ impl PostService {
         posts.into_iter()
             .take(num as usize)
             .cloned()
-            .map(|p| p.without_comments())
+            .map(|p| p.comment_count_without_comments())
             .collect()
     }
 
@@ -332,7 +332,7 @@ fn paging(ps: &BTreeMap<u64, PostProfile>, page_size: usize, page_num: usize,
         .values()
         .filter(ff)
         .cloned()
-        .map(|p| p.without_comments())
+        .map(|p| p.comment_count_without_comments())
         .collect();
 
     ps.sort_by(compare);

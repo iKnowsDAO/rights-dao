@@ -27,6 +27,7 @@ pub struct PostProfile {
     pub created_at: Timestamp,
     pub updated_at: Timestamp,
     pub comments: Vec<PostComment>,
+    pub comment_count: Option<usize>,
 }
 
 impl PostProfile {
@@ -48,7 +49,8 @@ impl PostProfile {
             status,
             created_at,
             updated_at: created_at,
-            comments: vec![]
+            comments: vec![],
+            comment_count: None,
         }
     }
 
@@ -60,8 +62,9 @@ impl PostProfile {
         !self.comments.is_empty()
     }
 
-    pub fn without_comments(self) -> Self {
+    pub fn comment_count_without_comments(self) -> Self {
         Self {
+            comment_count: Some(self.comments.len()),
             comments: vec![],
             ..self
         }

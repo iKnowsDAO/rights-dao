@@ -251,6 +251,7 @@ export const idlFactory = ({ IDL }) => {
     'updated_at' : IDL.Nat64,
     'participants' : IDL.Vec(IDL.Text),
     'content' : RichText,
+    'comment_count' : IDL.Opt(IDL.Nat64),
     'created_at' : IDL.Nat64,
     'end_time' : IDL.Opt(IDL.Nat64),
     'answer' : IDL.Opt(IDL.Nat64),

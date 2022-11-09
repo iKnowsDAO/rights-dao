@@ -81,7 +81,7 @@ fn change_post_status(cmd: PostChangeStatusCommand) -> Result<bool, PostError> {
     })
 }
 
-#[update]
+#[update(guard = "has_user_guard")]
 fn submit_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
@@ -139,7 +139,7 @@ fn delete_post(cmd: PostIdCommand) -> Result<bool, PostError> {
     })
 }
 
-#[update]
+#[update(guard = "has_user_guard")]
 fn add_post_comment(cmd: PostCommentCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
@@ -171,7 +171,7 @@ fn add_post_comment(cmd: PostCommentCommand) -> Result<bool, PostError> {
     })
 }
 
-#[update]
+#[update(guard = "has_user_guard")]
 fn add_comment_comment(cmd: CommentCommentCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
@@ -190,7 +190,7 @@ fn add_comment_comment(cmd: CommentCommentCommand) -> Result<bool, PostError> {
     })
 }
 
-#[update]
+#[update(guard = "has_user_guard")]
 fn add_post_event(cmd: PostEventCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
@@ -200,7 +200,7 @@ fn add_post_event(cmd: PostEventCommand) -> Result<bool, PostError> {
     })
 }
 
-#[update]
+#[update(guard = "has_user_guard")]
 fn delete_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
@@ -229,7 +229,7 @@ fn delete_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
     })
 }
 
-#[update]
+#[update(guard = "has_user_guard")]
 fn delete_post_answer_comment(cmd: PostAnswerCommentCommand) -> Result<bool, PostError> {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
@@ -374,12 +374,12 @@ fn other_comments(query: PostPageOtherQuery) -> Result<CommentSummaryPage, PostE
 }
 
 /// ---------- 点赞 ------------------------
-#[update]
+#[update(guard = "has_user_guard")]
 fn like_post(cmd: PostLikeCommand) -> Result<bool, PostError> {
     like_post_(cmd, true)
 }
 
-#[update]
+#[update(guard = "has_user_guard")]
 fn cancel_like_post(cmd: PostLikeCommand) -> Result<bool, PostError> {
     like_post_(cmd, false)
 }
@@ -400,12 +400,12 @@ fn like_post_(cmd: PostLikeCommand, is_like: bool) -> Result<bool, PostError> {
     })
 }
 
-#[update]
+#[update(guard = "has_user_guard")]
 fn like_post_answer(cmd: PostAnswerLikeCommand) -> Result<bool, PostError> {
     like_post_answer_(cmd, true)
 }
 
-#[update]
+#[update(guard = "has_user_guard")]
 fn cancel_like_post_answer(cmd: PostAnswerLikeCommand) -> Result<bool, PostError> {
     like_post_answer_(cmd, false)
 }
@@ -460,7 +460,7 @@ fn is_like_post_answer(q: PostAnswerLikeCommand) -> Result<bool, PostError> {
         let caller = ctx.env.caller();
         let like_id = (q.post_id, caller, q.answer_id);
 
-        Ok(ctx.post_service.get_like_by_id(&like_id).is_some())
+        Ok(ctx.post_service.is_like_by_id(&like_id))
     })
 }
 
