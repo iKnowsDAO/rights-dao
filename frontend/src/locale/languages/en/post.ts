@@ -22,9 +22,9 @@ export default {
     item: " ",
     joined: "Joined",
     public: {
-        hello: "Welcome to RightsDao",
-        text: "RightsDao is a decentralized application platform built on the Internet Computer (IC), based on the IC network, with knowledge as the core, and through a social approach." +
-            "Users interact on RightsDao without any threshold, including but not limited to spreading knowledge, asking questions, " +
+        hello: "Welcome to iKnows",
+        text: "iKnows is a decentralized application platform built on the Internet Computer (IC), based on the IC network, with knowledge as the core, and through a social approach." +
+            "Users interact on iKnows without any threshold, including but not limited to spreading knowledge, asking questions, " +
             "solving others' problems, etc. Because of the special nature of IC, users do not need to pay any fees. If needed, professional assistance and financial support can be obtained from the platform through the Decentralized Autonomous Organization (DAO) proposal."
     },
     help: {

@@ -110,7 +110,7 @@
 </template>
 
 <script lang="ts" setup>
-    import {ref, onMounted, computed, nextTick} from 'vue';
+    import {ref, onMounted, watch, computed, nextTick} from 'vue';
     import Navigator from '@/components/navigator/Navigator.vue';
     import {
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
@@ -132,7 +132,6 @@
 
     const store = useStore();
     const router = useRouter();
-    const route = useRoute();
 
     // const locale = computed<SupportedLocale>(() => {
     //     return store.state.user.locale
@@ -166,10 +165,10 @@
     }, {
         value: "Law",
         label: t('post.help.category.law')
-    },  {
+    }, {
         value: "Safeguard",
         label: t('post.help.category.safeguard')
-    },  {
+    }, {
         value: "Blacklist",
         label: t('post.help.category.blacklist')
     }, {
@@ -201,7 +200,7 @@
                 upload: (file) => {
                     return new Promise((resolve, reject) => {
                         uploadImage(file).then(res => {
-                                if (res!=='') {
+                                if (res !== '') {
                                     resolve(res)
                                 } else {
                                     reject()
@@ -231,6 +230,26 @@
         init()
     });
 
+    const saveDraftBox = () => {
+        //存草稿箱
+        if (showEditorLength.value > 0) {
+            localStorage.setItem('postDraftBox', JSON.stringify(form.value));
+        }
+    }
+
+    const getDraftBox = () => {
+        //读取并设置草稿箱中的内容
+        const item = localStorage.getItem('postDraftBox');
+        if (!item) {
+            return
+        }
+        const postDraftBox = JSON.parse(item);
+        if (postDraftBox && myTextEditor.value) {
+            form.value = postDraftBox;
+            myTextEditor.value.setHTML(form.value.content.content);
+        }
+    }
+
     const showEditorLength = computed(() => {
         const length = calculatedICPIdLength(form.value.content.content);
         length > limitLength ? (isEditorErr.value = true) : (isEditorErr.value = false);
@@ -240,7 +259,6 @@
     const addParticipants = () => {
         form.value.participants.push("");
     }
-
 
     const removeItem = (index) => {
         if (index !== -1) {
@@ -269,6 +287,8 @@
                     if (res.Ok) {
                         showMessageSuccess(t('message.post.create'));
                         router.push('/post/detail/' + Number(res.Ok));
+                        //发布成功后删除草稿箱里的内容。
+                        localStorage.removeItem('postDraftBox')
                     }
                 }).finally(() => {
                     loading.value = false;
@@ -279,6 +299,15 @@
             }
         })
     }
+
+    watch(
+        () => form,
+        () => {
+            //监听form对象，有变动就存草稿箱。
+            saveDraftBox();
+        },
+        {deep: true}
+    );
 
     const init = () => {
         console.log("currentUserPrincipal.value", currentUserPrincipal.value)
@@ -294,6 +323,7 @@
                 }
             });
         }, 1500);
+        getDraftBox();
     }
 
 </script>
@@ -301,11 +331,11 @@
 <style lang="scss">
     .post-submit-container {
         /* 当页面宽度小于426px*/
-        @media screen and (max-width:426px) {
-            .container{
+        @media screen and (max-width: 426px) {
+            .container {
                 padding: 0 10px;
             }
-            .post-form .el-form-item{
+            .post-form .el-form-item {
                 display: block;
             }
         }

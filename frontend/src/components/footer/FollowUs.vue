@@ -1,7 +1,7 @@
 <template>
     <div class="follow-us-container">
         <b>©</b>
-        <b class="copyright">&nbsp;RightsDao</b>
+        <b class="copyright">&nbsp;iKnows</b>
         <!--<a class="icon-link" target="blank" href="https://t.me/">-->
             <!--<i class="iconfont icon-telegram"></i>-->
         <!--</a>-->

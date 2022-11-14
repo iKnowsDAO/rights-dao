@@ -103,31 +103,11 @@
         init()
     }
 
-    const getPost = () => {
-        getTargetUserPost(pageNum.value, pageSize.value, query.value, targetPrincipal.value).then(res => {
-            console.log("getPost", res)
-            if (res.Ok) {
-                totalCount.value = Number(res.Ok.total_count);
-                list.value.push(...res.Ok.data.map(item => {
-                    return {
-                        id: item.id,
-                        created_at: item.created_at,
-                        title: item.title,
-                        content: {
-                            content: cleanHtml(item.content.content),
-                            format: "text" as 'text'
-                        },
-                        length: item.comments ? item.comments.length : 0
-                    }
-                }))
-            }
-        })
-    }
-
     const getPostComment = () => {
+        //获取目标用户发布的主题，现在不包括评论，只包括评论数
         loading.value = true;
         getTargetUserPostComments(pageNum.value, pageSize.value, query.value, targetPrincipal.value).then(res => {
-            console.log("PostComments", res)
+            console.log("userPost", res)
             if (res.Ok) {
                 totalCount.value = Number(res.Ok.total_count);
                 list.value.push(...res.Ok.data.map(item => {
@@ -139,7 +119,7 @@
                             content: cleanHtml(item.content.content),
                             format: "text" as 'text'
                         },
-                        length: item.comments ? item.comments.length : 0
+                        length: item.comment_count ? Number(item.comment_count[0]) : 0
                     }
                 }))
             }
@@ -149,6 +129,7 @@
     }
 
     const getComments = () => {
+        //获取目标用户发布的评论
         loading.value = true;
         getTargetUserComments(pageNum.value, pageSize.value, query.value, targetPrincipal.value).then(res => {
             console.log("Comments", res)

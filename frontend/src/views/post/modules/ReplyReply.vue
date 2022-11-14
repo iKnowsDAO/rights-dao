@@ -22,7 +22,8 @@
                                     <b>
                                         <Username :principalId="item.author.toString()"
                                                   :username="item.authorData && item.authorData.name!==''
-                                                      ? item.authorData.name: ''"/>
+                                                      ? item.authorData.name: ''"
+                                                  :clickable="true"/>
                                     </b>
                                     <span class="quote-name" v-if="item.quote_id.length >0">{{t('post.reply')+" "+item.quoteName}}</span>
                                 </div>

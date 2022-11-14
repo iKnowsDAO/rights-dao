@@ -44,7 +44,6 @@ export async function getUserAutoRegister(): Promise<ApiResult<ApiUserInfo>> {
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
         execute: () => getBackend().auto_register_user(),
         ttl: TTL.day1,
-        // ttl: 60 * 60, // 目前开发阶段先设置短的时间
         isLocal: true, // 需要本地存储
     });
 }

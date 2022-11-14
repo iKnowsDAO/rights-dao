@@ -1,7 +1,7 @@
 <template>
     <span class="username-container"
           :class="{ 'username-clickable': clickable }"
-          @click="onClick">
+          @click.stop="onClick">
         {{ showName }}
     </span>
 </template>

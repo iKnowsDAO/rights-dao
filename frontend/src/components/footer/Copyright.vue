@@ -4,7 +4,7 @@
             {{
                 `Copyright © ${
                     2021 + (new Date().getFullYear() === 2021 ? '' : '-' + new Date().getFullYear())
-                } RightsDao. All rights reserved`
+                } iKnows. All rights reserved`
             }}
         </p>
     </div>

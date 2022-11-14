@@ -17,17 +17,21 @@
                     </el-icon>
                     Beta Warning!
                 </b>
-                <span class="text">RightsDao is in the Beta phase, there may be issues.</span>
+                <span class="text">iKnows is in the Beta phase, there may be issues.</span>
             </div>
-            <div class="post-top-like" v-if="list.length>0">
+            <div class="post-top-like" v-if="!error">
                 <el-divider content-position="left">
                     <i class="iconfont icon-fire-fill"></i>
                     {{t('common.hot')}}
                 </el-divider>
-                <span v-for="item in list" :key="Number(item.id)" @click="goDetail(Number(item.id))"
-                      class="post-title">
-                    {{item.title}}
-                </span>
+                <el-skeleton :rows="3" :loading="loading" animated>
+                    <template #default>
+                        <span v-for="item in list" :key="Number(item.id)" @click="goDetail(Number(item.id))"
+                              class="post-title">
+                            {{item.title}}
+                        </span>
+                    </template>
+                </el-skeleton>
             </div>
             <el-divider/>
             <div class="public-item">
@@ -42,7 +46,7 @@
 
 <script lang="ts" setup>
     import {defineProps, computed, onMounted, ref} from 'vue';
-    import {ElButton, ElCard, ElIcon, ElDivider} from 'element-plus/es';
+    import {ElButton, ElCard, ElIcon, ElDivider,ElSkeleton} from 'element-plus/es';
     import {Opportunity} from '@element-plus/icons-vue';
     import Footer from '@/components/footer/Footer.vue';
     import {t} from '@/locale';
@@ -55,6 +59,8 @@
     const store = useStore();
     const router = useRouter();
     const isDisabled = ref(true);
+    const loading = ref(true);
+    const error = ref(false);
     const props = defineProps({
         buttonType: {
             type: String,
@@ -68,9 +74,12 @@
 
     const getTopLikePost = () => {
         getTopLikePosts().then((res) => {
-            console.log("getTopLikePosts", res)
+            // console.log("getTopLikePosts", res)
             if (res.Ok) {
                 list.value = res.Ok;
+                loading.value = false;
+            } else {
+                error.value = true;
             }
         })
     }

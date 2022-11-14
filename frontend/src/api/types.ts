@@ -83,9 +83,10 @@ export type ApiUserInfo = {
 export type ApiPost = {
     id: bigint; //id
     author: Principal | string; // 作者
-    authorData?: ApiUserInfo; //作者详细资料 通过id获取对应资料
+    authorData?: ApiUserInfo; //作者详细资料 通过id请求对应方法，获取对应资料
     title: string;
     comments?: ApiPostComments[];
+    comment_count: number[]; //opt格式的回复数
     content: RichText;
     category: PostCategory;
     photos: number[];
@@ -129,6 +130,7 @@ export type ApiProfilePost = {
     author?: Principal | string; // 作者principalID
     content: RichText;
     comments?: [];
+    comment_count?: number[]; //opt格式的回复数
     length?: number;
     created_at: bigint;
     title: string;

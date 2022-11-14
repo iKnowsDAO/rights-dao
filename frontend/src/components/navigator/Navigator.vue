@@ -43,7 +43,7 @@
                 <!-- logo -->
                 <div class="logo">
                     <div>
-                        <img src="@/assets/images/RightsDaoText.png" @click="onHome" />
+                        <img src="@/assets/images/iKnowsText.png" @click="onHome" />
                     </div>
                 </div>
                 <div class="content adaptation-hidden-1100">
@@ -302,10 +302,12 @@
     }
 
     const doInitAuth = () => {
+        console.log("doInitAuth")
         initAuth().then((ai) => {
             clientReady.value = true;
             if (ai.info) {
                 signedIn.value = true;
+                console.log("doInitAuth",ai.info)
                 setCurrentIdentity(ai.info.identity, ai.info.principal);
                 // 保存 principal 到用户信息状态
                 setPrincipal(ai.info.principal).then(() =>
@@ -338,6 +340,7 @@
     };
 
     const onLogOut = async () => {
+        console.log("onLogout")
         const auth = await initAuth();
         signedIn.value = false;
         clearCurrentIdentity();

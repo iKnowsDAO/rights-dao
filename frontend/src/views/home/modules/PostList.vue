@@ -70,7 +70,7 @@
                                     <LikeButton :postId="Number(item.id)" :likeCount="Number(item.likes_count)"/>
                                 </div>
                                 <div class="reply">
-                                    {{t('post.reply')+" "+item.comments.length}}
+                                    {{t('post.reply')+" "+Number(item.comment_count[0])}}
                                 </div>
                             </div>
                         </el-card>

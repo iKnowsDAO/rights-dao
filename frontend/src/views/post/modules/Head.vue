@@ -61,7 +61,6 @@
                                     {{t('post.writeAnswer')}}
                                 </el-button>
                                 <LikeButton :postId="Number(post.id)" :likeCount="Number(post.likes_count)"/>
-                                <!--<span style="margin: 5px;">{{post.comments.length}} 条回复</span>-->
                             </div>
                             <div class="right flex-y-center" v-if="isOwner">
                                 <span v-if="isFold" @click="isFold = !isFold" class="fold">{{t('common.expand')}}</span>

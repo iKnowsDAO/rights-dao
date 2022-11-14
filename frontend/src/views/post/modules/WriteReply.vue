@@ -4,7 +4,7 @@
             <el-row>
                 <el-col :sm={span:16,offset:4} :xs="24">
                     <el-card :class="{ isEditorError: isEditorErr }">
-                        <h4>{{t('post.answer')}}</h4>
+                        <h4 style="margin-bottom: 5px">{{t('post.answer')}}</h4>
                         <QuillEditor
                             ref="myTextEditor"
                             v-model:content="reply"

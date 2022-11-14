@@ -28,6 +28,7 @@ export const getUserInfoStorage = (principal: string): UserInfo | null => {
 };
 
 export const deleteUserInfoStorage = (principal: string): void => {
+    console.log("deleteUser",principal)
     localStorage.removeItem(`USER_${principal.toUpperCase()}`);
 };
 

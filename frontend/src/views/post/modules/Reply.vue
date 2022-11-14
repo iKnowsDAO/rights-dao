@@ -29,7 +29,8 @@
                                         <b>
                                             <Username :principalId="item.author.toString()"
                                                       :username="item.authorData && item.authorData.name!==''
-                                                      ? item.authorData.name: ''"/>
+                                                      ? item.authorData.name: ''"
+                                                      :clickable="true"/>
                                         </b>
                                         <div class="sign" v-if="item.authorData && item.authorData.biography!==''">
                                             {{item.authorData.biography}}
@@ -152,7 +153,7 @@
     const onScroll = () => {
         //初始化时会运行一次此方法
         //不能加载分页的时候停止请求博客列表，免得陷入死循环
-        console.log("onScroll", pageNum.value)
+        // console.log("onScroll", pageNum.value)
         if (total.value !== 0 && showList.value.length !== total.value) {
             pageNum.value++;
             paging()
@@ -242,8 +243,11 @@
         await getPostComments(props.postId).then(res => {
             if (res.Ok) {
                 console.log("getPostComments", res)
-                //由于按时间顺排序问题，需要倒序
-                list.value = res.Ok.reverse();
+                //由于按时间顺排序问题，需要倒序。
+                //倒序后按点赞数大小排序。
+                list.value = res.Ok.reverse().sort((a, b) => {
+                    return Number(b.likes_count[0]) - Number(a.likes_count[0]);
+                });
                 total.value = list.value.length;
                 if (props.answerId) {
                     console.log("props.answerId", props.answerId)
