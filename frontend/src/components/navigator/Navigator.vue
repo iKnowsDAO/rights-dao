@@ -241,20 +241,8 @@
         return showUsername(name, principal.value);
     });
 
-    const comingSoon = () =>
-        // 路径不全的 就当做还未完成
-        ElMessage({
-            // showClose: true,
-            message: `${t('message.tip.comingSoon')}`,
-            customClass:"i-message iconfont icon-development",
-            center: true,
-            type: '' as 'info',
-            duration: 2000,
-        });
-
     const chooseTab = (i: number, item: { action: string }) => {
         if (item.action === '') {
-            comingSoon();
             return;
         }
         if (item.action.startsWith('http')) {
@@ -305,9 +293,9 @@
         console.log("doInitAuth")
         initAuth().then((ai) => {
             clientReady.value = true;
+            console.log("await doInitAuth",ai)
             if (ai.info) {
                 signedIn.value = true;
-                console.log("doInitAuth",ai.info)
                 setCurrentIdentity(ai.info.identity, ai.info.principal);
                 // 保存 principal 到用户信息状态
                 setPrincipal(ai.info.principal).then(() =>

@@ -173,6 +173,16 @@ function getNetwork(viteEnv: ViteEnv) {
     return viteEnv.VITE_NETWORK;
 }
 
+// 获取后端运行地址
+function getLocation(viteEnv: ViteEnv): string {
+    const position = viteEnv.VITE_LOCAL_DFX;
+    if (position) {
+        const dfxJson = require(position);
+        return 'http://' + dfxJson.networks.local.bind;
+    }
+    return 'https://mainnet.dfinity.network';
+}
+
 // 根据环境参数加载 canister 名称 和 id 之间的关系，主要关联需要用到的 canister_ids.json 文件 可以多个
 function getCanisterIds(viteEnv: ViteEnv) {
     // 找出 2 段字符串数组的交集
@@ -262,16 +272,6 @@ function initAlias(canisterIds: {}, network: string, apiPositions: {}) {
         }
     }
     return canistersAlias;
-}
-
-// 获取后端运行地址
-function getLocation(viteEnv: ViteEnv): string {
-    const position = viteEnv.VITE_LOCAL_DFX;
-    if (position) {
-        const dfxJson = require(position);
-        return 'http://' + dfxJson.networks.local.bind;
-    }
-    return 'https://mainnet.dfinity.network';
 }
 
 function getMode(configMode: ConfigMode) {
