@@ -7,7 +7,7 @@ import { viteHtmlPlugins } from './html';
 import { svgIconsPlugin } from './svgIcons';
 import { styleImportPlugin } from './styleImport';
 import { viteCompressionPlugin } from './compression';
-import PurgeIcons from 'vite-plugin-purge-icons';
+// import PurgeIcons from 'vite-plugin-purge-icons';
 import { visualizerPlugin } from './visualizer';
 import { viteThemePlugin } from './theme';
 import { imageminPlugin } from './imagemin';
@@ -28,7 +28,7 @@ export function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
     vitePlugins.push(...viteHtmlPlugins(viteEnv, isBuild)); // 注入配置字符串
     vitePlugins.push(svgIconsPlugin(isBuild)); // svg 图标资源整合管理
     vitePlugins.push(styleImportPlugin(isBuild)); // 样式导入
-    vitePlugins.push(PurgeIcons({})); // 图片管理
+    // vitePlugins.push(PurgeIcons({})); // 图片管理
     vitePlugins.push(visualizerPlugin()); // 可视化依赖分析，非生产模式
     // vitePlugins.push(viteThemePlugin()) // 主题
     vitePlugins.push(legacyPlugin()); // 低级浏览器支持

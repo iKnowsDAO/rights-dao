@@ -83,18 +83,6 @@
                                 </template>
                             </el-input>
                         </el-form-item>
-                        <!--<el-form-item :label="$t('post.help.endTime.label')">-->
-                        <!--<el-config-provider :locale="elementPlusLocale">-->
-                        <!--<el-date-picker-->
-                        <!--v-model="form.end_time[0]"-->
-                        <!--type="datetime"-->
-                        <!--:placeholder="$t('post.help.endTime.placeholder')"-->
-                        <!--popper-class="i-date-pop"-->
-                        <!--:editable="false"-->
-                        <!--value-format="x"-->
-                        <!--/>-->
-                        <!--</el-config-provider>-->
-                        <!--</el-form-item>-->
                     </el-form>
                     <div style="display: flex;justify-content: space-between">
                         <el-button @click="addParticipants">{{t('post.help.participants.add')}}</el-button>
@@ -118,25 +106,20 @@
     } from 'element-plus/es';
     import {Close} from '@element-plus/icons-vue';
     import type {FormInstance, FormRules} from 'element-plus'
-    import {SupportedLocale, t} from '@/locale';
+    import {t} from '@/locale';
     import {Quill, QuillEditor} from '@vueup/vue-quill';
     import ImageUploader from "quill-image-uploader";
-    import {useRoute, useRouter} from 'vue-router';
-    import en from 'element-plus/lib/locale/lang/en';
-    import zhCn from 'element-plus/lib/locale/lang/zh-cn';
-    import {useStore} from "vuex";
+    import {useRouter} from 'vue-router';
     import {submitPost} from "@/api/post";
     import {goBack} from "@/router/routers";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {calculatedICPIdLength, uploadImage} from "@/utils/images";
+    import { useUserStore } from "@/store/user";
 
-    const store = useStore();
+    const userStore = useUserStore();
     const router = useRouter();
 
-    // const locale = computed<SupportedLocale>(() => {
-    //     return store.state.user.locale
-    // });
-    const currentUserPrincipal = computed<string>(() => store.state.user.principal);
+    const currentUserPrincipal = computed<string>(() => userStore.principal);
     const loading = ref(false);
     //编辑器是否发生变化
     const isEditorChange = ref(false);
@@ -216,15 +199,6 @@
         theme: 'snow', //主题 snow/bubble
         syntax: true, //语法检测
     };
-    // 日期选择器需要用到的方法，目前不需要日期选择器，所以注释了
-    // const elementPlusLocale = computed(() => {
-    //     switch (locale.value) {
-    //         case SupportedLocale.zhCN:
-    //             return zhCn;
-    //         default:
-    //             return en;
-    //     }
-    // });
 
     onMounted(() => {
         init()

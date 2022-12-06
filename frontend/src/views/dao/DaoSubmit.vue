@@ -117,20 +117,17 @@
     import {useRoute, useRouter} from 'vue-router';
     import en from 'element-plus/lib/locale/lang/en';
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
-    import {useStore} from "vuex";
     import {goBack} from "@/router/routers";
     import {showMessageError, showMessageSuccess, showResultError} from "@/utils/message";
     import {calculatedICPIdLength, uploadImage} from "@/utils/images";
     import {addDaoProposal} from "@/api/dao";
+    import { useUserStore } from "@/store/user";
 
-    const store = useStore();
+    const userStore = useUserStore();
     const router = useRouter();
-    const route = useRoute();
 
-    const locale = computed<SupportedLocale>(() => {
-        return store.state.user.locale
-    });
-    const currentUserPrincipal = computed<string>(() => store.state.user.principal);
+    const locale = computed(() => userStore.getLocale);
+    const currentUserPrincipal = computed<string>(() => userStore.principal);
     const loading = ref(false);
     //编辑器是否发生变化
     const isEditorChange = ref(false);

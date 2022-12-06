@@ -22,16 +22,16 @@
     import {useRoute, useRouter} from 'vue-router';
     import {getPostInfo} from "@/api/post";
     import {ApiPost} from "@/api/types";
-    import {useStore} from "vuex";
     import {goBack} from "@/router/routers";
     import {showMessageError} from "@/utils/message";
     import {t} from "@/locale";
+    import { useUserStore } from "@/store/user";
 
     const route = useRoute();
     const router = useRouter();
-    const store = useStore();
+    const userStore = useUserStore();
     const postId = Number(route.params.id);
-    const currentUserPrincipal = computed<string>(() => store.state.user.principal);
+    const currentUserPrincipal = computed<string>(() => userStore.principal);
     // 是否是本人 或者是管理员。关联编辑，删除按钮的显示与否
     // 本地环境下，authorId和currentId会有冲突。
     const isOwner = computed(() => {

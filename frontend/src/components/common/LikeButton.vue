@@ -11,9 +11,9 @@
 <script lang="ts" setup>
     import {ref, defineProps, onMounted, computed} from 'vue';
     import {cancelLike, isLikedPost, likePost} from "@/api/post";
-    import {useStore} from "vuex";
+    import { useUserStore } from "@/store/user";
 
-    const store = useStore();
+    const userStore = useUserStore();
     const props = defineProps({
         // 问题ID
         postId: {
@@ -31,10 +31,10 @@
         },
     });
     const currentUserPrincipal = computed<string>(() => {
-        if (!store.state.user.principal) {
+        if (!userStore.principal) {
             isDisabled.value = true;
         }
-        return store.state.user.principal
+        return userStore.principal
     });
     const isDisabled = ref(false);
     const isLiked = ref(false);

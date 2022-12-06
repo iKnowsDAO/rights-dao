@@ -43,7 +43,7 @@
     </div>
     <el-dialog v-model="timelineFormVisible" custom-class="post-timeLine-dialog" :title="t('post.timeline.add')"
                width="30%">
-        <el-form :model="timelineForm" hide-required-asterisk>
+        <el-form :model="timelineForm" hide-required-asterisk ref="timelineFormRef">
             <el-form-item :label="$t('post.timeline.time')+'：'"
                           prop="event_time"
                           :rules="[{
@@ -79,7 +79,7 @@
         <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="timelineFormVisible = false">{{t('common.cancel')}}</el-button>
-                    <el-button type="primary" @click="addTimeline()"
+                    <el-button type="primary" @click="addTimeline(timelineFormRef)"
                                :loading="timelineLoading">{{t('common.confirm')}}</el-button>
                 </span>
         </template>
@@ -150,20 +150,19 @@
         ElSelect,
         ElOption
     } from 'element-plus/es';
+    import type {FormInstance, FormRules} from 'element-plus'
     import {Comment} from '@element-plus/icons-vue';
     import {SupportedLocale, t} from '@/locale';
     import en from 'element-plus/lib/locale/lang/en';
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
-    import {useStore} from "vuex";
     import {addPostTimeline, changePostStatus, getPostTimeLine} from "@/api/post";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {ApiPostTimeline} from "@/api/types";
     import {getTimeF} from "@/utils/dates";
+    import { useUserStore } from "@/store/user";
 
-    const store = useStore();
-    const locale = computed<SupportedLocale>(() => {
-        return store.state.user.locale
-    });
+    const userStore = useUserStore();
+    const locale = computed(() => userStore.getLocale);
 
     const props = defineProps({
         postId: {
@@ -175,6 +174,7 @@
             required: true,
         }
     });
+    const timelineFormRef = ref<FormInstance>();
     const timelineShowMore = ref(false);
     //默认展开3个时间线
     const timelineMount = ref(3);
@@ -243,23 +243,28 @@
         }
     }
 
-    const addTimeline = () => {
+    const addTimeline = async (formEl: FormInstance | undefined) => {
         console.log("timelineForm", timelineForm.value)
-        timelineLoading.value = true;
-        let timeline = {...timelineForm.value};
-        timeline.event_time *= (1000 * 1000);
-        addPostTimeline(timeline).then(res => {
-            if (res.Ok) {
-                init()
-                showMessageSuccess(t('post.timeline.success'));
-                timelineFormVisible.value = false;
-            } else if (res.Err && res.Err.PostAlreadyCompleted !== undefined) {
-                showMessageError(t('message.error.post.alreadyCompleted'));
-            } else {
-                console.error(res)
+        if (!formEl) return;
+        await formEl.validate((valid, fields) => {
+            if(valid){
+                timelineLoading.value = true;
+                let timeline = {...timelineForm.value};
+                timeline.event_time *= (1000 * 1000);
+                addPostTimeline(timeline).then(res => {
+                    if (res.Ok) {
+                        init()
+                        showMessageSuccess(t('post.timeline.success'));
+                        timelineFormVisible.value = false;
+                    } else if (res.Err && res.Err.PostAlreadyCompleted !== undefined) {
+                        showMessageError(t('message.error.post.alreadyCompleted'));
+                    } else {
+                        console.error(res)
+                    }
+                }).finally(() => {
+                    timelineLoading.value = false;
+                })
             }
-        }).finally(() => {
-            timelineLoading.value = false;
         })
     }
 

@@ -51,12 +51,12 @@
     import Footer from '@/components/footer/Footer.vue';
     import {t} from '@/locale';
     import {useRouter} from 'vue-router';
-    import {useStore} from "vuex";
     import {showAdmin} from "@/common/auth";
     import {getTopLikePosts} from "@/api/post";
     import {ApiPost} from "@/api/types";
+    import { useUserStore } from "@/store/user";
 
-    const store = useStore();
+    const userStore = useUserStore();
     const router = useRouter();
     const isDisabled = ref(true);
     const loading = ref(true);
@@ -69,7 +69,7 @@
     });
     const list = ref<ApiPost[]>([]);
     const currentUserPrincipal = computed<string>(() => {
-        return store.state.user.principal
+        return userStore.principal
     });
 
     const getTopLikePost = () => {

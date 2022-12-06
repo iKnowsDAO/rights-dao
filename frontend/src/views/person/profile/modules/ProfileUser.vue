@@ -165,7 +165,6 @@
 </template>
 <script lang="ts" setup>
     import {ref, onMounted, computed, defineEmits} from 'vue';
-    import {useStore} from 'vuex';
     import {useRoute, useRouter} from 'vue-router';
     import {t} from '@/locale';
     import {
@@ -179,8 +178,9 @@
     import {editUserSelf, getTargetUser, getTargetUserNewCache, getUserReputation} from "@/api/user";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {toClipboard} from "@soerenmartius/vue3-clipboard";
+    import { useUserStore } from "@/store/user";
 
-    const store = useStore();
+    const userStore = useUserStore();
     const router = useRouter();
     const route = useRoute();
     const dialogFormVisible = ref(false);
@@ -204,7 +204,7 @@
         created_at: 0,
         interests: []
     });
-    const currentUserPrincipal = computed<string>(() => store.state.user.principal);
+    const currentUserPrincipal = computed<string>(() => userStore.principal);
     const targetPrincipal = ref('');
     // 是否是本人。关联编辑按钮的显示与否
     const isOwner = computed<boolean>(

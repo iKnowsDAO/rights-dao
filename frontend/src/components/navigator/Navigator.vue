@@ -129,24 +129,16 @@
     import {
         getUserAutoRegister,
     } from '@/api/user';
-    import {
-        getLocaleText,
-        setLocaleText,
-        setPrincipalText,
-        setUserInfoText,
-        setUsernameText
-    } from '@/store/modules/user';
-    import { useStore } from 'vuex';
     import { useRouter } from 'vue-router';
-    import { UserText } from '@/store';
     import { Auth } from '@/types/auth';
     import {initAuth, signIn, signOut} from "@/api/auth";
     import {clearCurrentIdentity, setCurrentIdentity} from "@/api/canister_pool";
     import {UserInfoElement} from "@/types/user";
     import {showUsername} from "@/common/utils";
     import {showAdmin} from "@/common/auth";
-    const store = useStore();
+    import { useUserStore } from "@/store/user";
     const router = useRouter();
+    const userStore = useUserStore();
     const props = defineProps({
         // II 认证成功 即 注册成功的回调
         loginInCallback: {
@@ -178,14 +170,8 @@
     // let auth = new Auth(); // 不能被 vue 代理，只能放到外面了
     const clientReady = ref(false);
     const signedIn = ref(false); // 是否登录
-    const principal= computed(() => store.state.user.principal);
-    const userInfo = computed(() => store.state.user.user);
-    const setUserInfo = (userInfo: UserInfoElement) =>
-        store.dispatch(UserText + '/' + setUserInfoText, userInfo);
-    const setPrincipal = (principal: string) =>
-        store.dispatch(UserText + '/' + setPrincipalText, principal);
-    const setUsername = (username: string) =>
-        store.dispatch(UserText + '/' + setUsernameText, username);
+    const principal= computed(() => userStore.principal);
+    const userInfo = computed(() => userStore.user);
 
     const navbarRef = ref<HTMLElement | null>(null); // 导航栏ref属性
     const screenWidth = ref(document.documentElement.clientWidth); // 当前屏幕宽度
@@ -200,10 +186,8 @@
     ]);
 
     // 多语言设置
-    const locale = computed(() => store.getters[UserText + '/' + getLocaleText]);
+    const locale = computed(() => userStore.getLocale);
     const isEn = computed(() => locale.value === SupportedLocale.en);
-    const setLocale = (locale: SupportedLocale) =>
-        store.dispatch(UserText + '/' + setLocaleText, locale);
     const currentLanguage = computed<string>(
         () => languages.find((i) => i.payload == locale.value)?.title ?? languages[0].title,
     );
@@ -280,7 +264,7 @@
 
     const refreshUserInfo = (UserInfoElement: UserInfoElement) => {
         if (UserInfoElement.name) userInfo.value.name = UserInfoElement.name;
-        setUserInfo(UserInfoElement);
+        userStore.setUserInfo(UserInfoElement);
     };
 
     const toProfile = () => {
@@ -298,7 +282,7 @@
                 signedIn.value = true;
                 setCurrentIdentity(ai.info.identity, ai.info.principal);
                 // 保存 principal 到用户信息状态
-                setPrincipal(ai.info.principal).then(() =>
+                userStore.setPrincipal(ai.info.principal).then(() =>
                     // 获取用户信息
                     getUserInfoFromServices(),
                 );
@@ -310,19 +294,19 @@
         const auth = await initAuth();
         signIn(auth.client) // 理论上有链接对象才会进入这个方法
             .then((ii) => {
-                signedIn.value=true;
+                signedIn.value = true;
                 auth.info = ii
                 // 每次成功获取到登录信息后就调用一次注册
                 setCurrentIdentity(ii.identity, ii.principal);
-                    // 保存 principal 到状态
-                    setPrincipal(ii.principal).then(() => {
-                        // 尝试获取用户信息
-                        getUserInfoFromServices();
-                        props.loginInCallback?.call(props.loginInCallback);
-                    });
+                // 保存 principal 到状态
+                userStore.setPrincipal(ii.principal).then(() => {
+                    // 尝试获取用户信息
+                    getUserInfoFromServices();
+                    props.loginInCallback?.call(props.loginInCallback);
+                });
             })
             .catch((e) => {
-                console.log("e",e)
+                console.log("e", e)
                 showMessageError(t('message.error.login'));
             });
     };
@@ -348,7 +332,7 @@
             current = languages[0].payload;
         }
         // console.error('set locale', current);
-        setLocale(current);
+        userStore.setLocale(current);
     };
 
     const onHome = () => router.push('/');
@@ -459,19 +443,15 @@
                     .login {
                         > div {
                             margin: 0 auto;
-                            background-color: #06f;
+                            background: linear-gradient(to right, #2f7dff, 80%, #409eff);
+                            border-radius: 4px;
                             width: 114px;
                             height: 40px;
-                            border-radius: 30px;
                             display: flex;
                             flex-direction: row;
                             align-items: center;
                             justify-content: center;
                             cursor: pointer;
-                            &:hover {
-                                border-color: #005ce6;
-                                background-color: #005ce6;
-                            }
                             > div {
                                 font-size: 22px;
                                 line-height: 30px;

@@ -88,16 +88,16 @@
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {goHome} from "@/router/routers";
     import {useRoute, useRouter} from "vue-router";
-    import {useStore} from "vuex";
+    import { useUserStore } from "@/store/user";
 
-    const store = useStore();
+    const userStore = useUserStore();
     const router = useRouter();
     const route = useRoute();
     const author = ref<ApiUserInfo>();
 
     const isFold = ref(true);
     const proposalId = Number(route.params.id);
-    const currentUserPrincipal = computed<string>(() => store.state.user.principal);
+    const currentUserPrincipal = computed<string>(() => userStore.principal);
     const dialogVisible = ref(false);
     const loading = ref(false);
 
