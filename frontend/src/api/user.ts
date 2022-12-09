@@ -3,6 +3,9 @@ import {getCurrentPrincipal, getBackend} from './canister_pool';
 import {ApiProfilePost, ApiResult, ApiResultByPage, ApiUserInfo, GovernanceMember, UserReputation} from "@/api/types";
 import {Principal} from "@dfinity/principal/lib/cjs";
 
+const userTTL = TTL.day1; //用户自身信息缓存时长。
+const ohterUserTTL = TTL.day1; //其他用户信息缓存时长。
+
 // 注册用户接口，将当前登录用户 id 登记在后端 应当有缓存 不需要返回值
 export async function registerUser(principalId: string): Promise<ApiResult<string>> {
     // return getBackend().registerUser(getSourceChannel());
@@ -21,7 +24,7 @@ export async function registerUser(principalId: string): Promise<ApiResult<strin
             }
             return r;
         },
-        ttl: TTL.day7, // 每一个 id 请求一次就够了，缓存 7 天没毛病
+        ttl: userTTL, // 每一个 id 请求一次就够了，缓存 7 天没毛病
         // ttl: 60 * 10, // 目前开发阶段先设置短的时间
         isLocal: true, // 需要本地存储
     });
@@ -32,7 +35,7 @@ export async function getUserInfo(): Promise<ApiResult<ApiUserInfo>> {
     return await getCache({
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
         execute: () => getBackend().get_self(),
-        ttl: TTL.minute30,
+        ttl: userTTL,
         // ttl: 60 * 60, // 目前开发阶段先设置短的时间
         isLocal: true, // 需要本地存储
     });
@@ -43,7 +46,7 @@ export async function getUserAutoRegister(): Promise<ApiResult<ApiUserInfo>> {
     return await getCache({
         key: 'USER_INFO_' + getCurrentPrincipal().toUpperCase(),
         execute: () => getBackend().auto_register_user(),
-        ttl: TTL.day1,
+        ttl: userTTL,
         isLocal: true, // 需要本地存储
     });
 }
@@ -55,7 +58,7 @@ export async function getTargetUser(principal: string): Promise<ApiResult<any | 
         execute: () => getBackend().get_user(Principal.fromText(principal)),
         // 记得部署之前改成方法参数
         // execute: () => getBackend().get_user(Principal.fromText("2vxsx-fae")),
-        ttl: TTL.minute30,
+        ttl: ohterUserTTL,
         isLocal: true, // 需要本地存储
     });
 }
@@ -66,7 +69,7 @@ export async function getTargetUserNewCache(principal: string): Promise<ApiResul
         key: 'USER_INFO_' + principal.toUpperCase(),
         execute: () => getBackend().get_user(Principal.fromText(principal)),
         cache: false,
-        ttl: TTL.minute30,
+        ttl: ohterUserTTL,
         isLocal: true, // 需要本地存储
     });
 }

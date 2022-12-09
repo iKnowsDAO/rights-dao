@@ -4,7 +4,6 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css'; //导入quill编辑器样式
 import { createApp } from 'vue';
 import i18n from './locale';
 import router from './router';
-import store from './store';
 import App from './App.vue';
 import { ElInfiniteScroll } from "element-plus/es";
 
@@ -13,5 +12,5 @@ import { createPinia } from "pinia"; //类似于vuex的状态管理
 
 const app = createApp(App);
 const pinia = createPinia()
-app.use(i18n).use(router).use(store).use(VueClipboard).use(ElInfiniteScroll).use(pinia);
+app.use(i18n).use(router).use(VueClipboard).use(ElInfiniteScroll).use(pinia);
 app.mount('#app');

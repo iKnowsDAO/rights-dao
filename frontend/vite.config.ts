@@ -92,7 +92,8 @@ export default defineConfig(({ command, mode }) => {
                 // external: ["element-plus"],
                 output: {
                     manualChunks: {
-                        vue: ['vue', 'vue-router', 'vuex'], // 目前打包还是这个最小，还没有 bug
+                        // 每个 '键' 都表示一个分包块，'值' 包含列出的模块及其所有依赖项
+                        vue: ['vue', 'vue-router', 'pinia'], // 目前打包还是这个最小，还没有 bug
                         'element-plus': ['element-plus'],
                     },
                     // manualChunks(id) {

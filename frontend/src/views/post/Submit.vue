@@ -90,7 +90,8 @@
                 </el-col>
             </el-row>
             <div style="text-align: center" class="form-footer">
-                <el-button type="primary" class="submit-button" @click="submit(ruleFormRef)" :loading="loading">提交
+                <el-button type="primary" class="submit-button" @click="submit(ruleFormRef)" :loading="loading">
+                    {{t('post.submit')}}
                 </el-button>
             </div>
         </div>
@@ -98,23 +99,23 @@
 </template>
 
 <script lang="ts" setup>
-    import {ref, onMounted, watch, computed, nextTick} from 'vue';
+    import { ref, onMounted, watch, computed, nextTick } from 'vue';
     import Navigator from '@/components/navigator/Navigator.vue';
     import {
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
         ElDatePicker, ElLoading
     } from 'element-plus/es';
-    import {Close} from '@element-plus/icons-vue';
-    import type {FormInstance, FormRules} from 'element-plus'
-    import {t} from '@/locale';
-    import {Quill, QuillEditor} from '@vueup/vue-quill';
+    import { Close } from '@element-plus/icons-vue';
+    import type { FormInstance, FormRules } from 'element-plus'
+    import { t } from '@/locale';
+    import { Quill, QuillEditor } from '@vueup/vue-quill';
     import ImageUploader from "quill-image-uploader";
-    import {useRouter} from 'vue-router';
-    import {submitPost} from "@/api/post";
-    import {goBack} from "@/router/routers";
-    import {showMessageError, showMessageSuccess} from "@/utils/message";
-    import {calculatedICPIdLength, uploadImage} from "@/utils/images";
-    import { useUserStore } from "@/store/user";
+    import { useRouter } from 'vue-router';
+    import { submitPost } from "@/api/post";
+    import { goBack } from "@/router/routers";
+    import { showMessageError, showMessageSuccess } from "@/utils/message";
+    import { calculatedICPIdLength, uploadImage } from "@/utils/images";
+    import { useUserStore } from "@/stores/user";
 
     const userStore = useUserStore();
     const router = useRouter();
@@ -207,7 +208,7 @@
     const saveDraftBox = () => {
         //存草稿箱
         if (showEditorLength.value > 0) {
-            localStorage.setItem('postDraftBox', JSON.stringify(form.value));
+            localStorage.setItem('postDraftBox', JSON.stringify({form: form.value, time: new Date().toLocaleString()}));
         }
     }
 
@@ -219,7 +220,8 @@
         }
         const postDraftBox = JSON.parse(item);
         if (postDraftBox && myTextEditor.value) {
-            form.value = postDraftBox;
+            form.value = postDraftBox.form;
+            showMessageSuccess(t('post.draft.get') + postDraftBox.time)
             myTextEditor.value.setHTML(form.value.content.content);
         }
     }

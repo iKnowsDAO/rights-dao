@@ -178,7 +178,7 @@
     import {editUserSelf, getTargetUser, getTargetUserNewCache, getUserReputation} from "@/api/user";
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {toClipboard} from "@soerenmartius/vue3-clipboard";
-    import { useUserStore } from "@/store/user";
+    import { useUserStore } from "@/stores/user";
 
     const userStore = useUserStore();
     const router = useRouter();

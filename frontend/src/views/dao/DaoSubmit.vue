@@ -95,7 +95,8 @@
                 </el-col>
             </el-row>
             <div style="text-align: center" class="form-footer">
-                <el-button type="primary" class="submit-button" @click="submit(ruleFormRef)" :loading="loading">提交
+                <el-button type="primary" class="submit-button" @click="submit(ruleFormRef)" :loading="loading">
+                    {{t('post.submit')}}
                 </el-button>
             </div>
         </div>
@@ -114,14 +115,14 @@
     import {SupportedLocale, t} from '@/locale';
     import {Quill, QuillEditor} from '@vueup/vue-quill';
     import ImageUploader from "quill-image-uploader";
-    import {useRoute, useRouter} from 'vue-router';
+    import {useRouter} from 'vue-router';
     import en from 'element-plus/lib/locale/lang/en';
     import zhCn from 'element-plus/lib/locale/lang/zh-cn';
     import {goBack} from "@/router/routers";
     import {showMessageError, showMessageSuccess, showResultError} from "@/utils/message";
     import {calculatedICPIdLength, uploadImage} from "@/utils/images";
     import {addDaoProposal} from "@/api/dao";
-    import { useUserStore } from "@/store/user";
+    import { useUserStore } from "@/stores/user";
 
     const userStore = useUserStore();
     const router = useRouter();

@@ -11,7 +11,7 @@
 <script lang="ts" setup>
     import {ref, defineProps, onMounted, computed} from 'vue';
     import {cancelLike, isLikedPost, likePost} from "@/api/post";
-    import { useUserStore } from "@/store/user";
+    import { useUserStore } from "@/stores/user";
 
     const userStore = useUserStore();
     const props = defineProps({

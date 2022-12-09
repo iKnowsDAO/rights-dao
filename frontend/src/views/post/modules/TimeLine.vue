@@ -159,7 +159,7 @@
     import {showMessageError, showMessageSuccess} from "@/utils/message";
     import {ApiPostTimeline} from "@/api/types";
     import {getTimeF} from "@/utils/dates";
-    import { useUserStore } from "@/store/user";
+    import { useUserStore } from "@/stores/user";
 
     const userStore = useUserStore();
     const locale = computed(() => userStore.getLocale);

@@ -39,7 +39,15 @@ export class IdentityInfo {
 // 通过客户端对象判断是否已经登录，如果登录记录登录信息
 export async function initAuth(): Promise<AuthInfo> {
     if (null == client) {
-        client = await AuthClient.create(); // 创建链接对象
+        client = await AuthClient.create({
+            idleOptions:{
+                // idleTimeout:1000 * 20, //设置闲置超时时间
+                disableIdle: true, //设置为true禁用检测闲置行为
+                onIdle() {
+                    //检测到闲置时的回调，默认为登出并且刷新页面，假如有此方法则会替代原来的方法
+                },
+            }
+        }); // 创建链接对象;
         // 链接对象已经准备好
         clientReady.value = true;
     }

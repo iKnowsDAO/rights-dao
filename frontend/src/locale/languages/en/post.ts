@@ -19,6 +19,7 @@ export default {
     comments: "Comments",
     commentPlaceholder: "Please enter your comment...",
     submitComment: "Submit Comment",
+    submit: "Submit",
     item: " ",
     joined: "Joined",
     public: {
@@ -26,6 +27,9 @@ export default {
         text: "iKnows is a decentralized application platform built on the Internet Computer (IC), based on the IC network, with knowledge as the core, and through a social approach." +
             "Users interact on iKnows without any threshold, including but not limited to spreading knowledge, asking questions, " +
             "solving others' problems, etc. Because of the special nature of IC, users do not need to pay any fees. If needed, professional assistance and financial support can be obtained from the platform through the Decentralized Autonomous Organization (DAO) proposal."
+    },
+    draft: {
+        get: "Restore Unpublished Drafts......"
     },
     help: {
         search: "Search Title and Content",

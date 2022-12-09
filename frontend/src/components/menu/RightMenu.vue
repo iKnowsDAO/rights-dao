@@ -45,16 +45,16 @@
 </template>
 
 <script lang="ts" setup>
-    import {defineProps, computed, onMounted, ref} from 'vue';
-    import {ElButton, ElCard, ElIcon, ElDivider,ElSkeleton} from 'element-plus/es';
-    import {Opportunity} from '@element-plus/icons-vue';
+    import { defineProps, computed, onMounted, ref } from 'vue';
+    import { ElButton, ElCard, ElIcon, ElDivider, ElSkeleton } from 'element-plus/es';
+    import { Opportunity } from '@element-plus/icons-vue';
     import Footer from '@/components/footer/Footer.vue';
-    import {t} from '@/locale';
-    import {useRouter} from 'vue-router';
-    import {showAdmin} from "@/common/auth";
-    import {getTopLikePosts} from "@/api/post";
-    import {ApiPost} from "@/api/types";
-    import { useUserStore } from "@/store/user";
+    import { t } from '@/locale';
+    import { useRouter } from 'vue-router';
+    import { showAdmin } from "@/common/auth";
+    import { getTopLikePosts } from "@/api/post";
+    import { ApiPost } from "@/api/types";
+    import { useUserStore } from "@/stores/user";
 
     const userStore = useUserStore();
     const router = useRouter();

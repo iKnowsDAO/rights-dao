@@ -19,11 +19,15 @@ export default {
     commentPlaceholder: "请输入你的评论...",
     comments: "评论",
     submitComment: "提交评论",
+    submit: "提交",
     item: "条",
     joined: "加入于",
     public: {
         hello: "欢迎来到iKnows",
         text: "iKnows构建在 Internet Computer（简称IC）上，基于IC网络以知识为核心，通过社交的方式打造的去中心化应用平台。用户在iKnows上进行无门槛互动，包括但不限于传播知识，提出问题，解决他人问题等，不需要支付任何费用，如果有需要，可以通过去中心化自治组织（DAO）从平台中获取专业人士的协助和资金支持。",
+    },
+    draft: {
+        get: "恢复未发布的草稿......"
     },
     help: {
         search: "搜索标题和内容",

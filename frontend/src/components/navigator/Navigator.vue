@@ -136,7 +136,7 @@
     import {UserInfoElement} from "@/types/user";
     import {showUsername} from "@/common/utils";
     import {showAdmin} from "@/common/auth";
-    import { useUserStore } from "@/store/user";
+    import { useUserStore } from "@/stores/user";
     const router = useRouter();
     const userStore = useUserStore();
     const props = defineProps({

@@ -5,7 +5,7 @@
 <script lang="ts" setup>
 import { onMounted, computed } from 'vue';
 import { changeLanguage } from './locale';
-import { useUserStore } from "@/store/user";
+import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
 const locale = computed(() => userStore.getLocale);

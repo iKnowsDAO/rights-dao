@@ -35,7 +35,7 @@
                                                 item.authorData.name : item.author.toString()"
                                             :principalId=item.author.toString()
                                             :clickable="false"
-                                            :size="60"/>
+                                            :size="avatarSize"/>
                                     <div class="text">
                                         <div class="title">
                                             <span @click="onClick(Number(item.id))">{{item.title}}</span>
@@ -74,6 +74,37 @@
                                 </div>
                             </div>
                         </el-card>
+                        <el-skeleton :loading="pageLoading" animated>
+                            <template #template>
+                                <el-card class="post-card" v-for="item in 5" style="cursor: default">
+                                    <el-row justify="space-between">
+                                        <el-col :span="24" class="card-info">
+                                            <el-skeleton-item variant="circle"
+                                                              :style="{width: avatarSize+'px',height:avatarSize+'px'}"/>
+                                            <div class="text" style="width: 70%">
+                                                <div class="title">
+                                                    <el-skeleton-item variant="h1" style="width: 60%"/>
+                                                </div>
+                                                <div class="info">
+                                                    <el-skeleton-item variant="h3" style="width: 30%"/>
+                                                </div>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+                                    <div class="content">
+                                        <el-skeleton-item variant="h3" style="width: 50%"/>
+                                    </div>
+                                    <div class="footer">
+                                        <div>
+                                            <el-skeleton-item variant="h3" style="width: 30px;height: 20px"/>
+                                        </div>
+                                        <div class="reply">
+                                            <el-skeleton-item variant="h3" style="width: 51px"/>
+                                        </div>
+                                    </div>
+                                </el-card>
+                            </template>
+                        </el-skeleton>
                         <el-row :class="{ empty: list.length === 0 }" justify="center" class="loading-tip">
                             <div class="note" v-if="pageLoading">
                                 {{ $t('common.loading') }}
@@ -92,8 +123,8 @@
     </div>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, computed} from 'vue';
-    import {t} from '@/locale';
+    import { ref, onMounted, computed } from 'vue';
+    import { t } from '@/locale';
     import {
         ElRow,
         ElCol,
@@ -104,24 +135,27 @@
         ElIcon,
         ElDivider,
         ElMenu,
-        ElMenuItem
+        ElMenuItem,
+        ElSkeleton,
+        ElSkeletonItem
     } from 'element-plus/es';
-    import {Search, Opportunity} from '@element-plus/icons-vue'
+    import { Search } from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
     import CategoryButton from '@/components/common/CategoryButton.vue';
     import LikeButton from '@/components/common/LikeButton.vue';
     import RightMenu from '@/components/menu/RightMenu.vue';
-    import {useRoute, useRouter} from 'vue-router';
-    import {getTimeF} from "@/utils/dates";
-    import {getPostPage} from "@/api/post";
-    import {ApiPost} from "@/api/types";
-    import {cleanHtml} from "@/common/utils";
-    import {getTargetUser} from "@/api/user";
+    import { useRouter } from 'vue-router';
+    import { getTimeF } from "@/utils/dates";
+    import { getPostPage } from "@/api/post";
+    import { ApiPost } from "@/api/types";
+    import { cleanHtml } from "@/common/utils";
+    import { getTargetUser } from "@/api/user";
 
     const router = useRouter();
 
     const search = ref("");
+    const avatarSize = 60;
     const pageSize = ref(5);
     const pageNum = ref(0);
     const totalCount = ref(0);
@@ -197,14 +231,14 @@
         let category;
         //当board=''时，加载[]，而不是['']
         board.value ? category = [board.value] : category = [];
-        console.log("post",pageNum.value, pageSize.value, search.value, category)
+        console.log("post", pageNum.value, pageSize.value, search.value, category)
         getPostPage(pageNum.value, pageSize.value, search.value, category).then(res => {
-            console.log("post",res)
+            console.log("post", res)
             if (res.Ok) {
                 //防止用户快速切换板块，导致bug。只有在category（运行方法时的板块值）等于board.value（现在的板块值）相等时才清空
                 if (board.value ? category.toString() == [board.value].toString() : category.length == 0) {
                     //分页加载时不执行清空list操作
-                    if(isClean){
+                    if (isClean) {
                         list.value = [];
                     }
                 } else {
@@ -315,9 +349,7 @@
                     display: -webkit-box;
                     -webkit-line-clamp: 6;
                     -webkit-box-orient: vertical;
-                    &:hover {
-                        cursor: pointer;
-                    }
+                    /*cursor: pointer;*/
                 }
                 .footer {
                     display: flex;

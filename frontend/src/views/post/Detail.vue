@@ -25,7 +25,7 @@
     import {goBack} from "@/router/routers";
     import {showMessageError} from "@/utils/message";
     import {t} from "@/locale";
-    import { useUserStore } from "@/store/user";
+    import { useUserStore } from "@/stores/user";
 
     const route = useRoute();
     const router = useRouter();
