@@ -1,10 +1,8 @@
-
 use std::collections::BTreeMap;
 
 use candid::Principal;
 
 use super::{domain::*, error::GovernanceError};
-
 
 #[derive(Debug, Default)]
 pub struct GovernanceService {
@@ -13,26 +11,33 @@ pub struct GovernanceService {
 }
 
 impl GovernanceService {
-    pub fn insert_proposal(&mut self, proposal: GovernanceProposal) -> Result<u64, GovernanceError> {
+    pub fn insert_proposal(
+        &mut self,
+        proposal: GovernanceProposal,
+    ) -> Result<u64, GovernanceError> {
         let proposal_id = proposal.id;
         match self.proposals.get(&proposal_id) {
             Some(_) => Err(GovernanceError::ProposalAlreadyExists),
-            None => {             
+            None => {
                 self.proposals.insert(proposal_id, proposal);
-                Ok(proposal_id)            
+                Ok(proposal_id)
             }
         }
     }
 
-    pub fn vote_proposal(&mut self, cmd: GovernanceVoteCommand) -> Result<ProposalState, GovernanceError> {
-        let proposal = self.proposals
+    pub fn vote_proposal(
+        &mut self,
+        cmd: GovernanceVoteCommand,
+    ) -> Result<ProposalState, GovernanceError> {
+        let proposal = self
+            .proposals
             .get_mut(&cmd.proposal_id)
             .ok_or(GovernanceError::ProposalNotFound)?;
-        
+
         if proposal.state != ProposalState::Open {
             return Err(GovernanceError::ProposalStateNotOpen);
         }
-        
+
         if proposal.contains_voter(&cmd.voter) {
             return Err(GovernanceError::VoterAlreadyVoted);
         }
@@ -42,10 +47,8 @@ impl GovernanceService {
         proposal.voters.push(cmd);
 
         proposal.refresh_state();
-        
 
         Ok(proposal.state.clone())
-        
     }
 
     pub fn get_proposal(&self, id: &u64) -> Option<GovernanceProposal> {
@@ -57,7 +60,7 @@ impl GovernanceService {
         self.proposals
             .values_mut()
             .filter(|p| p.state == ProposalState::Open && p.get_deadline() < current_time)
-            .for_each(|p| p.state = ProposalState::Rejected );
+            .for_each(|p| p.state = ProposalState::Rejected);
     }
 
     // 获取 被接受的提案列表
@@ -65,7 +68,10 @@ impl GovernanceService {
         self.proposals
             .values_mut()
             .filter(|p| p.state == ProposalState::Accepted)
-            .map(|p| { p.state = ProposalState::Executing; p.clone() })
+            .map(|p| {
+                p.state = ProposalState::Executing;
+                p.clone()
+            })
             .collect()
     }
 
@@ -78,14 +84,15 @@ impl GovernanceService {
 
     // 分页查询 proposal
     pub fn page_proposals(&self, q: GovernanceProposalPageQuery) -> GovernanceProposalPage {
-        let mut data: Vec<GovernanceProposal> = self.proposals
+        let mut data: Vec<GovernanceProposal> = self
+            .proposals
             .iter()
             .filter(|(_, p)| p.proposer.to_string().contains(q.querystring.as_str()))
             .map(|(_, q)| q.clone())
             .collect();
 
         data.sort_by(|c1, c2| c2.created_at.cmp(&c1.created_at));
-            
+
         let data = data
             .iter()
             .skip(q.page_num * q.page_size)
@@ -94,7 +101,7 @@ impl GovernanceService {
             .collect();
 
         let total_count = self.proposals.len();
-        
+
         GovernanceProposalPage {
             data,
             page_size: q.page_size,
@@ -110,16 +117,19 @@ impl GovernanceService {
     pub fn delete_member(&mut self, member: GovernanceMember) {
         self.members.remove(&member.id);
     }
-    
+
     pub fn get_member(&self, id: &Principal) -> Option<GovernanceMember> {
         self.members.get(id).cloned()
     }
 
-    pub fn get_proposal_vote(&self, proposal_id: &u64, voter: &Principal) -> Result<u64, GovernanceError> {
+    pub fn get_proposal_vote(
+        &self,
+        proposal_id: &u64,
+        voter: &Principal,
+    ) -> Result<u64, GovernanceError> {
         match self.proposals.get(proposal_id) {
             None => Err(GovernanceError::ProposalNotFound),
             Some(p) => Ok(p.get_weight_by_voter(voter).unwrap_or(0)),
         }
     }
-
 }

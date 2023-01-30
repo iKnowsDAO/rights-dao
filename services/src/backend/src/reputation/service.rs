@@ -1,13 +1,8 @@
-
-
 use std::collections::{BTreeMap, BTreeSet};
 
 use candid::Principal;
 
-use super::{
-    domain::{ReputationSummary, ReputationEvent}
-};
-
+use super::domain::{ReputationEvent, ReputationSummary};
 
 #[derive(Debug, Default)]
 pub struct ReputationService {
@@ -16,13 +11,15 @@ pub struct ReputationService {
 }
 
 impl ReputationService {
-
     pub fn insert_reputation(&mut self, rs: ReputationSummary) {
         self.summaries.insert(rs.id, rs);
     }
-    
+
     pub fn get_reputation(&self, user: &Principal) -> ReputationSummary {
-        self.summaries.get(user).cloned().unwrap_or(ReputationSummary::new(*user))
+        self.summaries
+            .get(user)
+            .cloned()
+            .unwrap_or(ReputationSummary::new(*user))
     }
 
     pub fn get_reputations(&self, users: &BTreeSet<Principal>) -> Vec<ReputationSummary> {
@@ -36,9 +33,11 @@ impl ReputationService {
     pub fn handle_reputation_event(&mut self, event: ReputationEvent) -> bool {
         self.events.insert(event.id, event.clone());
         let user = event.operator;
-        *self.summaries.entry(user).or_insert_with(|| ReputationSummary::new(user)) += event.amount;
-        
+        *self
+            .summaries
+            .entry(user)
+            .or_insert_with(|| ReputationSummary::new(user)) += event.amount;
+
         true
     }
 }
-

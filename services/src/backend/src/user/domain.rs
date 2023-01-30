@@ -1,4 +1,3 @@
-
 use candid::{CandidType, Deserialize, Principal};
 
 use super::error::UserError;
@@ -9,7 +8,7 @@ pub type Timestamp = u64;
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct UserProfile {
     pub id: UserId,
-    pub owner: Principal,     // 用户 Principal
+    pub owner: Principal, // 用户 Principal
     pub email: String,
     pub name: String,
     pub avatar_id: u64,
@@ -31,9 +30,20 @@ pub struct UserProfile {
 //     }
 // }
 impl UserProfile {
-    pub fn new(id: UserId, owner: Principal, email: String, name: String, 
-            avatar_id: u64, avatar_uri: String, biography: String, interests: Vec<String>,
-            location: String, memo: String, status: UserStatus, created_at: u64) -> Self {
+    pub fn new(
+        id: UserId,
+        owner: Principal,
+        email: String,
+        name: String,
+        avatar_id: u64,
+        avatar_uri: String,
+        biography: String,
+        interests: Vec<String>,
+        location: String,
+        memo: String,
+        status: UserStatus,
+        created_at: u64,
+    ) -> Self {
         Self {
             id,
             owner,
@@ -82,9 +92,27 @@ pub struct UserRegisterCommand {
 }
 
 impl UserRegisterCommand {
-    pub fn build_profile(self, id: UserId, owner: Principal, status: UserStatus, created_at: u64) -> UserProfile {
-        UserProfile::new(id, owner, self.email, self.name, 0, "".to_string(), "".to_string(),
-        vec![], "".to_string(), self.memo, status, created_at)
+    pub fn build_profile(
+        self,
+        id: UserId,
+        owner: Principal,
+        status: UserStatus,
+        created_at: u64,
+    ) -> UserProfile {
+        UserProfile::new(
+            id,
+            owner,
+            self.email,
+            self.name,
+            0,
+            "".to_string(),
+            "".to_string(),
+            vec![],
+            "".to_string(),
+            self.memo,
+            status,
+            created_at,
+        )
     }
 }
 
@@ -113,7 +141,7 @@ impl UserEditCommand {
 
         if !UserProfile::valid_biography(&self.biography) {
             return Err(UserError::UserBiographyTooLong);
-        } 
+        }
 
         profile.email = self.email;
         profile.name = self.name;

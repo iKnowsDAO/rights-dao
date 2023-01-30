@@ -1,8 +1,7 @@
-
 use candid::{CandidType, Deserialize};
 
 #[derive(Debug, Clone, CandidType, Deserialize)]
-pub enum GovernanceError { 
+pub enum GovernanceError {
     ProposalNotFound,
     ProposalAlreadyExists,
     ProposalStateNotOpen,
@@ -14,8 +13,8 @@ pub enum GovernanceError {
     MemberNotFound,
     ExecutingProposalUnAuthorized,
     MemberAlreadyExists,
-    UserNotFound, // 提案不存在的用户成为 Governance member
-    CandidatePrincipalFormatInvalid,    // 提案候选人的 Principal 格式无效
+    UserNotFound,                    // 提案不存在的用户成为 Governance member
+    CandidatePrincipalFormatInvalid, // 提案候选人的 Principal 格式无效
     GovernanaceMemberActionFormatInvalid,
     ProposalDeadlineOutOfDate,
     VoterPrincipalWrongFormat,

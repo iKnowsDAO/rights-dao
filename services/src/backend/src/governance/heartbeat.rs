@@ -1,9 +1,11 @@
-
 use ic_cdk_macros::heartbeat;
 
 use crate::CONTEXT;
 
-use super::domain::{GovernanceProposal, ProposalState, ProposalExecuteArgs, GovernanceMember, GovernanceMemberAction};
+use super::domain::{
+    GovernanceMember, GovernanceMemberAction, GovernanceProposal, ProposalExecuteArgs,
+    ProposalState,
+};
 
 #[heartbeat]
 async fn heartbeat() {
@@ -25,10 +27,14 @@ async fn execute_accepted_governance_member_proposals() {
     for proposal in accepted_proposals {
         let state = match execute_governance_member_proposal(proposal.clone()).await {
             Ok(()) => ProposalState::Succeeded,
-            Err(msg) => ProposalState::Failed(msg)
+            Err(msg) => ProposalState::Failed(msg),
         };
 
-        CONTEXT.with(|c| c.borrow_mut().governance_service.update_proposal_state(proposal.id, state))
+        CONTEXT.with(|c| {
+            c.borrow_mut()
+                .governance_service
+                .update_proposal_state(proposal.id, state)
+        })
     }
 }
 
@@ -50,8 +56,8 @@ async fn execute_governance_member_proposal(proposal: GovernanceProposal) -> Res
     //             code, msg
     //         )
     //     })
-    //     .map(|_| ()) 
-    
+    //     .map(|_| ())
+
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
         // let ProposalExecuteArgs::AddGovernanceMember(cmd) = proposal.payload.execute_args;
@@ -61,12 +67,12 @@ async fn execute_governance_member_proposal(proposal: GovernanceProposal) -> Res
             id: cmd.id,
             created_at: ctx.env.now(),
         };
-        
+
         match cmd.action {
             GovernanceMemberAction::Add => ctx.governance_service.insert_member(member),
             GovernanceMemberAction::Delete => ctx.governance_service.delete_member(member),
         }
-        
+
         Ok(())
     })
 }
@@ -75,6 +81,7 @@ async fn execute_expired_governance_member_proposals() {
     CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
         let current_time = ctx.env.now();
-        ctx.governance_service.set_expired_open_proposals_rejected(current_time);
+        ctx.governance_service
+            .set_expired_open_proposals_rejected(current_time);
     })
 }

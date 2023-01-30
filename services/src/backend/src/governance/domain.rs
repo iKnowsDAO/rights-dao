@@ -1,6 +1,7 @@
-
-use std::{ops::{Add, AddAssign, SubAssign, Mul}, str::FromStr};
-
+use std::{
+    ops::{Add, AddAssign, Mul, SubAssign},
+    str::FromStr,
+};
 
 use candid::{CandidType, Deserialize, Principal};
 
@@ -41,14 +42,13 @@ pub struct GovernanceMemberAddArgs {
     pub action: GovernanceMemberAction,
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)] 
+#[derive(Debug, Clone, CandidType, Deserialize)]
 pub enum GovernanceMemberAction {
     Add,
     Delete,
 }
 
 impl FromStr for GovernanceMemberAction {
-
     type Err = GovernanceError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -61,32 +61,30 @@ impl FromStr for GovernanceMemberAction {
 }
 
 impl TryFrom<GovernanceMemberAddCommand> for GovernanceMemberAddArgs {
-
     type Error = GovernanceError;
 
     fn try_from(cmd: GovernanceMemberAddCommand) -> Result<Self, Self::Error> {
-
         let candidate = Principal::from_text(cmd.id)
             .map_err(|_| GovernanceError::CandidatePrincipalFormatInvalid)?;
-        
+
         let action = cmd.action.parse()?;
 
-        Ok(Self { 
-            id: candidate, 
-            title: cmd.title, 
-            content: cmd.content, 
+        Ok(Self {
+            id: candidate,
+            title: cmd.title,
+            content: cmd.content,
             deadline: cmd.deadline,
-            action
+            action,
         })
     }
 }
 
 impl ProposalPayloadBuilder for GovernanceMemberAddArgs {
     fn build_proposal_payload(self) -> ProposalPayload {
-        ProposalPayload { 
-            // canister_id, 
+        ProposalPayload {
+            // canister_id,
             // method,
-            execute_args: ProposalExecuteArgs::AddGovernanceMember(self)
+            execute_args: ProposalExecuteArgs::AddGovernanceMember(self),
         }
     }
 }
@@ -105,14 +103,13 @@ pub struct GovernanceProposal {
 }
 
 impl GovernanceProposal {
-
     pub fn calc(&mut self, vote: &Vote, weights: Weights) {
         match vote {
             Vote::Yes => self.votes_yes += weights,
             Vote::No => self.votes_no += weights,
         }
     }
-    
+
     pub fn refresh_state(&mut self) {
         if self.votes_yes > self.vote_threshold {
             self.state = ProposalState::Accepted;
@@ -137,7 +134,7 @@ impl GovernanceProposal {
 
     pub fn get_deadline(&self) -> u64 {
         match &self.payload.execute_args {
-            ProposalExecuteArgs::AddGovernanceMember(add) => add.deadline
+            ProposalExecuteArgs::AddGovernanceMember(add) => add.deadline,
         }
     }
 }
@@ -161,9 +158,15 @@ pub trait ProposalPayloadBuilder {
 }
 
 impl ProposalPayload {
-    pub fn build_proposal(self, id: u64, proposer: Principal, vote_threshold: Weights, created_at: Timestamp) -> GovernanceProposal {
-        GovernanceProposal { 
-            id, 
+    pub fn build_proposal(
+        self,
+        id: u64,
+        proposer: Principal,
+        vote_threshold: Weights,
+        created_at: Timestamp,
+    ) -> GovernanceProposal {
+        GovernanceProposal {
+            id,
             proposer,
             payload: self,
             state: ProposalState::Open,
@@ -227,7 +230,9 @@ impl Add for Weights {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
-        Weights { amount: self.amount + other.amount }
+        Weights {
+            amount: self.amount + other.amount,
+        }
     }
 }
 
@@ -246,7 +251,9 @@ impl SubAssign for Weights {
 impl Mul<u64> for Weights {
     type Output = Weights;
     fn mul(self, rhs: u64) -> Self {
-        Weights { amount: self.amount * rhs }
+        Weights {
+            amount: self.amount * rhs,
+        }
     }
 }
 

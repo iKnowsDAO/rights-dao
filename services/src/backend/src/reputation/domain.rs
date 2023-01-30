@@ -1,4 +1,3 @@
-
 use std::ops::{Add, AddAssign};
 
 use candid::{CandidType, Deserialize, Principal};
@@ -9,12 +8,14 @@ use candid::{CandidType, Deserialize, Principal};
 pub struct ReputationSummary {
     pub id: Principal,
     pub amount: u64,
-
 }
 
 impl ReputationSummary {
     pub fn new(user: Principal) -> Self {
-        Self { id: user, amount: 0 }
+        Self {
+            id: user,
+            amount: 0,
+        }
     }
 }
 
@@ -31,9 +32,10 @@ impl Add<u64> for ReputationSummary {
 
 impl AddAssign<u64> for ReputationSummary {
     fn add_assign(&mut self, other: u64) {
-        *self = Self { 
-            id: self.id, 
-            amount: self.amount + other }
+        *self = Self {
+            id: self.id,
+            amount: self.amount + other,
+        }
     }
 }
 
@@ -55,8 +57,20 @@ pub struct ReputationEvent {
 }
 
 impl ReputationEvent {
-    pub fn new(id: u64, operator: Principal, action: ReputationAction, amount: u64, created_at: u64) -> Self {
-        Self { id, operator, action, amount, created_at }
+    pub fn new(
+        id: u64,
+        operator: Principal,
+        action: ReputationAction,
+        amount: u64,
+        created_at: u64,
+    ) -> Self {
+        Self {
+            id,
+            operator,
+            action,
+            amount,
+            created_at,
+        }
     }
 }
 
@@ -75,7 +89,7 @@ pub struct ReputationGetQuery {
     pub user: String,
 }
 
-#[cfg(test)] 
+#[cfg(test)]
 mod tests {
 
     use super::*;
@@ -84,14 +98,16 @@ mod tests {
     fn reputation_summary_add_u64_should_work() {
         let user = Principal::anonymous();
         let amount = 20u64;
-        let mut rm = ReputationSummary {
-            id: user,
-            amount,
-        };
+        let mut rm = ReputationSummary { id: user, amount };
 
         rm += amount;
 
-        assert_eq!(rm, ReputationSummary { id: user, amount: amount * 2 });
-
+        assert_eq!(
+            rm,
+            ReputationSummary {
+                id: user,
+                amount: amount * 2
+            }
+        );
     }
 }
