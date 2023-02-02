@@ -60,4 +60,22 @@ impl UserService {
             })
             .map(|_| true)
     }
+
+    pub fn update_wallet(&mut self, user: &Principal, wallet: Principal) -> Option<bool> {
+        self.users
+            .get_mut(user)
+            .map(|profile| {
+                profile.wallet_principal = Some(wallet);
+            })
+            .map(|_| true)
+    }
+
+    pub fn delete_wallet(&mut self, user: &Principal) -> Option<bool> {
+        self.users
+            .get_mut(user)
+            .map(|profile| {
+                profile.wallet_principal = None;
+            })
+            .map(|_| true)
+    }
 }

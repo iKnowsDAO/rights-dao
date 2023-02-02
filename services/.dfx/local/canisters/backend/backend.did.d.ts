@@ -341,6 +341,10 @@ export type UserResult = { 'Ok' : UserProfile } |
   { 'Err' : UserError };
 export type UserStatus = { 'Enable' : null } |
   { 'Disable' : null };
+export interface UserWalletUpdateCommand {
+  'user' : Principal,
+  'wallet' : Principal,
+}
 export type Vote = { 'No' : null } |
   { 'Yes' : null };
 export interface VoteArgs { 'vote' : Vote, 'proposal_id' : bigint }
@@ -367,6 +371,7 @@ export interface _SERVICE {
   'delete_post_answer_comment' : (arg_0: PostAnswerCommentCommand) => Promise<
       BoolPostResult
     >,
+  'delete_wallet' : () => Promise<BoolPostResult>,
   'disable_user' : (arg_0: Principal) => Promise<BoolUserResult>,
   'edit_post' : (arg_0: PostEditCommand) => Promise<BoolPostResult>,
   'edit_user' : (arg_0: UserEditCommand) => Promise<BoolUserResult>,
@@ -421,5 +426,6 @@ export interface _SERVICE {
       arg_0: GovernanceMemberAddCommand,
     ) => Promise<ProposalSubmitResult>,
   'submit_post_answer' : (arg_0: PostAnswerCommand) => Promise<BoolPostResult>,
+  'update_wallet' : (arg_0: UserWalletUpdateCommand) => Promise<BoolUserResult>,
   'vote_governance_proposal' : (arg_0: VoteArgs) => Promise<VoteResult>,
 }

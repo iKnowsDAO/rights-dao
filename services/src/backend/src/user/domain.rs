@@ -19,6 +19,7 @@ pub struct UserProfile {
     pub memo: String,
     pub status: UserStatus,
     pub created_at: Timestamp,
+    pub wallet_principal: Option<Principal>,
 }
 
 // impl Default for UserProfile {
@@ -57,6 +58,7 @@ impl UserProfile {
             memo,
             status,
             created_at,
+            wallet_principal: None,
         }
     }
 
@@ -65,7 +67,7 @@ impl UserProfile {
     }
 
     pub fn valid_email(email: &str) -> bool {
-        email_address::EmailAddress::is_valid(&email) && (email.chars().count() <= 50)
+        email_address::EmailAddress::is_valid(email) && (email.chars().count() <= 50)
     }
 
     pub fn valid_biography(biography: &str) -> bool {
@@ -127,6 +129,12 @@ pub struct UserEditCommand {
     pub memo: String,
     pub location: String,
     pub status: UserStatus,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct UserWalletUpdateCommand {
+    pub user: Principal,
+    pub wallet: Principal,
 }
 
 impl UserEditCommand {

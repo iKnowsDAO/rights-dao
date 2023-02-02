@@ -515,6 +515,11 @@ type PostAnswerLikeCommand = record {
     answer_id: nat64;
 };
 
+type UserWalletUpdateCommand = record {
+    user: principal;
+    wallet: principal;
+};
+
 type LikeProfileOption = opt LikeProfile;
 
 type LikeProfile = record {
@@ -537,6 +542,8 @@ service : {
     "disable_user" : (principal) -> (BoolUserResult);
     "get_user" : (principal) -> (UserResult);
     "get_self" : () -> (UserResult);
+    "update_wallet" : (UserWalletUpdateCommand) -> (BoolUserResult);
+    "delete_wallet" : () -> (BoolPostResult);
 
     "create_post" : (PostCreateCommand) -> (CreatePostResult);
     "edit_post" : (PostEditCommand) -> (BoolPostResult);
