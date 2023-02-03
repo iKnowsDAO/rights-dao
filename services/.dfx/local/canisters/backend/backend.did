@@ -38,6 +38,7 @@ type UserProfile = record {
     memo : text;
     status : UserStatus;
     created_at : nat64;
+    wallet_principal : opt principal;
 };
 
 type UserStatus = variant {
@@ -543,7 +544,7 @@ service : {
     "get_user" : (principal) -> (UserResult);
     "get_self" : () -> (UserResult);
     "update_wallet" : (UserWalletUpdateCommand) -> (BoolUserResult);
-    "delete_wallet" : () -> (BoolPostResult);
+    "delete_wallet" : (principal) -> (BoolUserResult);
 
     "create_post" : (PostCreateCommand) -> (CreatePostResult);
     "edit_post" : (PostEditCommand) -> (BoolPostResult);

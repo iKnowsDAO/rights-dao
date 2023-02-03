@@ -327,6 +327,7 @@ export interface UserProfile {
   'memo' : string,
   'name' : string,
   'biography' : string,
+  'wallet_principal' : [] | [Principal],
   'created_at' : bigint,
   'email' : string,
   'avatar_id' : bigint,
@@ -371,7 +372,7 @@ export interface _SERVICE {
   'delete_post_answer_comment' : (arg_0: PostAnswerCommentCommand) => Promise<
       BoolPostResult
     >,
-  'delete_wallet' : () => Promise<BoolPostResult>,
+  'delete_wallet' : (arg_0: Principal) => Promise<BoolUserResult>,
   'disable_user' : (arg_0: Principal) => Promise<BoolUserResult>,
   'edit_post' : (arg_0: PostEditCommand) => Promise<BoolPostResult>,
   'edit_user' : (arg_0: UserEditCommand) => Promise<BoolUserResult>,

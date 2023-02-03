@@ -93,7 +93,7 @@ fn disable_user(principal: Principal) -> Result<bool, UserError> {
     })
 }
 
-#[update]
+#[update(guard = "user_owner_guard")]
 fn update_wallet(cmd: UserWalletUpdateCommand) -> Result<bool, UserError> {
     CONTEXT.with(|c| {
         c.borrow_mut()
@@ -103,7 +103,7 @@ fn update_wallet(cmd: UserWalletUpdateCommand) -> Result<bool, UserError> {
     })
 }
 
-#[update]
+#[update(guard = "user_owner_guard")]
 fn delete_wallet(user: Principal) -> Result<bool, UserError> {
     CONTEXT.with(|c| {
         c.borrow_mut()
