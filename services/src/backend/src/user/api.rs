@@ -94,20 +94,23 @@ fn disable_user(principal: Principal) -> Result<bool, UserError> {
 }
 
 #[update(guard = "user_owner_guard")]
-fn update_wallet(cmd: UserWalletUpdateCommand) -> Result<bool, UserError> {
+fn update_wallet(wallet: Principal) -> Result<bool, UserError> {
     CONTEXT.with(|c| {
-        c.borrow_mut()
-            .user_service
-            .update_wallet(&cmd.user, cmd.wallet)
+        let mut ctx = c.borrow_mut();
+        let user = ctx.env.caller();
+
+        ctx.user_service
+            .update_wallet(&user, wallet)
             .ok_or(UserError::UserNotFound)
     })
 }
 
 #[update(guard = "user_owner_guard")]
-fn delete_wallet(user: Principal) -> Result<bool, UserError> {
+fn delete_wallet() -> Result<bool, UserError> {
     CONTEXT.with(|c| {
-        c.borrow_mut()
-            .user_service
+        let mut ctx = c.borrow_mut();
+        let user = ctx.env.caller();
+        ctx.user_service
             .delete_wallet(&user)
             .ok_or(UserError::UserNotFound)
     })

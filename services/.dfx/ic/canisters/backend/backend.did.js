@@ -393,10 +393,6 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : IDL.Nat64,
     'Err' : GovernanceError,
   });
-  const UserWalletUpdateCommand = IDL.Record({
-    'user' : IDL.Principal,
-    'wallet' : IDL.Principal,
-  });
   const VoteArgs = IDL.Record({ 'vote' : Vote, 'proposal_id' : IDL.Nat64 });
   const VoteResult = IDL.Variant({
     'Ok' : ProposalState,
@@ -430,7 +426,7 @@ export const idlFactory = ({ IDL }) => {
         [BoolPostResult],
         [],
       ),
-    'delete_wallet' : IDL.Func([IDL.Principal], [BoolUserResult], []),
+    'delete_wallet' : IDL.Func([], [BoolUserResult], []),
     'disable_user' : IDL.Func([IDL.Principal], [BoolUserResult], []),
     'edit_post' : IDL.Func([PostEditCommand], [BoolPostResult], []),
     'edit_user' : IDL.Func([UserEditCommand], [BoolUserResult], []),
@@ -509,7 +505,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'submit_post_answer' : IDL.Func([PostAnswerCommand], [BoolPostResult], []),
-    'update_wallet' : IDL.Func([UserWalletUpdateCommand], [BoolUserResult], []),
+    'update_wallet' : IDL.Func([IDL.Principal], [BoolUserResult], []),
     'vote_governance_proposal' : IDL.Func([VoteArgs], [VoteResult], []),
   });
 };

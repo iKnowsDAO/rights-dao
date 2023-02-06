@@ -12,6 +12,7 @@ node_modules
 # production
 .dfx/
 !.dfx/
+.dfx/local/
 !.dfx/ic/
 /build
 
