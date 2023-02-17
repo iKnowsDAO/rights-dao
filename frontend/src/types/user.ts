@@ -9,10 +9,12 @@ export class UserInfo {
     status = ''; //用户状态
     create_at = 0; //注册时间
     avatar_id = 0; // 头像 id
+    wallet_principal = ['']; // 用户绑定钱包
 }
 
 export interface UserInfoElement {
     owner?: string;
     name?: string;
+    wallet_principal?: string[];
     avatarId?: number;
 }

@@ -8,7 +8,7 @@
         <!--<a class="icon-link" target="blank" href="https://github.com/dfinity">-->
             <!--<i class="iconfont icon-github"></i>-->
         <!--</a>-->
-        <a class="icon-link" target="blank" href="https://twitter.com/Rights_DAO">
+        <a class="icon-link" target="blank" href="https://twitter.com/iKnowsDAO">
             <i class="iconfont icon-twitter"></i>
         </a>
         <a class="icon-link" target="blank" href="https://discord.gg/3ZUUaaWrSE">

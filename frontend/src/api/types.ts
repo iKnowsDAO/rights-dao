@@ -78,6 +78,7 @@ export type ApiUserInfo = {
     avatar_id: bigint; //头像id，暂时没用
     biography: string; //类似于个人签名
     interests: string[]; //兴趣，类似于标签
+    wallet_principal: string[]; //用户绑定的钱包
 };
 
 export type ApiPost = {

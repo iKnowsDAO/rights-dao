@@ -12,7 +12,9 @@ export const getLocaleStorage = (): string => {
 
 // 本地保存用户信息，没有网络访问时也可以显示
 export const setUserInfoStorage = (user: UserInfo): void => {
-    localStorage.setItem(`USER_${user.owner.toUpperCase()}`, JSON.stringify(user));
+    if(user.owner!==""){
+        localStorage.setItem(`USER_${user.owner.toUpperCase()}`, JSON.stringify(user));
+    }
 };
 // get方法注意缓存清没清
 export const getUserInfoStorage = (principal: string): UserInfo | null => {

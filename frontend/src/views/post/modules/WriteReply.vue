@@ -129,6 +129,8 @@
                 emit('replySuccess');
                 showMessageSuccess(t('message.post.reply'));
                 emit('foldWrite');
+                //将内容清空
+                myTextEditor.value?.setHTML('');
             }
         }).finally(() => {
             loading.value = false;

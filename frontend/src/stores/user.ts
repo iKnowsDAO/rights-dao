@@ -25,12 +25,14 @@ const getUserInfoByState = function (principal: string, user: UserInfo): UserInf
     if (!readUser) {
         readUser = new UserInfo(); // 如果没有就新建一个空的
         readUser.owner = principal;
+        console.log("readUser",readUser)
         setUserInfoStorage(readUser);
     }
     return readUser;
 };
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore({
+    id: "user",
     state: (): UserState => ({
         locale: "",
         principal: "",

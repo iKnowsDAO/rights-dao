@@ -1,6 +1,7 @@
-import {Identity} from '@dfinity/agent';
-import {AuthClient} from '@dfinity/auth-client';
-import {computed, ref} from 'vue';
+import { Identity } from '@dfinity/agent';
+import { AuthClient } from '@dfinity/auth-client';
+import { computed, ref } from 'vue';
+import { deleteUserInfoStorage } from "@/utils/storage";
 
 let client: AuthClient | null = null;
 
@@ -40,7 +41,7 @@ export class IdentityInfo {
 export async function initAuth(): Promise<AuthInfo> {
     if (null == client) {
         client = await AuthClient.create({
-            idleOptions:{
+            idleOptions: {
                 // idleTimeout:1000 * 20, //设置闲置超时时间
                 disableIdle: true, //设置为true禁用检测闲置行为
                 onIdle() {
@@ -116,5 +117,13 @@ export async function signIn(client: AuthClient): Promise<IdentityInfo> {
 
 // 登出动作
 export async function signOut(client: AuthClient): Promise<void> {
-    if (client) await client.logout();
+    if (client) {
+        const isAuthenticated = await client.isAuthenticated();
+        if (isAuthenticated) {
+            // 如果已经登录，则同时移除登录缓存
+            const principal = client.getIdentity().getPrincipal().toString();
+            deleteUserInfoStorage(principal)
+        }
+        await client.logout()
+    }
 }

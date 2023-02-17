@@ -99,7 +99,6 @@
             required: true,
         }
     });
-    const dialogVisible = ref(false);
     const loading = ref(false);
     const deleteLoading = ref(false);
     const replyReply = ref("")

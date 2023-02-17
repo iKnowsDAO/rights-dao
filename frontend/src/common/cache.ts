@@ -40,9 +40,11 @@ export async function getCache(info: {
 }): Promise<any> {
     // 给key增加前缀，以防被覆盖
     const key = 'CACHE_' + info.key;
-    let data = getExpiredData(key, info.isLocal || false);
+    let data;
     if (info.cache == false) {
         data = null; // 如果主动设置了 cache 是 false，那么表明不使用缓存
+    } else {
+        data = getExpiredData(key, info.isLocal || false);
     }
     // data = null; // TODO 测试阶段，关闭缓存
     if (data) {
@@ -117,18 +119,20 @@ const setExpiredData = (key: string, value: any, ttl: number, isLocal: boolean):
     };
     // 2. 将数据存在内存变量里，以便不用每次从 localStorage 中读取
     CACHE_DATA[key] = item;
+
     //定义即将存入localStorage里的对象中每个value的替换方法，setItem时使用
     function replacer(key, value) {
         // console.log("value",value)
         if (typeof value === "bigint") {
-            return Number(value) ;
-        } else if(typeof value === "object" && value?.constructor.name==='Principal'){
+            return Number(value);
+        } else if (typeof value === "object" && value?.constructor.name === 'Principal') {
             // 将Principal格式的value转换为字符串储存
             // 以免JSON.stringify深拷贝时破坏Principal的constructor，导致无法转换成字符串
             return value.toString();
         }
         return value;
     }
+
     // 3. 如果需要存储至 localStorage
     if (isLocal) {
         localStorage.setItem(

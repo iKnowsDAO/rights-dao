@@ -2,7 +2,7 @@ import {getCache, TTL} from '@/common/cache';
 import {getBackend} from "@/api/canister_pool";
 import {ApiPost, ApiPostComments, ApiPostTimeline, ApiResult, ApiResultByPage} from "@/api/types";
 
-// 更新用户自己的信息
+// 发贴
 export async function submitPost(post: any | ApiPost): Promise<ApiResult<boolean>> {
     return getBackend().create_post(post);
 }

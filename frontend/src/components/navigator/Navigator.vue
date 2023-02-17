@@ -77,7 +77,9 @@
                         </div>
                     </div>
                     <!-- username -->
-                    <div class="user" v-if="signedIn">
+                    <div class="user flex-y-center" v-if="signedIn">
+                        <!--<button class="connect-button" @click="connectWallet()">Wallet</button>-->
+                        <WalletButton :userPrincipal="userPrincipal" :userWalletPrincipal="userInfo.wallet_principal[0]"/>
                         <el-dropdown :hide-timeout="80">
                             <span class="username">
                                 {{ showedUsername }}
@@ -120,23 +122,28 @@
             </div>
         </nav>
         <el-backtop />
+        <ConnectDialog />
     </div>
 </template>
 <script lang="ts" setup>
     import { ref, watch, computed, onMounted, defineProps, defineExpose } from 'vue';
     import { languages, SupportedLocale, t } from '@/locale';
     import { ElBacktop, ElMessage, ElDropdown, ElDropdownItem, ElDropdownMenu } from 'element-plus/es';
+    //由于层级原因，connectDialog放在这里不会遮挡导航条，所以放这里。
+    import { ConnectDialog } from "@connect2ic/vue"
+    import "@connect2ic/core/style.css"
+    import WalletButton from './WalletButton.vue'
     import {
         getUserAutoRegister,
     } from '@/api/user';
     import { useRouter } from 'vue-router';
-    import { Auth } from '@/types/auth';
     import {initAuth, signIn, signOut} from "@/api/auth";
     import {clearCurrentIdentity, setCurrentIdentity} from "@/api/canister_pool";
     import {UserInfoElement} from "@/types/user";
     import {showUsername} from "@/common/utils";
     import {showAdmin} from "@/common/auth";
     import { useUserStore } from "@/stores/user";
+    import { showMessageError } from "@/utils/message";
     const router = useRouter();
     const userStore = useUserStore();
     const props = defineProps({
@@ -151,26 +158,10 @@
         },
     });
 
-    const showMessageError = (message: string) =>
-        ElMessage({
-            showClose: true,
-            message,
-            center: true,
-            type: 'error',
-        });
-    const showMessageSuccess = (message: string) =>
-        ElMessage({
-            showClose: true,
-            message,
-            center: true,
-            type: 'success',
-        });
-
     // 与 II 认证相关的信息
-    // let auth = new Auth(); // 不能被 vue 代理，只能放到外面了
     const clientReady = ref(false);
     const signedIn = ref(false); // 是否登录
-    const principal= computed(() => userStore.principal);
+    const userPrincipal = computed(() => userStore.principal);
     const userInfo = computed(() => userStore.user);
 
     const navbarRef = ref<HTMLElement | null>(null); // 导航栏ref属性
@@ -222,7 +213,7 @@
         if (!signedIn.value) return ''; // 没有登录返回空，按道理显示登录按钮不会调用本方法的
         let name = '';
         if (userInfo.value.name) name = userInfo.value.name;
-        return showUsername(name, principal.value);
+        return showUsername(name, userPrincipal.value);
     });
 
     const chooseTab = (i: number, item: { action: string }) => {
@@ -243,12 +234,17 @@
                 if (info.Ok) {
                     let user = info.Ok;
                     user.owner = user.owner.toString();
+                    console.log("user", user)
+                    if (user.wallet_principal.length > 0) {
+                        user.wallet_principal[0] = user.wallet_principal[0].toString()
+                    }
                     //查询用户是否为管理员
                     showAdmin()
                     // 设置用户信息
                     refreshUserInfo({
                         name: user.name,
                         avatarId: Number(user.avatar_id),
+                        wallet_principal:user.wallet_principal
                     });
                 } else if (info.Err && info.Err.unauthorized === null) {
                     console.error('no information for unregister user: ', info);
@@ -263,21 +259,21 @@
     };
 
     const refreshUserInfo = (UserInfoElement: UserInfoElement) => {
+        //刷新的时候把userInfo的数据顺便刷新了。
         if (UserInfoElement.name) userInfo.value.name = UserInfoElement.name;
+        if (UserInfoElement.wallet_principal) userInfo.value.wallet_principal = UserInfoElement.wallet_principal;
         userStore.setUserInfo(UserInfoElement);
     };
 
     const toProfile = () => {
         router.push({
-            path: '/person/profile/' + principal.value,
+            path: '/person/profile/' + userPrincipal.value,
         });
     }
 
     const doInitAuth = () => {
-        console.log("doInitAuth")
         initAuth().then((ai) => {
             clientReady.value = true;
-            console.log("await doInitAuth",ai)
             if (ai.info) {
                 signedIn.value = true;
                 setCurrentIdentity(ai.info.identity, ai.info.principal);
@@ -391,7 +387,7 @@
                     margin-left: 10px;
                     > div {
                         width: auto;
-                        display: inline-block;
+                        /*display: inline-block;*/
                     }
                     .user{
                         line-height: 14px;

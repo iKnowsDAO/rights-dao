@@ -38,7 +38,7 @@
                                             :size="avatarSize"/>
                                     <div class="text">
                                         <div class="title">
-                                            <span @click="onClick(Number(item.id))">{{item.title}}</span>
+                                            <span>{{item.title}}</span>
                                             <span class="post-status enable"
                                                   v-if="item.status.Enable!==undefined">{{t('common.status.enable')}}</span>
                                             <span class="post-status completed"
@@ -62,7 +62,7 @@
                                     <CategoryButton :category="item.category"/>
                                 </el-col>
                             </el-row>
-                            <div @click="onClick(Number(item.id))" class="content">
+                            <div class="content">
                                 {{item.content.content}}
                             </div>
                             <div class="footer">

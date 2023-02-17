@@ -27,6 +27,11 @@
                             <span class="principal" @click="copyPrincipal">{{ targetPrincipal }}</span>
                             <el-icon class="copy" @click="copyPrincipal"><CopyDocument /></el-icon>
                         </el-row>
+                        <el-row v-if="user.wallet_principal[0]">
+                            <el-icon><Wallet /></el-icon>
+                            <span class="principal" @click="copyWalletPrincipal">{{ user.wallet_principal[0] }}</span>
+                            <el-icon class="copy" @click="copyWalletPrincipal"><CopyDocument /></el-icon>
+                        </el-row>
                         <el-row v-if="user.location">
                             <el-icon><LocationFilled/></el-icon>
                             {{user.location}}
@@ -171,7 +176,7 @@
         ElRow, ElCol, ElButton, ElDialog, ElForm, ElFormItem,
         ElInput, ElMessage, ElTag, ElIcon,ElTooltip
     } from 'element-plus/es';
-    import {UserFilled, Message, Comment, Close, StarFilled, LocationFilled, CopyDocument} from '@element-plus/icons-vue';
+    import {UserFilled, Message, Comment, Close, StarFilled, LocationFilled, CopyDocument, Wallet} from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import Navigator from '@/components/navigator/Navigator.vue';
     import {formatDate} from '@/utils/dates';
@@ -202,7 +207,8 @@
         biography: "",
         location: "",
         created_at: 0,
-        interests: []
+        interests: [],
+        wallet_principal: []
     });
     const currentUserPrincipal = computed<string>(() => userStore.principal);
     const targetPrincipal = ref('');
@@ -230,6 +236,17 @@
         try {
             await toClipboard(targetPrincipal.value)
             showMessageSuccess(t('message.copy.success',{item:"Principal"}))
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const copyWalletPrincipal = async () => {
+        try {
+            if(user.value.wallet_principal[0]){
+                await toClipboard(user.value.wallet_principal[0])
+                showMessageSuccess(t('message.copy.success',{item:"Wallet Principal"}))
+            }
         } catch (e) {
             console.error(e)
         }

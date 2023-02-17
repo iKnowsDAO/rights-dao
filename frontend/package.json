@@ -13,8 +13,8 @@
         "report": "cross-env REPORT=true npm run build --mode=production"
     },
     "dependencies": {
-        "@connect2ic/core": "^0.2.0-beta.5",
-        "@connect2ic/vue": "^0.1.1",
+        "@connect2ic/core": "^0.2.0-beta.20",
+        "@connect2ic/vue": "^0.2.0-beta.20",
         "@element-plus/icons-vue": "^1.1.3",
         "@soerenmartius/vue3-clipboard": "^0.1.2",
         "@vueup/vue-quill": "^1.0.0-alpha.40",

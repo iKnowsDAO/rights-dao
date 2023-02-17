@@ -4,6 +4,7 @@
         <div class="container">
             <div class="submit-title">
                 <h3 class="title">
+                    <button @click="transferToken()">test</button>
                     {{ $t('post.help.create') }}
                     <div class="back-button" @click="$router.back()"
                     >{{ '<' }}{{ $t('common.back') }}
@@ -62,6 +63,15 @@
                                 />
                             </el-select>
                         </el-form-item>
+                        <el-form-item label="是否启用悬赏：">
+                            <el-radio-group v-model="isBounty">
+                                <el-radio :label="true">Yes</el-radio>
+                                <el-radio :label="false">No</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="悬赏金额：" v-if="isBounty">
+                            <el-input v-if="isBounty"></el-input>
+                        </el-form-item>
                         <el-form-item v-for="(item, index) in form.participants"
                                       :key="index"
                                       :prop="'participants.' + index"
@@ -103,7 +113,7 @@
     import Navigator from '@/components/navigator/Navigator.vue';
     import {
         ElRow, ElCol, ElButton, ElSelect, ElOption, ElForm, ElFormItem, ElInput, ElMessage, ElConfigProvider,
-        ElDatePicker, ElLoading
+        ElDatePicker, ElLoading, ElRadio, ElRadioGroup
     } from 'element-plus/es';
     import { Close } from '@element-plus/icons-vue';
     import type { FormInstance, FormRules } from 'element-plus'
@@ -116,12 +126,17 @@
     import { showMessageError, showMessageSuccess } from "@/utils/message";
     import { calculatedICPIdLength, uploadImage } from "@/utils/images";
     import { useUserStore } from "@/stores/user";
+    import { useConnect,useBalance } from "@connect2ic/vue";
 
     const userStore = useUserStore();
     const router = useRouter();
 
+    const {isConnected, connect, activeProvider, provider, principal} = useConnect()
+    const [assets, {refetch, error}] = useBalance()
     const currentUserPrincipal = computed<string>(() => userStore.principal);
     const loading = ref(false);
+    //是否启用赏金
+    const isBounty = ref(false);
     //编辑器是否发生变化
     const isEditorChange = ref(false);
     const isEditorErr = ref(false);
@@ -204,6 +219,20 @@
     onMounted(() => {
         init()
     });
+
+    const transferToken = async () => {
+        console.log("isConnected", isConnected.value)
+        if (isConnected.value) {
+            const result = await activeProvider.value.requestTransfer({
+                to: 'kxk63-q3xg5-isdfg-yigvp-rw23t-t264a-zpyhg-x2lcs-y7agd-yqhc7-yae',
+                amount: 0.0001,
+            })
+            refetch();
+            console.log("transfer    end", result)
+        } else {
+            console.error("not connect wallet")
+        }
+    }
 
     const saveDraftBox = () => {
         //存草稿箱

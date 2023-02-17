@@ -1,3 +1,6 @@
+import { toClipboard } from "@soerenmartius/vue3-clipboard";
+import { showMessageSuccess } from "@/utils/message";
+import { t } from "@/locale";
 
 // 统一处理显示用户名的逻辑
 export function showUsername(username: string, principalId: string): string {
@@ -19,4 +22,13 @@ export function cleanHtml(html: string): string {
     // 第二个\/?表示<img/>的情况；
     // /g表示全局替换；
     return html.replace(/<\/?.+?\/?>/g,'');;
+}
+
+// 移除html标签，只保留文本内容
+export function copyUtil(text: string) {
+    toClipboard(text).then(() => {
+        showMessageSuccess(t('message.copy.success', {item: text}))
+    }).catch(e => {
+        console.error(e)
+    })
 }

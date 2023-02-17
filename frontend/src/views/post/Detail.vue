@@ -30,6 +30,7 @@
     const route = useRoute();
     const router = useRouter();
     const userStore = useUserStore();
+
     const postId = Number(route.params.id);
     const currentUserPrincipal = computed<string>(() => userStore.principal);
     // 是否是本人 或者是管理员。关联编辑，删除按钮的显示与否
