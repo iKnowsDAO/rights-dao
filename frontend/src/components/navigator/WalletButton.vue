@@ -5,7 +5,7 @@
         <el-dropdown v-else :hide-timeout="80">
             <button class="connect-button">
                 <img src="@/assets/images/dfinityICON.svg">
-                <span v-if="assets"> {{assets?.find((o) => o.symbol === "ICP").amount}}</span>
+                <span v-if="assets"> {{walletStore.icp}}</span>
                 <span v-else>0</span>
             </button>
             <template #dropdown>
@@ -57,6 +57,7 @@
     import { showMessageSuccess } from "@/utils/message";
     import { t } from "@/locale";
     import { deleteUserInfoStorage } from "@/utils/storage";
+    import { useWalletStore } from "@/stores/wallet";
 
     const props = defineProps({
         // 用户已经绑定的钱包principalId
@@ -70,6 +71,7 @@
         },
     });
 
+    const walletStore = useWalletStore();
     const [walletProvider] = useWallet()
     const {open, close, isOpen} = useDialog()
     const {isConnected, principal, disconnect} = useConnect({
@@ -158,6 +160,18 @@
         () => {
             isBindWallet.value = !!props.userWalletPrincipal
         })
+
+    watch(
+        () => assets,
+        () => {
+            if (assets) {
+                walletStore.icp = assets.value.find((o) => o.symbol === "ICP").amount;
+                if (walletProvider) {
+                    walletStore.principal = walletProvider.value.wallets[0].principal
+                }
+            }
+        },
+        {deep: true})
 
 </script>
 <style lang="scss">

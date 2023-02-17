@@ -221,6 +221,7 @@
     });
 
     const transferToken = async () => {
+
         console.log("isConnected", isConnected.value)
         if (isConnected.value) {
             const result = await activeProvider.value.requestTransfer({
