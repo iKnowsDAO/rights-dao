@@ -62,16 +62,22 @@
                                 </el-button>
                                 <LikeButton :postId="Number(post.id)" :likeCount="Number(post.likes_count)"/>
                             </div>
-                            <div class="right flex-y-center" v-if="isOwner">
+                            <div class="right flex-y-center">
                                 <span v-if="isFold" @click="isFold = !isFold" class="fold">{{t('common.expand')}}</span>
                                 <span v-else @click="isFold = !isFold" class="fold">{{t('common.fold')}}</span>
-                                <DeleteButton :deleteFunction="deleteThisPost" :loading="loading"/>
+                                <DeleteButton v-if="isOwner" :deleteFunction="deleteThisPost" :loading="loading"/>
+                                <el-button v-if="isOwner" @click="dialogVisible=true" type="primary">
+                                    {{t('wallet.reward.add')}}
+                                </el-button>
                             </div>
                         </div>
                     </div>
                 </el-col>
             </el-row>
         </div>
+        <BountyDialog v-model:visible="dialogVisible" :title="t('wallet.reward.title')"
+                      :content="t('wallet.reward.content')"
+                      targetPrincipal="kxk63-q3xg5-isdfg-yigvp-rw23t-t264a-zpyhg-x2lcs-y7agd-yqhc7-yae"/>
     </div>
 </template>
 <script lang="ts" setup>
@@ -83,6 +89,7 @@
     import CategoryButton from '@/components/common/CategoryButton.vue';
     import DeleteButton from '@/components/common/PostDeleteButton.vue';
     import LikeButton from '@/components/common/LikeButton.vue';
+    import BountyDialog from '../../../components/wallet/TransferDialog';
     import {ApiPost, ApiUserInfo} from "@/api/types";
     import {getTargetUser} from "@/api/user";
     import {getTimeF} from "@/utils/dates";
@@ -116,10 +123,6 @@
     onMounted(() => {
         init();
     });
-
-    const fold = () => {
-        isFold.value = !isFold.value;
-    }
 
     const deleteThisPost = (callback) => {
         loading.value = true;
@@ -212,6 +215,11 @@
                 margin-bottom: 15px;
                 display: flex;
                 justify-content: space-between;
+                .right{
+                    button{
+                        margin-left: 5px;
+                    }
+                }
             }
         }
     }

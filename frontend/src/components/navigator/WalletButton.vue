@@ -5,8 +5,7 @@
         <el-dropdown v-else :hide-timeout="80">
             <button class="connect-button">
                 <img src="@/assets/images/dfinityICON.svg">
-                <span v-if="assets"> {{walletStore.icp}}</span>
-                <span v-else>0</span>
+                <span> {{walletStore.icp}}</span>
             </button>
             <template #dropdown>
                 <div class="wallet-status">
@@ -164,6 +163,7 @@
     watch(
         () => assets,
         () => {
+            //将icp数量存入缓存中。
             if (assets) {
                 walletStore.icp = assets.value.find((o) => o.symbol === "ICP").amount;
                 if (walletProvider) {

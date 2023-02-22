@@ -19,6 +19,15 @@ export default {
         image: {
             size: "图片大小错误",
             format: "图片格式错误",
+        },
+        amountMore: "输入的数量应该大于 {amount}"
+    },
+    wallet: {
+        transfer: {
+            success: "转账成功。"
+        },
+        connect: {
+            error: "钱包没有连接。"
         }
     },
     update: {

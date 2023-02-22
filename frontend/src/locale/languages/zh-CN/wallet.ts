@@ -11,5 +11,10 @@ export default {
     unbind: {
         button: "钱包解绑账户",
         success: "解绑账户成功"
+    },
+    reward: {
+        add: "增加赏金",
+        title: "赏金",
+        content: "为问题设置的赏金金额："
     }
 }

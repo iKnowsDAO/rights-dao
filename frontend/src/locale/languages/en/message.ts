@@ -19,6 +19,15 @@ export default {
         image: {
             size: "Image size error",
             format: "Image format error",
+        },
+        amountMore: "Amount entered should be greater than {amount}"
+    },
+    wallet: {
+        transfer: {
+            success: "Transfer Succeeded."
+        },
+        connect: {
+            error: "Wallet is not Connected."
         }
     },
     update: {

@@ -11,5 +11,10 @@ export default {
     unbind: {
         button: "Wallet Unbinding Account",
         success: "Unbinding account successful"
+    },
+    reward: {
+        add: "Increase Bounty",
+        title: "Reward",
+        content: "Reward amount set for the Question:"
     }
 }
