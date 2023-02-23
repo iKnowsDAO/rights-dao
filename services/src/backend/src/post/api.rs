@@ -272,6 +272,34 @@ fn delete_post_answer_comment(cmd: PostAnswerCommentCommand) -> Result<bool, Pos
     })
 }
 
+/// 为帖子 增加赏金 记录
+#[update(guard = "has_user_guard")]
+fn add_post_bounty(cmd: PostAddBountyCommand) -> Result<u64, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let id = ctx.id;
+        let caller = ctx.env.caller();
+        let now = ctx.env.now();
+        match ctx.post_service.add_bounty(cmd, id, caller, now) {
+            Ok(_) => {
+                ctx.id += 1; // id addOne
+                Ok(id)
+            }
+            e => e,
+        }
+    })
+}
+
+/// 为帖子 增加赏金
+#[update(guard = "has_user_guard")]
+fn update_post_bounty(cmd: PostUpdateBountyCommand) -> Result<bool, PostError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let now = ctx.env.now();
+        ctx.post_service.update_post_bounty(cmd, now)
+    })
+}
+
 #[query]
 fn get_post(cmd: PostIdCommand) -> Result<PostProfile, PostError> {
     CONTEXT.with(|c| {

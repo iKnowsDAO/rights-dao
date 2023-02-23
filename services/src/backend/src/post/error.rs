@@ -12,4 +12,6 @@ pub enum PostError {
     UserNotAnswerAuthor,
     AnswerWithCommentCantDelete,
     UserNotCommentAuthor,
+    PostBountyAlreadyExists,
+    PostBountyNotFound,
 }

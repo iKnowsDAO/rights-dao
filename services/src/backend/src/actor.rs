@@ -4,7 +4,7 @@ use ic_cdk::storage;
 use ic_cdk::{caller, id, print};
 use ic_cdk_macros::*;
 
-use crate::context::{DaoContext, DaoDataStorage};
+use crate::context::{DaoContext, DaoDataStorage, DaoDataStorage2};
 
 use crate::env::CanisterEnvironment;
 use crate::governance::domain::GovernanceMember;
@@ -91,7 +91,13 @@ fn pre_upgrade() {
         let posts = Vec::from_iter(context.post_service.posts.iter().map(|(_k, v)| (v.clone())));
 
         let likes = Vec::from_iter(context.post_service.likes.iter().map(|(_k, v)| v.clone()));
-        // let likes = vec![];
+        let post_bounties = Vec::from_iter(
+            context
+                .post_service
+                .bounties
+                .iter()
+                .map(|(_k, v)| v.clone()),
+        );
 
         let reputation_summaries = Vec::from_iter(
             context
@@ -130,6 +136,7 @@ fn pre_upgrade() {
             reputation_events,
             governance_proposals,
             governance_members,
+            post_bounties,
         };
 
         storage::stable_save((payload,)).expect("failed to save state data");
@@ -143,9 +150,10 @@ fn post_upgrade() {
     let canister_id = id();
     print(format!("starting post_upgrade {:?}", canister_id));
 
-    let (payload,): (DaoDataStorage,) = storage::stable_restore().expect("failed to restore users");
+    let (payload,): (DaoDataStorage2,) = storage::stable_restore().expect("failed to restore users");
 
-    let state_stable = DaoContext::from(payload);
+    let state_stable = DaoContext::from(DaoDataStorage::from(payload));
+    // let state_stable = DaoContext::from(payload);
 
     CONTEXT.with(|s| {
         let mut state = s.borrow_mut();

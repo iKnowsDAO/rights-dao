@@ -11,15 +11,23 @@ export const idlFactory = ({ IDL }) => {
     'PostAlreadyExists' : IDL.Null,
     'PostWithCommentCantDelete' : IDL.Null,
     'UserNotCommentAuthor' : IDL.Null,
+    'PostBountyAlreadyExists' : IDL.Null,
     'PostCommentNotFound' : IDL.Null,
     'AnswerWithCommentCantDelete' : IDL.Null,
     'PostAlreadyCompleted' : IDL.Null,
+    'PostBountyNotFound' : IDL.Null,
     'PostNotFound' : IDL.Null,
     'PostUnAuthorizedOperation' : IDL.Null,
     'UserNotFound' : IDL.Null,
     'UserNotAnswerAuthor' : IDL.Null,
   });
   const BoolPostResult = IDL.Variant({ 'Ok' : IDL.Bool, 'Err' : PostError });
+  const PostAddBountyCommand = IDL.Record({
+    'post_id' : IDL.Nat64,
+    'nonce' : IDL.Nat64,
+    'amount' : IDL.Nat64,
+  });
+  const CreatePostResult = IDL.Variant({ 'Ok' : IDL.Nat64, 'Err' : PostError });
   const PostCommentCommand = IDL.Record({
     'post_id' : IDL.Nat64,
     'content' : RichText,
@@ -74,7 +82,6 @@ export const idlFactory = ({ IDL }) => {
     'category' : IDL.Text,
     'photos' : IDL.Vec(IDL.Nat64),
   });
-  const CreatePostResult = IDL.Variant({ 'Ok' : IDL.Nat64, 'Err' : PostError });
   const PostIdCommand = IDL.Record({ 'id' : IDL.Nat64 });
   const PostAnswerCommand = IDL.Record({
     'post_id' : IDL.Nat64,
@@ -253,6 +260,7 @@ export const idlFactory = ({ IDL }) => {
     'participants' : IDL.Vec(IDL.Text),
     'content' : RichText,
     'comment_count' : IDL.Opt(IDL.Nat64),
+    'bounty_sum' : IDL.Opt(IDL.Nat64),
     'created_at' : IDL.Nat64,
     'end_time' : IDL.Opt(IDL.Nat64),
     'answer' : IDL.Opt(IDL.Nat64),
@@ -280,6 +288,8 @@ export const idlFactory = ({ IDL }) => {
     'updated_at' : IDL.Nat64,
     'participants' : IDL.Vec(IDL.Text),
     'content' : RichText,
+    'comment_count' : IDL.Opt(IDL.Nat64),
+    'bounty_sum' : IDL.Opt(IDL.Nat64),
     'created_at' : IDL.Nat64,
     'end_time' : IDL.Opt(IDL.Nat64),
     'answer' : IDL.Opt(IDL.Nat64),
@@ -393,6 +403,11 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : IDL.Nat64,
     'Err' : GovernanceError,
   });
+  const PostUpdateBountyCommand = IDL.Record({
+    'nonce' : IDL.Nat64,
+    'bounty_id' : IDL.Nat64,
+    'amount' : IDL.Nat64,
+  });
   const VoteArgs = IDL.Record({ 'vote' : Vote, 'proposal_id' : IDL.Nat64 });
   const VoteResult = IDL.Variant({
     'Ok' : ProposalState,
@@ -402,6 +417,11 @@ export const idlFactory = ({ IDL }) => {
     'add_comment_comment' : IDL.Func(
         [CommentCommentCommand],
         [BoolPostResult],
+        [],
+      ),
+    'add_post_bounty' : IDL.Func(
+        [PostAddBountyCommand],
+        [CreatePostResult],
         [],
       ),
     'add_post_comment' : IDL.Func([PostCommentCommand], [BoolPostResult], []),
@@ -505,6 +525,11 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'submit_post_answer' : IDL.Func([PostAnswerCommand], [BoolPostResult], []),
+    'update_post_bounty' : IDL.Func(
+        [PostUpdateBountyCommand],
+        [BoolPostResult],
+        [],
+      ),
     'update_wallet' : IDL.Func([IDL.Principal], [BoolUserResult], []),
     'vote_governance_proposal' : IDL.Func([VoteArgs], [VoteResult], []),
   });

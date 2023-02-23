@@ -24,6 +24,7 @@ pub struct PostProfile {
     pub updated_at: Timestamp,
     pub comments: Vec<PostComment>,
     pub comment_count: Option<usize>,
+    pub bounty_sum: Option<u64>,
 }
 
 impl PostProfile {
@@ -57,6 +58,7 @@ impl PostProfile {
             updated_at: created_at,
             comments: vec![],
             comment_count: None,
+            bounty_sum: None,
         }
     }
 
@@ -189,6 +191,8 @@ pub struct PostInfo {
     pub status: PostStatus,
     pub created_at: Timestamp,
     pub updated_at: Timestamp,
+    pub comment_count: Option<usize>,
+    pub bounty_sum: Option<u64>,
 }
 
 impl From<PostProfile> for PostInfo {
@@ -208,6 +212,8 @@ impl From<PostProfile> for PostInfo {
             status: profile.status,
             created_at: profile.created_at,
             updated_at: profile.updated_at,
+            comment_count: profile.comment_count,
+            bounty_sum: profile.bounty_sum,
         }
     }
 }
@@ -637,6 +643,7 @@ impl LikeProfile {
         self.updated_at = now;
     }
 }
+
 /// 点赞 问题
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct PostLikeCommand {
@@ -648,6 +655,82 @@ pub struct PostLikeCommand {
 pub struct PostAnswerLikeCommand {
     pub post_id: PostId,
     pub answer_id: u64,
+}
+
+/// 为问题添加赏金
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostAddBountyCommand {
+    pub post_id: PostId,
+    pub amount: u64,
+    pub nonce: u64,
+}
+
+impl PostAddBountyCommand {
+    pub fn build_profile(self, id: u64, author: Principal, created_at: u64) -> PostBountyProfile {
+        PostBountyProfile {
+            id,
+            post_id: self.post_id,
+            amount: self.amount,
+            nonce: self.nonce,
+            status: PostBountyStatus::Unpaid,
+            block_height: None,
+            author,
+            created_at,
+            finalized_at: None,
+        }
+    }
+}
+
+/// 为问题添加赏金
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostUpdateBountyCommand {
+    pub bounty_id: u64,
+    pub amount: u64,
+    pub nonce: u64,
+}
+
+/// 点赞问题的回答
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct PostBountyProfile {
+    pub id: u64,
+    pub post_id: PostId,
+    pub amount: u64, // 此数值比实际放大10000倍，1icp = 10000
+    pub nonce: u64,
+    pub status: PostBountyStatus,
+    pub block_height: Option<u64>,
+    pub author: Principal,
+    pub created_at: u64,
+    pub finalized_at: Option<u64>,
+}
+
+impl PostBountyProfile {
+    pub fn new(
+        id: u64,
+        post_id: u64,
+        amount: u64,
+        nonce: u64,
+        author: Principal,
+        created_at: u64,
+    ) -> Self {
+        Self {
+            id,
+            post_id,
+            amount,
+            nonce,
+            status: PostBountyStatus::Unpaid,
+            block_height: None,
+            author,
+            created_at,
+            finalized_at: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+pub enum PostBountyStatus {
+    Unpaid, // 题主没付款
+    Paid,   // 题主已付款
+    Issued, // 题主已发放赏金给他人
 }
 
 #[cfg(test)]

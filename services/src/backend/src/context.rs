@@ -2,7 +2,7 @@ use candid::{CandidType, Deserialize, Principal};
 use std::collections::BTreeMap;
 use std::iter::FromIterator;
 
-use crate::domain::{LikeId, LikeProfile};
+use crate::domain::{LikeId, LikeProfile, PostBountyProfile};
 use crate::env::{CanisterEnvironment, EmptyEnvironment, Environment};
 
 use crate::governance::domain::{GovernanceMember, GovernanceProposal};
@@ -36,22 +36,36 @@ pub struct DaoDataStorage {
     pub reputation_events: Vec<ReputationEvent>,
     pub governance_proposals: Vec<GovernanceProposal>,
     pub governance_members: Vec<GovernanceMember>,
+    pub post_bounties: Vec<PostBountyProfile>,
 }
 
-// impl From<DaoDataStoragePreUpdate> for DaoDataStorage {
-//     fn from(cp: DaoDataStoragePreUpdate) -> Self {
-//         Self {
-//             id: cp.id,
-//             users: cp.users,
-//             posts: cp.posts,
-//             likes: vec![],
-//             reputation_summaries: cp.reputation_summaries,
-//             reputation_events: cp.reputation_events,
-//             governance_proposals: cp.governance_proposals,
-//             governance_members: cp.governance_members
-//         }
-//     }
-// }
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct DaoDataStorage2 {
+    pub id: u64,
+    pub users: Vec<UserProfile>,
+    pub posts: Vec<PostProfile>,
+    pub likes: Vec<LikeProfile>,
+    pub reputation_summaries: Vec<ReputationSummary>,
+    pub reputation_events: Vec<ReputationEvent>,
+    pub governance_proposals: Vec<GovernanceProposal>,
+    pub governance_members: Vec<GovernanceMember>,
+}
+
+impl From<DaoDataStorage2> for DaoDataStorage {
+    fn from(value: DaoDataStorage2) -> Self {
+        Self {
+            id: value.id,
+            users: value.users,
+            posts: value.posts,
+            likes: value.likes,
+            reputation_summaries: value.reputation_summaries,
+            reputation_events: value.reputation_events,
+            governance_proposals: value.governance_proposals,
+            governance_members: value.governance_members,
+            post_bounties: vec![],
+        }
+    }
+}
 
 impl From<DaoContext> for DaoDataStorage {
     fn from(context: DaoContext) -> Self {
@@ -59,6 +73,13 @@ impl From<DaoContext> for DaoDataStorage {
         let users = Vec::from_iter(context.user_service.users.iter().map(|(_k, v)| v.clone()));
         let posts = Vec::from_iter(context.post_service.posts.iter().map(|(_k, v)| v.clone()));
         let likes = Vec::from_iter(context.post_service.likes.iter().map(|(_k, v)| v.clone()));
+        let post_bounties = Vec::from_iter(
+            context
+                .post_service
+                .bounties
+                .iter()
+                .map(|(_k, v)| v.clone()),
+        );
 
         let reputation_summaries = Vec::from_iter(
             context
@@ -98,6 +119,7 @@ impl From<DaoContext> for DaoDataStorage {
             reputation_events,
             governance_proposals,
             governance_members,
+            post_bounties,
         }
     }
 }
@@ -165,7 +187,11 @@ impl From<DaoDataStorage> for DaoContext {
             env: Box::new(CanisterEnvironment {}),
             id: payload.id,
             user_service: UserService { users },
-            post_service: PostService { posts, likes },
+            post_service: PostService {
+                posts,
+                likes,
+                bounties: BTreeMap::new(),
+            },
             reputation_service: ReputationService {
                 summaries: reputation_summaries,
                 events: reputation_events,

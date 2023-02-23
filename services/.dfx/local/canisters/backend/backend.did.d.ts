@@ -130,6 +130,11 @@ export interface PageQuery {
   'querystring' : string,
   'page_num' : bigint,
 }
+export interface PostAddBountyCommand {
+  'post_id' : bigint,
+  'nonce' : bigint,
+  'amount' : bigint,
+}
 export interface PostAnswerCommand { 'post_id' : bigint, 'answer_id' : bigint }
 export interface PostAnswerCommentCommand {
   'post_id' : bigint,
@@ -181,9 +186,11 @@ export interface PostEditCommand {
 export type PostError = { 'PostAlreadyExists' : null } |
   { 'PostWithCommentCantDelete' : null } |
   { 'UserNotCommentAuthor' : null } |
+  { 'PostBountyAlreadyExists' : null } |
   { 'PostCommentNotFound' : null } |
   { 'AnswerWithCommentCantDelete' : null } |
   { 'PostAlreadyCompleted' : null } |
+  { 'PostBountyNotFound' : null } |
   { 'PostNotFound' : null } |
   { 'PostUnAuthorizedOperation' : null } |
   { 'UserNotFound' : null } |
@@ -210,6 +217,8 @@ export interface PostInfo {
   'updated_at' : bigint,
   'participants' : Array<string>,
   'content' : RichText,
+  'comment_count' : [] | [bigint],
+  'bounty_sum' : [] | [bigint],
   'created_at' : bigint,
   'end_time' : [] | [bigint],
   'answer' : [] | [bigint],
@@ -258,6 +267,7 @@ export interface PostProfile {
   'participants' : Array<string>,
   'content' : RichText,
   'comment_count' : [] | [bigint],
+  'bounty_sum' : [] | [bigint],
   'created_at' : bigint,
   'end_time' : [] | [bigint],
   'answer' : [] | [bigint],
@@ -276,6 +286,11 @@ export type PostResult = { 'Ok' : PostProfile } |
 export type PostStatus = { 'Enable' : null } |
   { 'Closed' : null } |
   { 'Completed' : null };
+export interface PostUpdateBountyCommand {
+  'nonce' : bigint,
+  'bounty_id' : bigint,
+  'amount' : bigint,
+}
 export type ProposalExecuteArgs = {
     'AddGovernanceMember' : GovernanceMemberAddArgs
   };
@@ -342,10 +357,6 @@ export type UserResult = { 'Ok' : UserProfile } |
   { 'Err' : UserError };
 export type UserStatus = { 'Enable' : null } |
   { 'Disable' : null };
-export interface UserWalletUpdateCommand {
-  'user' : Principal,
-  'wallet' : Principal,
-}
 export type Vote = { 'No' : null } |
   { 'Yes' : null };
 export interface VoteArgs { 'vote' : Vote, 'proposal_id' : bigint }
@@ -355,6 +366,9 @@ export interface Weights { 'amount' : bigint }
 export interface _SERVICE {
   'add_comment_comment' : (arg_0: CommentCommentCommand) => Promise<
       BoolPostResult
+    >,
+  'add_post_bounty' : (arg_0: PostAddBountyCommand) => Promise<
+      CreatePostResult
     >,
   'add_post_comment' : (arg_0: PostCommentCommand) => Promise<BoolPostResult>,
   'add_post_event' : (arg_0: PostEventCommand) => Promise<BoolPostResult>,
@@ -372,7 +386,7 @@ export interface _SERVICE {
   'delete_post_answer_comment' : (arg_0: PostAnswerCommentCommand) => Promise<
       BoolPostResult
     >,
-  'delete_wallet' : (arg_0: Principal) => Promise<BoolUserResult>,
+  'delete_wallet' : () => Promise<BoolUserResult>,
   'disable_user' : (arg_0: Principal) => Promise<BoolUserResult>,
   'edit_post' : (arg_0: PostEditCommand) => Promise<BoolPostResult>,
   'edit_user' : (arg_0: UserEditCommand) => Promise<BoolUserResult>,
@@ -427,6 +441,9 @@ export interface _SERVICE {
       arg_0: GovernanceMemberAddCommand,
     ) => Promise<ProposalSubmitResult>,
   'submit_post_answer' : (arg_0: PostAnswerCommand) => Promise<BoolPostResult>,
-  'update_wallet' : (arg_0: UserWalletUpdateCommand) => Promise<BoolUserResult>,
+  'update_post_bounty' : (arg_0: PostUpdateBountyCommand) => Promise<
+      BoolPostResult
+    >,
+  'update_wallet' : (arg_0: Principal) => Promise<BoolUserResult>,
   'vote_governance_proposal' : (arg_0: VoteArgs) => Promise<VoteResult>,
 }

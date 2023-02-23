@@ -10,6 +10,7 @@ use super::{domain::*, error::PostError};
 pub struct PostService {
     pub posts: BTreeMap<PostId, PostProfile>,
     pub likes: BTreeMap<LikeId, LikeProfile>,
+    pub bounties: BTreeMap<u64, PostBountyProfile>,
 }
 
 impl PostService {
@@ -280,6 +281,58 @@ impl PostService {
             }
             Some(_) => Err(PostError::PostAlreadyCompleted),
             _ => Err(PostError::PostNotFound),
+        }
+    }
+
+    pub fn add_bounty(
+        &mut self,
+        cmd: PostAddBountyCommand,
+        id: u64,
+        author: Principal,
+        now: Timestamp,
+    ) -> Result<u64, PostError> {
+        match self.posts.get_mut(&cmd.post_id) {
+            Some(p) if p.is_active() => match self.bounties.get_mut(&id) {
+                Some(_) => Err(PostError::PostBountyAlreadyExists),
+                None => {
+                    let bounty = cmd.build_profile(id, author, now);
+                    self.bounties.insert(id, bounty);
+                    Ok(id)
+                }
+            },
+            Some(_) => Err(PostError::PostAlreadyCompleted),
+            _ => Err(PostError::PostNotFound),
+        }
+    }
+
+    pub fn update_post_bounty(
+        &mut self,
+        cmd: PostUpdateBountyCommand,
+        now: Timestamp,
+    ) -> Result<bool, PostError> {
+        match self.bounties.get_mut(&cmd.bounty_id) {
+            Some(b) => {
+                if b.amount == cmd.amount && b.nonce == cmd.nonce {
+                    b.finalized_at = Some(now);
+                    b.status = PostBountyStatus::Paid;
+
+                    match self.posts.get_mut(&b.post_id) {
+                        Some(p) => {
+                            if p.bounty_sum.is_some() {
+                                p.bounty_sum.iter_mut().for_each(|v| *v += cmd.amount);
+                            } else {
+                                p.bounty_sum = Some(b.amount);
+                            }
+                            
+                            Ok(true)
+                        }
+                        None => Err(PostError::PostNotFound),
+                    }
+                } else {
+                    Err(PostError::PostBountyNotFound)
+                }
+            }
+            None => Err(PostError::PostBountyNotFound),
         }
     }
 

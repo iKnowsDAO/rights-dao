@@ -116,7 +116,6 @@ fn delete_wallet() -> Result<bool, UserError> {
     })
 }
 
-
 #[query]
 fn get_user(principal: Principal) -> Result<UserProfile, UserError> {
     CONTEXT
