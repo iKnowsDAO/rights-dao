@@ -4,7 +4,7 @@ use ic_cdk::storage;
 use ic_cdk::{caller, id, print};
 use ic_cdk_macros::*;
 
-use crate::context::{DaoContext, DaoDataStorage, DaoDataStorage2};
+use crate::context::{DaoContext, DaoDataStorage};
 
 use crate::env::CanisterEnvironment;
 use crate::governance::domain::GovernanceMember;
@@ -150,10 +150,10 @@ fn post_upgrade() {
     let canister_id = id();
     print(format!("starting post_upgrade {:?}", canister_id));
 
-    let (payload,): (DaoDataStorage2,) = storage::stable_restore().expect("failed to restore users");
-
-    let state_stable = DaoContext::from(DaoDataStorage::from(payload));
-    // let state_stable = DaoContext::from(payload);
+    let (payload,): (DaoDataStorage,) = storage::stable_restore().expect("failed to restore users");
+    // let (payload,): (DaoDataStorage2,) = storage::stable_restore().expect("failed to restore users");
+    // let state_stable = DaoContext::from(DaoDataStorage::from(payload));
+    let state_stable = DaoContext::from(payload);
 
     CONTEXT.with(|s| {
         let mut state = s.borrow_mut();

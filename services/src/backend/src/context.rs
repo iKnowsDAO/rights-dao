@@ -39,33 +39,33 @@ pub struct DaoDataStorage {
     pub post_bounties: Vec<PostBountyProfile>,
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct DaoDataStorage2 {
-    pub id: u64,
-    pub users: Vec<UserProfile>,
-    pub posts: Vec<PostProfile>,
-    pub likes: Vec<LikeProfile>,
-    pub reputation_summaries: Vec<ReputationSummary>,
-    pub reputation_events: Vec<ReputationEvent>,
-    pub governance_proposals: Vec<GovernanceProposal>,
-    pub governance_members: Vec<GovernanceMember>,
-}
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct DaoDataStorage2 {
+//     pub id: u64,
+//     pub users: Vec<UserProfile>,
+//     pub posts: Vec<PostProfile>,
+//     pub likes: Vec<LikeProfile>,
+//     pub reputation_summaries: Vec<ReputationSummary>,
+//     pub reputation_events: Vec<ReputationEvent>,
+//     pub governance_proposals: Vec<GovernanceProposal>,
+//     pub governance_members: Vec<GovernanceMember>,
+// }
 
-impl From<DaoDataStorage2> for DaoDataStorage {
-    fn from(value: DaoDataStorage2) -> Self {
-        Self {
-            id: value.id,
-            users: value.users,
-            posts: value.posts,
-            likes: value.likes,
-            reputation_summaries: value.reputation_summaries,
-            reputation_events: value.reputation_events,
-            governance_proposals: value.governance_proposals,
-            governance_members: value.governance_members,
-            post_bounties: vec![],
-        }
-    }
-}
+// impl From<DaoDataStorage2> for DaoDataStorage {
+//     fn from(value: DaoDataStorage2) -> Self {
+//         Self {
+//             id: value.id,
+//             users: value.users,
+//             posts: value.posts,
+//             likes: value.likes,
+//             reputation_summaries: value.reputation_summaries,
+//             reputation_events: value.reputation_events,
+//             governance_proposals: value.governance_proposals,
+//             governance_members: value.governance_members,
+//             post_bounties: vec![],
+//         }
+//     }
+// }
 
 impl From<DaoContext> for DaoDataStorage {
     fn from(context: DaoContext) -> Self {
@@ -158,7 +158,11 @@ impl From<DaoDataStorage> for DaoContext {
             .into_iter()
             .map(|p| (p.generate_key(), p))
             .collect();
-        // let likes: BTreeMap<(u64, Principal), LikeProfile> = BTreeMap::new();
+        let bounties: BTreeMap<u64, PostBountyProfile> = payload
+            .post_bounties
+            .into_iter()
+            .map(|p| (p.id, p))
+            .collect();
 
         let reputation_summaries: BTreeMap<Principal, ReputationSummary> = payload
             .reputation_summaries
@@ -190,7 +194,7 @@ impl From<DaoDataStorage> for DaoContext {
             post_service: PostService {
                 posts,
                 likes,
-                bounties: BTreeMap::new(),
+                bounties,
             },
             reputation_service: ReputationService {
                 summaries: reputation_summaries,
