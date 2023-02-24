@@ -5,7 +5,7 @@ use ic_cdk_macros::{query, update};
 
 use crate::common::guard::has_user_guard;
 use crate::reputation::domain::{ReputationAction, ReputationEvent};
-use crate::CONTEXT;
+use crate::{transfer, TransferCommand, CONTEXT};
 
 use super::{domain::*, error::PostError};
 
@@ -78,12 +78,13 @@ fn change_post_status(cmd: PostChangeStatusCommand) -> Result<bool, PostError> {
 }
 
 #[update(guard = "has_user_guard")]
-fn submit_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
-    CONTEXT.with(|c| {
+async fn submit_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
+    let res = CONTEXT.with(|c| {
         let mut ctx = c.borrow_mut();
         let caller = ctx.env.caller();
         let post_id = cmd.post_id;
         let now = ctx.env.now();
+
         match ctx.post_service.get_post(post_id) {
             Some(p) => {
                 if p.author != caller {
@@ -92,9 +93,12 @@ fn submit_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
 
                 let res = ctx.post_service.update_post_answer(cmd.clone(), now);
 
+                let mut ret: Option<TransferCommand> = None;
+
                 if res.is_ok() {
                     if let Some(comment) = p.comments.iter().find(|c| c.id == cmd.answer_id) {
-                        if comment.author != p.author {
+                        let answer_author = comment.author;
+                        if answer_author != p.author {
                             let re = ReputationEvent::new(
                                 ctx.id,
                                 comment.author,
@@ -103,15 +107,42 @@ fn submit_post_answer(cmd: PostAnswerCommand) -> Result<bool, PostError> {
                                 now,
                             );
                             ctx.reputation_service.handle_reputation_event(re);
+
+                            // Get the answer author and amount_e8s
+                            match ctx.user_service.get_user(&answer_author) {
+                                Some(user) if user.wallet_principal.is_some() => {
+                                    if p.bounty_sum.is_some() && p.bounty_sum.unwrap() > 0 {
+                                        let cmd = TransferCommand {
+                                            amount_e8s: p.bounty_sum.unwrap(),
+                                            recipient_principal: user
+                                                .wallet_principal
+                                                .unwrap()
+                                                .to_string(),
+                                        };
+                                        ret = Some(cmd);
+                                    }
+                                }
+                                _ => println!("User wallet not found"),
+                            }
                         }
                     }
                 }
 
-                res
+                Ok(ret)
             }
             None => Err(PostError::PostNotFound),
         }
-    })
+    });
+
+    // // transfer the bounty to the answer author
+    match res {
+        Ok(Some(cmd)) => {
+            let _ = transfer(cmd).await.unwrap();
+            Ok(true)
+        }
+        Err(e) => Err(e),
+        _ => Ok(true), // answer author not found
+    }
 }
 
 #[update]
