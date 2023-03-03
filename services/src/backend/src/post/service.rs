@@ -323,7 +323,7 @@ impl PostService {
                             } else {
                                 p.bounty_sum = Some(b.amount);
                             }
-                            
+
                             Ok(true)
                         }
                         None => Err(PostError::PostNotFound),
