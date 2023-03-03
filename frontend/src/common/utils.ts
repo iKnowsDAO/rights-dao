@@ -21,7 +21,8 @@ export function cleanHtml(html: string): string {
     // .+?表示将中间的内容替代；
     // 第二个\/?表示<img/>的情况；
     // /g表示全局替换；
-    return html.replace(/<\/?.+?\/?>/g,'');;
+    return html.replace(/<\/?.+?\/?>/g, '');
+    ;
 }
 
 // 移除html标签，只保留文本内容
@@ -31,4 +32,11 @@ export function copyUtil(text: string) {
     }).catch(e => {
         console.error(e)
     })
+}
+
+//前端生成指定长度的随机数。
+export function getRandomNumber(length: number): string {
+    const max = Math.pow(10, length) - 1;
+    const randomNumber = Math.floor(Math.random() * max);
+    return String(randomNumber).padStart(length, '0');
 }

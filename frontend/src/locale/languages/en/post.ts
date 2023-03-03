@@ -8,7 +8,7 @@ export default {
         already: "Adopted Answer"
     },
     cancelReply: "Cancel Reply",
-    writeAnswer: "Write Comment",
+    writeAnswer: "Write Answer",
     answer: "Answer", // answer 全改成 comment
     answers: "Answers",
     answerFold: "Fold Answer",

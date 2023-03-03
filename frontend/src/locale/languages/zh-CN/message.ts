@@ -20,11 +20,16 @@ export default {
             size: "图片大小错误",
             format: "图片格式错误",
         },
-        amountMore: "输入的数量应该大于 {amount}"
+        browser: {
+            block: "弹出式窗口可能被你的浏览器拦截了，请检查"
+        },
+        amountMore: "输入的数量应该大于 {amount}",
+        decimalNoMore: "输入的小数点位数应该小于 {amount}",
     },
     wallet: {
         transfer: {
-            success: "转账成功。"
+            success: "转账成功。",
+            error: "转账失败。"
         },
         connect: {
             error: "钱包没有连接。"
@@ -56,6 +61,7 @@ export default {
         notFound: "找不到目标用户信息。"
     },
     tip: {
-        comingSoon: "尽请期待"
+        comingSoon: "尽请期待",
+        notClose: "页面完成前请勿关闭页面"
     }
 };

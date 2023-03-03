@@ -1,6 +1,7 @@
 <template>
     <div class="wallet-container">
-        <button v-if="!isConnectedWallet" class="connect-button login-wallet" @click="connectWallet()">{{t('wallet.wallet')}}
+        <button v-if="!isConnectedWallet" class="connect-button login-wallet" @click="connectWallet()">
+            {{t('wallet.wallet')}}
         </button>
         <el-dropdown v-else :hide-timeout="80">
             <button class="connect-button">
@@ -76,23 +77,22 @@
     const {isConnected, principal, disconnect} = useConnect({
         onConnect: (res) => {
             // Signed in
-            console.log("connectWallet onConnect", res)
-            console.log("assets",assets.value)
-
             isConnectedWallet.value = true;
+            // console.log("connectWallet onConnect", res)
         },
         onDisconnect: (res) => {
             // Signed out
             console.log("onDisconnect", res)
         }
     })
-    const [assets, { refetch, error }] = useBalance()
+    const [assets, {refetch, error}] = useBalance()
     const isConnectedWallet = ref(isConnected.value);
     //如果存在钱包principal，则说明已连接钱包
     const isBindWallet = ref(false);
     const bindLoading = ref(false);
 
     const copy = () => {
+        // console.log("connectWallet onConnect", walletProvider.value.wallets)
         //复制
         copyUtil(walletProvider.value.wallets[0].principal);
     }
@@ -103,7 +103,7 @@
         if (props.userPrincipal) {
             deleteUserInfoStorage(props.userPrincipal)
         }
-        userConnectWallet(principal.value).then(res => {
+        userConnectWallet(walletProvider.value.wallets[0].principal).then(res => {
             if (res.Ok) {
                 //刷新用户缓存。
                 getTargetUserNewCache(props.userPrincipal)
@@ -219,7 +219,7 @@
 </style>
 <style lang="scss" scoped>
     .wallet-container {
-        .login-wallet{
+        .login-wallet {
             height: 52px;
         }
         .connect-button {
@@ -234,7 +234,7 @@
             border-radius: 40px;
             cursor: pointer;
             font-weight: 600;
-            img{
+            img {
                 margin-right: 5px;
             }
         }

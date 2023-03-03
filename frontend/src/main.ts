@@ -11,6 +11,8 @@ import { VueClipboard } from '@soerenmartius/vue3-clipboard'; //复制到粘贴�
 import { createPinia } from "pinia"; //类似于vuex的状态管理
 
 const app = createApp(App);
-const pinia = createPinia()
+const pinia = createPinia();
+
 app.use(i18n).use(router).use(VueClipboard).use(ElInfiniteScroll).use(pinia);
 app.mount('#app');
+

@@ -94,6 +94,7 @@ export type ApiPost = {
     answer: number[];
     participants: string[];//期待参与的人
     end_time: [number]; //结束时间  opt格式，类似于[1000]，数组中只有一个数据。
+    bounty_sum: [number]; //问题的赏金 opt格式
     events?: ApiPostTimeline[];
     likes_count: number; //点赞数
     ask_for_money: any;

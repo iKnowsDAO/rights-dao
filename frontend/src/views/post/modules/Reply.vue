@@ -61,24 +61,36 @@
                                         {{item.comments.length+ " " + t('post.item') + t('post.comments')}}
                                     </span>
                                     <span @click="share(item.id)">{{t('common.share')}}</span>
-                                    <el-popconfirm v-if="isOwner && props.answerId===undefined"
-                                                   :title="t('post.adopt.confirm')"
-                                                   :confirmButtonText="t('common.confirm')"
-                                                   :cancelButtonText="t('common.cancel')"
-                                                   @confirm="submitAnswer(Number(item.post_id),Number(item.id))"
-                                    >
-                                        <template #reference>
-                                            <div class="owner-div flex-y-center">
-                                                <el-icon>
-                                                    <Medal/>
-                                                </el-icon>
-                                                <span>{{t('post.adopt.text')}}</span>
-                                            </div>
-                                        </template>
-                                    </el-popconfirm>
+                                    <el-tooltip :content="t('wallet.bounty.noWallet')">
+                                        <el-popconfirm v-if="isOwner && props.answerId===undefined"
+                                                       :title="t('post.adopt.confirm')"
+                                                       :confirmButtonText="t('common.confirm')"
+                                                       :cancelButtonText="t('common.cancel')"
+                                                       @confirm="submitAnswer(Number(item.post_id),Number(item.id))"
+                                        >
+                                            <template #reference>
+                                                <div class="owner-div flex-y-center">
+                                                    <el-icon>
+                                                        <Medal/>
+                                                    </el-icon>
+                                                    <span>{{t('post.adopt.text')}}</span>
+                                                </div>
+                                            </template>
+                                        </el-popconfirm>
+                                    </el-tooltip>
                                     <LikeButton :postId="Number(props.postId)" :commentId="Number(item.id)"
                                                 :likeCount="Number(item.likes_count)"
                                                 style="margin-left:10px"/>
+                                    <el-tooltip :content="t('wallet.reward.onlyWallet')">
+                                        <div v-if="item.authorData && item.authorData.wallet_principal.length>0"
+                                             class="reward-button"
+                                             @click="showReward(item.authorData?.wallet_principal)">
+                                            <el-icon>
+                                                <Coin/>
+                                            </el-icon>
+                                            {{t('wallet.reward.title')}}
+                                        </div>
+                                    </el-tooltip>
                                     <DeleteButton v-if="props.currentUserPrincipal===item.author.toString()"
                                                   :id="Number(item.id)"
                                                   :deleteFunction="deleteAnswer"
@@ -101,23 +113,30 @@
     <ReplyReply v-if="showReplyReply" v-model:visible="showReplyReply" :comments="comments" :replyId="commentId"
                 :postId="props.postId" :isOwner="props.isOwner" :currentUserPrincipal="props.currentUserPrincipal"
                 @refreshCallback="init()"/>
+    <TransferDialog
+        v-if="dialogVisible"
+        v-model:visible="dialogVisible" :title="t('wallet.reward.title')"
+        :content="t('wallet.reward.content')"
+        :onlyTransfer="true"
+        :targetPrincipal="targetPrincipal"/>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, defineProps, defineExpose} from 'vue';
-    import {ElRow, ElCol, ElButton, ElCard, ElIcon, ElPopconfirm, ElTag} from 'element-plus/es';
-    import {Medal, Flag} from '@element-plus/icons-vue';
+    import { ref, onMounted, defineProps, defineExpose } from 'vue';
+    import { ElRow, ElCol, ElButton, ElCard, ElIcon, ElPopconfirm, ElTag, ElTooltip } from 'element-plus/es';
+    import { Medal, Flag, Coin } from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
     import DeleteButton from '@/components/common/PostDeleteButton.vue';
     import LikeButton from '@/components/common/LikeButton.vue';
     import ReplyReply from './ReplyReply.vue';
-    import {ApiPostComments} from "@/api/types";
-    import {getTargetUser} from "@/api/user";
-    import {deletePostAnswer, getPostComments, submitPostAnswer} from "@/api/post";
-    import {t} from '@/locale';
-    import {toClipboard} from "@soerenmartius/vue3-clipboard";
-    import {showMessageSuccess, showResultError} from "@/utils/message";
-    import {getTimeF} from "@/utils/dates";
+    import TransferDialog from '@/components/wallet/TransferDialog.vue';
+    import { ApiPostComments } from "@/api/types";
+    import { getTargetUser } from "@/api/user";
+    import { deletePostAnswer, getPostComments, submitPostAnswer } from "@/api/post";
+    import { t } from '@/locale';
+    import { toClipboard } from "@soerenmartius/vue3-clipboard";
+    import { showMessageSuccess, showResultError } from "@/utils/message";
+    import { getTimeF } from "@/utils/dates";
 
     const props = defineProps({
         postId: {
@@ -139,6 +158,7 @@
     const list = ref<ApiPostComments[]>([]); //初始数据，可能会有很多数据量，所以需要分页成showList
     const showList = ref<ApiPostComments[]>([]); //实际展示数据
     const answer = ref<ApiPostComments>();
+    const dialogVisible = ref(false);
     const showReplyReply = ref(false);
     const pageLoading = ref(false);
     const deleteLoading = ref(false);
@@ -149,6 +169,7 @@
     const replyIndex = ref(-1);
     const commentId = ref(0);
     const comments = ref<any[]>([]);
+    const targetPrincipal = ref("");
 
     const onScroll = () => {
         //初始化时会运行一次此方法
@@ -178,6 +199,14 @@
             showMessageSuccess(t('message.share.success'))
         } catch (e) {
             console.error(e)
+        }
+    }
+
+    const showReward = (wallet_principal: string[]) => {
+        //有绑定钱包才能打开打赏
+        if (wallet_principal.length > 0) {
+            targetPrincipal.value = wallet_principal[0].toString();
+            dialogVisible.value = true;
         }
     }
 
@@ -302,6 +331,12 @@
                     margin-left: 10px;
                 }
                 .delete-button {
+                    margin-left: 10px;
+                }
+                .reward-button {
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
                     margin-left: 10px;
                 }
                 .footer {

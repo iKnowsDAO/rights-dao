@@ -4,7 +4,6 @@
         <div class="container">
             <div class="submit-title">
                 <h3 class="title">
-                    <button @click="transferToken()">test</button>
                     {{ $t('post.help.create') }}
                     <div class="back-button" @click="$router.back()"
                     >{{ '<' }}{{ $t('common.back') }}

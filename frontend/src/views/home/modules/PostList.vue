@@ -44,6 +44,7 @@
                                             <span class="post-status completed"
                                                   v-else-if="item.status.Completed!==undefined">{{t('common.status.completed')}}</span>
                                             <span class="post-status closed" v-else-if="item.status.Closed!==undefined">{{t('common.status.closed')}}</span>
+                                            <BountyTag :bounty_sum="item.bounty_sum"/>
                                         </div>
                                         <div class="info">
                                             <Username :principalId="item.author.toString()"
@@ -142,6 +143,7 @@
     import { Search } from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
+    import BountyTag from '@/components/common/BountyTag.vue';
     import CategoryButton from '@/components/common/CategoryButton.vue';
     import LikeButton from '@/components/common/LikeButton.vue';
     import RightMenu from '@/components/menu/RightMenu.vue';

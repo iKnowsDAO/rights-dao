@@ -1,5 +1,5 @@
 // import Error from '../../views/errors/Error.vue';
-import Error404 from '../../views/errors/Error404.vue';
+import Error404 from '@/views/errors/Error404.vue';
 
 const errors = [
     // {
