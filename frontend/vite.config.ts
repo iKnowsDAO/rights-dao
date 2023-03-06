@@ -58,7 +58,6 @@ export default defineConfig(({ command, mode }) => {
         define: {
             'process.env.NODE_ENV': JSON.stringify(getNodeEnv(configMode)), // 接口文件里面需要用来判断 莫名其妙要加双引号
             'process.env': process.env, // 环境变量
-
         },
         plugins: [...createVitePlugins(viteEnv, isBuild)], // 插件
         resolve: {
