@@ -32,9 +32,11 @@
     </noscript>
     <div id="app"></div>
     <script type="module">
-      import { Buffer } from "buffer"
-      window.global = window
-      window.Buffer = Buffer
+        import {Buffer} from "buffer"
+
+        window.global = window
+        window.Buffer = Buffer
+        window.process = {};
     </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
