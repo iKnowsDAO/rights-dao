@@ -68,15 +68,17 @@
                                                    @confirm="submitAnswer(Number(item.post_id),Number(item.id))"
                                     >
                                         <template #reference>
-                                            <el-tooltip :content="t('wallet.bounty.noWallet')"
-                                                        :disabled="!(item.authorData?.wallet_principal.length === 0)">
-                                                <div class="owner-div flex-y-center">
-                                                    <el-icon>
-                                                        <Medal/>
-                                                    </el-icon>
-                                                    <span>{{t('post.adopt.text')}}</span>
-                                                </div>
-                                            </el-tooltip>
+                                            <div>
+                                                <el-tooltip :content="t('wallet.bounty.noWallet')"
+                                                            :disabled="!(item.authorData?.wallet_principal.length === 0)">
+                                                    <div class="owner-div flex-y-center">
+                                                        <el-icon>
+                                                            <Medal/>
+                                                        </el-icon>
+                                                        <span>{{t('post.adopt.text')}}</span>
+                                                    </div>
+                                                </el-tooltip>
+                                            </div>
                                         </template>
                                     </el-popconfirm>
                                     <LikeButton :postId="Number(props.postId)" :commentId="Number(item.id)"

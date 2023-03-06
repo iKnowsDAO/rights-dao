@@ -77,6 +77,7 @@
             </el-row>
         </div>
         <TransferDialog
+            v-if="dialogVisible"
             v-model:visible="dialogVisible" :title="t('wallet.bounty.title')"
             :postId="Number(props.post.id)"
             :content="t('wallet.bounty.content')"

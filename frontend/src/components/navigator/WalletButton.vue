@@ -152,6 +152,7 @@
         refetch();
         //刷新用户缓存。
         getTargetUserNewCache(props.userPrincipal)
+        isBindWallet.value = !!props.userWalletPrincipal
     });
 
     watch(

@@ -1,0 +1,113 @@
+type UserPrincipal__1 = text;
+type UserPrincipal = text;
+type Timestamp = int;
+type StreamingStrategy = variant {
+                           Callback:
+                            record {
+                              callback:
+                               func (StreamingCallbackToken) ->
+                                (StreamingCallbackHttpResponse) query;
+                              token: StreamingCallbackToken;
+                            };};
+type StreamingCallbackToken = 
+ record {
+   content_encoding: text;
+   index: nat;
+   key: text;
+   sha256: opt blob;
+ };
+type StreamingCallbackHttpResponse = 
+ record {
+   body: blob;
+   token: opt StreamingCallbackToken;
+ };
+type Result_4 = 
+ variant {
+   err: Error;
+   ok: opt Picture;
+ };
+type Result_3 = 
+ variant {
+   err: Error;
+   ok: opt PictureProfile;
+ };
+type Result_2 = 
+ variant {
+   err: Error;
+   ok: vec record {
+             PictureId;
+             Picture;
+           };
+ };
+type Result_1 = 
+ variant {
+   err: Error;
+   ok: nat;
+ };
+type Result = 
+ variant {
+   err: Error;
+   ok: PictureId;
+ };
+type Picture__1 = 
+ record {
+   content: blob;
+   fileType: text;
+ };
+type PictureStatus = 
+ variant {
+   disable;
+   enable;
+   pending;
+ };
+type PictureProfile = 
+ record {
+   createdAt: Timestamp;
+   createdBy: UserPrincipal__1;
+   description: text;
+   id: PictureId__1;
+   owner: UserPrincipal__1;
+   pic: Picture__1;
+   picName: text;
+   status: PictureStatus;
+ };
+type PictureId__1 = nat;
+type PictureId = nat;
+type Picture = 
+ record {
+   content: blob;
+   fileType: text;
+ };
+type HttpResponse = 
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   status_code: nat16;
+   streaming_strategy: opt StreamingStrategy;
+ };
+type HttpRequest = 
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   method: text;
+   url: text;
+ };
+type HeaderField = 
+ record {
+   text;
+   text;
+ };
+type Error = 
+ variant {
+   picAlreadyExisted;
+   picNotFound;
+   tooLargeQuantity;
+ };
+service : {
+  getPicture: (PictureId) -> (Result_4) query;
+  getPictureProfile: (PictureId) -> (Result_3) query;
+  getPictures: (vec PictureId) -> (Result_2) query;
+  getTotalPics: () -> (Result_1) query;
+  http_request: (HttpRequest) -> (HttpResponse) query;
+  savePic: (Picture, text, text, UserPrincipal) -> (Result);
+}
