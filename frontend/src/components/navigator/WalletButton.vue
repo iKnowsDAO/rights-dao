@@ -165,7 +165,9 @@
         () => assets,
         () => {
             console.log("assets",assets)
-            console.log("walletProvider",walletProvider)
+            console.log("assets",assets.value)
+            console.log("assets",assets.value.find((o) => o.symbol === "ICP").amount)
+            console.log("walletProvider",walletProvider.value)
             //将icp数量存入缓存中。
             if (assets) {
                 walletStore.icp = assets.value.find((o) => o.symbol === "ICP").amount;
