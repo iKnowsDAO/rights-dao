@@ -61,23 +61,24 @@
                                         {{item.comments.length+ " " + t('post.item') + t('post.comments')}}
                                     </span>
                                     <span @click="share(item.id)">{{t('common.share')}}</span>
-                                    <el-tooltip :content="t('wallet.bounty.noWallet')">
-                                        <el-popconfirm v-if="isOwner && props.answerId===undefined"
-                                                       :title="t('post.adopt.confirm')"
-                                                       :confirmButtonText="t('common.confirm')"
-                                                       :cancelButtonText="t('common.cancel')"
-                                                       @confirm="submitAnswer(Number(item.post_id),Number(item.id))"
-                                        >
-                                            <template #reference>
+                                    <el-popconfirm v-if="isOwner && props.answerId===undefined"
+                                                   :title="t('post.adopt.confirm')"
+                                                   :confirmButtonText="t('common.confirm')"
+                                                   :cancelButtonText="t('common.cancel')"
+                                                   @confirm="submitAnswer(Number(item.post_id),Number(item.id))"
+                                    >
+                                        <template #reference>
+                                            <el-tooltip :content="t('wallet.bounty.noWallet')"
+                                                        :disabled="!(item.authorData?.wallet_principal.length === 0)">
                                                 <div class="owner-div flex-y-center">
                                                     <el-icon>
                                                         <Medal/>
                                                     </el-icon>
                                                     <span>{{t('post.adopt.text')}}</span>
                                                 </div>
-                                            </template>
-                                        </el-popconfirm>
-                                    </el-tooltip>
+                                            </el-tooltip>
+                                        </template>
+                                    </el-popconfirm>
                                     <LikeButton :postId="Number(props.postId)" :commentId="Number(item.id)"
                                                 :likeCount="Number(item.likes_count)"
                                                 style="margin-left:10px"/>
@@ -202,9 +203,9 @@
         }
     }
 
-    const showReward = (wallet_principal: string[]) => {
+    const showReward = (wallet_principal?: string[]) => {
         //有绑定钱包才能打开打赏
-        if (wallet_principal.length > 0) {
+        if (wallet_principal && wallet_principal.length > 0) {
             targetPrincipal.value = wallet_principal[0].toString();
             dialogVisible.value = true;
         }
