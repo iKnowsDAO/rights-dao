@@ -58,14 +58,13 @@ export default defineConfig(({ command, mode }) => {
         define: {
             'process.env.NODE_ENV': JSON.stringify(getNodeEnv(configMode)), // 接口文件里面需要用来判断 莫名其妙要加双引号
             'process.env': process.env, // 环境变量
-            process: {}
+
         },
         plugins: [...createVitePlugins(viteEnv, isBuild)], // 插件
         resolve: {
             alias: {
                 ...canistersAlias, // canister 接口文件位置的映射
                 '@': path.resolve(__dirname, 'src'), // @符号要解析
-                '@admin': path.resolve(__dirname, '../admin3/src'), // @符号要解析
                 '~/': `${path.resolve(__dirname, 'src')}/`, // element-plus 可能要用
                 // "vue-i18n": "vue-i18n/dist/vue-i18n.cjs.js", // 浏览器总是有 warning，这样就不显示了
             },
