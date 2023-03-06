@@ -164,6 +164,8 @@
     watch(
         () => assets,
         () => {
+            console.log("assets",assets)
+            console.log("walletProvider",walletProvider)
             //将icp数量存入缓存中。
             if (assets) {
                 walletStore.icp = assets.value.find((o) => o.symbol === "ICP").amount;
