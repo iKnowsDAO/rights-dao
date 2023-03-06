@@ -78,7 +78,7 @@
         onConnect: (res) => {
             // Signed in
             isConnectedWallet.value = true;
-            // console.log("connectWallet onConnect", res)
+            console.log("connectWallet onConnect", res)
         },
         onDisconnect: (res) => {
             // Signed out

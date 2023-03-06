@@ -67,7 +67,7 @@
                                 <span v-if="isFold" @click="isFold = !isFold" class="fold">{{t('common.expand')}}</span>
                                 <span v-else @click="isFold = !isFold" class="fold">{{t('common.fold')}}</span>
                                 <DeleteButton v-if="isOwner" :deleteFunction="deleteThisPost" :loading="loading"/>
-                                <el-button v-if="isOwner" @click="dialogVisible=true" type="primary">
+                                <el-button v-if="isOwner && post.answer.length===0" @click="dialogVisible=true" type="primary">
                                     {{t('wallet.bounty.add')}}
                                 </el-button>
                             </div>

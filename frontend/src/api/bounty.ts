@@ -2,7 +2,7 @@ import { ApiResult } from "@/api/types";
 import { getBackend } from "@/api/canister_pool";
 
 const multiply = 10000 * 10000; //10的8次方
-//转换位数
+//转换位数，乘法
 export const SumMultiplier = (amount: number): number => {
     const type = typeof amount;
     if (type === 'number' || type === 'bigint') {
@@ -11,6 +11,7 @@ export const SumMultiplier = (amount: number): number => {
         return 0;
     }
 }
+//转换位数，除法
 export const SumDivision = (amount: number): number => {
     const type = typeof amount;
     if (type === 'number' || type === 'bigint') {
