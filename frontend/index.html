@@ -38,11 +38,11 @@
         window.Buffer = Buffer
         // 只在线上使用这个
         console.log("proces",window.process)
-        console.log("network",window.process.env.network)
         console.log('"import"',import.meta.env)
         if(!process.env.network){
             window.process = {}
         }
+        console.log("network",window.process.env.network)
         // window.process = {};
     </script>
     <script type="module" src="/src/main.ts"></script>
