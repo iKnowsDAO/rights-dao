@@ -149,8 +149,6 @@
     }
 
     onMounted(() => {
-        console.log(`process`,process);
-        console.log(`process`,process.env);
         refetch();
         //刷新用户缓存。
         getTargetUserNewCache(props.userPrincipal)

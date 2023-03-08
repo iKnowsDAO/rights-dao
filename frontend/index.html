@@ -36,10 +36,7 @@
 
         window.global = window
         window.Buffer = Buffer
-
-        console.log("proces", window.process)
-        console.log('"import"', import.meta.env)
-        // 只在线上使用这个
+        // 只在线上使用这个，不然会与astorMe的钱包冲突，无法唤醒Me钱包。
         if (import.meta.env.MODE === "production") {
             window.process = {}
         }
