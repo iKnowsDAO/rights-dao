@@ -36,7 +36,14 @@
 
         window.global = window
         window.Buffer = Buffer
-        window.process = {};
+        // 只在线上使用这个
+        console.log("proces",window.process)
+        console.log("network",window.process.env.network)
+        console.log('"import"',import.meta.env)
+        if(!process.env.network){
+            window.process = {}
+        }
+        // window.process = {};
     </script>
     <script type="module" src="/src/main.ts"></script>
   </body>

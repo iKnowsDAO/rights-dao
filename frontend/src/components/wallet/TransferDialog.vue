@@ -130,9 +130,13 @@
                 active.value = 3;
                 console.log("updatePostBounty", res)
                 onClose();
+            }).finally(() => {
+                loading.value = false;
             });
+        } else {
+            loading.value = false;
+            console.error("transferToken error", res)
         }
-        loading.value = false;
     }
 
     const submitPostBounty = async () => {

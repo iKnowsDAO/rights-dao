@@ -63,6 +63,12 @@
                                     <CategoryButton :category="item.category"/>
                                 </el-col>
                             </el-row>
+                            <div class="adopted" v-if="item.answer.length>0">
+                                <el-icon>
+                                    <Flag/>
+                                </el-icon>
+                                {{t('post.adopt.already')}}
+                            </div>
                             <div class="content">
                                 {{item.content.content}}
                             </div>
@@ -140,7 +146,7 @@
         ElSkeleton,
         ElSkeletonItem
     } from 'element-plus/es';
-    import { Search } from '@element-plus/icons-vue'
+    import { Search,Flag } from '@element-plus/icons-vue'
     import Avatar from '@/components/common/Avatar.vue';
     import Username from '@/components/common/Username.vue';
     import BountyTag from '@/components/common/BountyTag.vue';
@@ -218,6 +224,7 @@
     const searchPage = () => {
         pageNum.value = 0;
         list.value = [];
+        init(true)
     }
 
     const handleSelect = (key: string, keyPath: string[]) => {
@@ -280,6 +287,14 @@
         justify-content: center;
         position: relative;
         padding-top: 24px;
+        .adopted {
+            font-size: 12px;
+            color: #9eadb6;
+            .el-icon {
+                color: rgb(103, 194, 58);
+                font-size: 14px;
+            }
+        }
         .left-menu {
             border-radius: var(--el-card-border-radius);
             border-right: 0;

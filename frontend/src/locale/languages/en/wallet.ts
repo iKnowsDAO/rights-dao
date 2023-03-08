@@ -21,7 +21,8 @@ export default {
         createOrder: "Create Payment Order",
         transfer: "Transfer",
         updateOrder: "Update Payment Order Status",
-        noWallet: "此用户没有绑定钱包，采纳后赏金将会消失，而不是给予此用户。"
+        noWallet: "This user is not tied to a wallet and the bounty will disappear upon adoption, " +
+            "rather than being given to this user."
     },
     reward: {
         title: "Reward",
