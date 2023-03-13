@@ -61,7 +61,8 @@
                                         {{item.comments.length+ " " + t('post.item') + t('post.comments')}}
                                     </span>
                                     <span @click="share(item.id)">{{t('common.share')}}</span>
-                                    <el-popconfirm v-if="isOwner && props.answerId===undefined"
+                                    <!--必须是发贴人且问题没有采纳答案，并且不能自己采纳自己-->
+                                    <el-popconfirm v-if="props.isOwner && props.answerId===undefined && props.currentUserPrincipal!==item.author.toString()"
                                                    :title="t('post.adopt.confirm')"
                                                    :confirmButtonText="t('common.confirm')"
                                                    :cancelButtonText="t('common.cancel')"

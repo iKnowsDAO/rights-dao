@@ -12,7 +12,9 @@
     </span>
         <el-input type="number" v-model="bountyAmount" placeholder="Amount"
                   min="0.0001" step="0.0001"
-                  style="margin-bottom: 5px"/>
+                  style="margin-bottom: 5px">
+            <template #append>ICP</template>
+        </el-input>
         <span v-if="!props.onlyTransfer">
             {{t('message.tip.notClose')}}
         </span>
