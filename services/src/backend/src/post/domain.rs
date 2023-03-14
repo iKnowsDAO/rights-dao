@@ -677,6 +677,8 @@ impl PostAddBountyCommand {
             author,
             created_at,
             finalized_at: None,
+            issued_at: None,
+            recipient: None,
         }
     }
 }
@@ -701,6 +703,8 @@ pub struct PostBountyProfile {
     pub author: Principal,
     pub created_at: u64,
     pub finalized_at: Option<u64>,
+    pub issued_at: Option<u64>,
+    pub recipient: Option<Principal>,
 }
 
 impl PostBountyProfile {
@@ -722,6 +726,8 @@ impl PostBountyProfile {
             author,
             created_at,
             finalized_at: None,
+            issued_at: None,
+            recipient: None,
         }
     }
 }
