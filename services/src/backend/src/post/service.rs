@@ -217,6 +217,53 @@ impl PostService {
         }
     }
 
+    /// 查询用户的回复数
+    pub fn get_comment_count_by_user(&self, caller: Principal) -> u64 {
+        self.posts
+            .values()
+            .flat_map(|p| &p.comments)
+            .filter(|p| p.author == caller)
+            .count() as u64
+
+        // let mut count = 0;
+        // for  p in self.posts.values() {
+        //     for c in &p.comments {
+        //         if c.author == caller {
+        //             count += 1;
+        //         }
+        //     }
+        // }
+
+        // count
+    }
+
+    /// 查询用户的问题的回复数
+    pub fn get_post_comment_count_by_user(&self, caller: Principal) -> u64 {
+        self.posts
+            .values()
+            .filter(|p| p.author == caller)
+            .map(|p| p.comments.len() as u64)
+            .sum()
+    }
+
+    /// 查询用户发放的赏金
+    pub fn get_issued_bounty_by_user(&self, caller: Principal) -> u64 {
+        self.bounties
+            .values()
+            .filter(|b| b.author == caller && b.finalized_at.is_some())
+            .map(|b| b.amount)
+            .sum()
+    }
+
+    /// 查询用户获得的赏金
+    pub fn get_received_bounty_by_user(&self, caller: Principal) -> u64 {
+        self.bounties
+            .values()
+            .filter(|b| b.recipient == Some(caller))
+            .map(|b| b.amount)
+            .sum()
+    }
+
     /// add comment to post
     pub fn add_post_comment(
         &mut self,

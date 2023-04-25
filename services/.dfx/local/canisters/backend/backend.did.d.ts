@@ -4,12 +4,19 @@ export type AchieveLevel = { 'Gold' : null } |
   { 'Commoner' : null } |
   { 'Silver' : null };
 export interface Achievement {
-  'status' : boolean,
+  'issued_bounty' : AchievementItem,
+  'post_comment' : AchievementItem,
+  'reputation' : AchievementItem,
+  'active_user' : AchievementItem,
+  'received_bounty' : AchievementItem,
+}
+export interface AchievementItem {
   'description' : string,
-  'level' : AchieveLevel,
   'experience' : bigint,
   'keyword' : string,
 }
+export type AchievementResult = { 'Ok' : Achievement } |
+  { 'Err' : UserError };
 export type BoolPostResult = { 'Ok' : boolean } |
   { 'Err' : PostError };
 export type BoolUserResult = { 'Ok' : boolean } |
@@ -323,6 +330,13 @@ export interface ReputationSummary { 'id' : Principal, 'amount' : bigint }
 export type ReputationSummaryResult = { 'Ok' : ReputationSummary } |
   { 'Err' : ReputationError };
 export interface RichText { 'content' : string, 'format' : string }
+export interface Sbt {
+  'id' : bigint,
+  'achievement' : Achievement,
+  'photo_id' : bigint,
+  'created_at' : bigint,
+  'level' : AchieveLevel,
+}
 export type U64GovernanceResult = { 'Ok' : bigint } |
   { 'Err' : GovernanceError };
 export interface UserEditCommand {
@@ -349,15 +363,14 @@ export interface UserProfile {
   'status' : UserStatus,
   'owner' : Principal,
   'interests' : Array<string>,
+  'claimed_sbt' : [] | [Sbt],
   'avatar_uri' : string,
   'memo' : string,
   'name' : string,
   'biography' : string,
   'wallet_principal' : [] | [Principal],
-  'achievement' : [] | [Achievement],
   'created_at' : bigint,
   'email' : string,
-  'current_medal_id' : [] | [bigint],
   'avatar_id' : bigint,
   'location' : string,
 }
@@ -423,8 +436,10 @@ export interface _SERVICE {
       ReputationSummaryResult
     >,
   'get_self' : () => Promise<UserResult>,
+  'get_self_achievement' : () => Promise<AchievementResult>,
   'get_top_likes_posts' : () => Promise<PostProfileListResult>,
   'get_user' : (arg_0: Principal) => Promise<UserResult>,
+  'get_user_achievement' : (arg_0: Principal) => Promise<AchievementResult>,
   'greet' : (arg_0: string) => Promise<string>,
   'is_like_post' : (arg_0: PostLikeCommand) => Promise<BoolPostResult>,
   'is_like_post_answer' : (arg_0: PostAnswerLikeCommand) => Promise<

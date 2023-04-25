@@ -38,33 +38,44 @@ export const idlFactory = ({ IDL }) => {
     'event_time' : IDL.Nat64,
   });
   const UserStatus = IDL.Variant({ 'Enable' : IDL.Null, 'Disable' : IDL.Null });
+  const AchievementItem = IDL.Record({
+    'description' : IDL.Text,
+    'experience' : IDL.Nat64,
+    'keyword' : IDL.Text,
+  });
+  const Achievement = IDL.Record({
+    'issued_bounty' : AchievementItem,
+    'post_comment' : AchievementItem,
+    'reputation' : AchievementItem,
+    'active_user' : AchievementItem,
+    'received_bounty' : AchievementItem,
+  });
   const AchieveLevel = IDL.Variant({
     'Gold' : IDL.Null,
     'Bronze' : IDL.Null,
     'Commoner' : IDL.Null,
     'Silver' : IDL.Null,
   });
-  const Achievement = IDL.Record({
-    'status' : IDL.Bool,
-    'description' : IDL.Text,
+  const Sbt = IDL.Record({
+    'id' : IDL.Nat64,
+    'achievement' : Achievement,
+    'photo_id' : IDL.Nat64,
+    'created_at' : IDL.Nat64,
     'level' : AchieveLevel,
-    'experience' : IDL.Nat64,
-    'keyword' : IDL.Text,
   });
   const UserProfile = IDL.Record({
     'id' : IDL.Nat64,
     'status' : UserStatus,
     'owner' : IDL.Principal,
     'interests' : IDL.Vec(IDL.Text),
+    'claimed_sbt' : IDL.Opt(Sbt),
     'avatar_uri' : IDL.Text,
     'memo' : IDL.Text,
     'name' : IDL.Text,
     'biography' : IDL.Text,
     'wallet_principal' : IDL.Opt(IDL.Principal),
-    'achievement' : IDL.Opt(Achievement),
     'created_at' : IDL.Nat64,
     'email' : IDL.Text,
-    'current_medal_id' : IDL.Opt(IDL.Nat64),
     'avatar_id' : IDL.Nat64,
     'location' : IDL.Text,
   });
@@ -328,6 +339,10 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : ReputationSummary,
     'Err' : ReputationError,
   });
+  const AchievementResult = IDL.Variant({
+    'Ok' : Achievement,
+    'Err' : UserError,
+  });
   const PostProfileListResult = IDL.Variant({
     'Ok' : IDL.Vec(PostProfile),
     'Err' : PostError,
@@ -497,8 +512,10 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'get_self' : IDL.Func([], [UserResult], []),
+    'get_self_achievement' : IDL.Func([], [AchievementResult], []),
     'get_top_likes_posts' : IDL.Func([], [PostProfileListResult], []),
     'get_user' : IDL.Func([IDL.Principal], [UserResult], []),
+    'get_user_achievement' : IDL.Func([IDL.Principal], [AchievementResult], []),
     'greet' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
     'is_like_post' : IDL.Func([PostLikeCommand], [BoolPostResult], []),
     'is_like_post_answer' : IDL.Func(

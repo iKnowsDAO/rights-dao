@@ -39,8 +39,7 @@ type UserProfile = record {
     status : UserStatus;
     created_at : nat64;
     wallet_principal : opt principal;
-    achievement: opt Achievement;
-    current_medal_id: opt nat64;
+    claimed_sbt: opt Sbt;
 };
 
 type UserStatus = variant {
@@ -60,17 +59,37 @@ type UserEditCommand = record {
     status: UserStatus;
 };
 
+type Sbt = record {
+    id: nat64;
+    achievement: Achievement;
+    photo_id: nat64;
+    // 等级，例如：铜牌，银牌，金牌
+    level: AchieveLevel;
+    created_at: nat64;
+};
+
 type Achievement = record {
+    // 活跃用户
+    active_user: AchievementItem;
+    // 问题回复
+    post_comment: AchievementItem;
+    // 积分（声望）成就
+    reputation: AchievementItem;
+    // 发出赏金
+    issued_bounty: AchievementItem;
+    // 收到赏金
+    received_bounty: AchievementItem;
+};
+
+type AchievementItem = record {
     // 成就关键词
     keyword: text;
     // 成就简短描述
     description: text;
-    // 经验值
+    // 经验值(例如 1条帖子，1条回复，1个积分，1 ICP等)
     experience: nat64;
-    // 成就等级，例如：铜牌，银牌，金牌
-    level: AchieveLevel;
     // 成就完成状态
-    status: bool;
+    // status: bool;
 };
 
 type AchieveLevel = variant {
@@ -82,6 +101,11 @@ type AchieveLevel = variant {
     Silver;
     // 金牌
     Gold;
+};
+
+type AchievementResult = variant {
+    Ok: Achievement;
+    Err: UserError;
 };
 
 type BoolUserResult = variant {
@@ -583,6 +607,9 @@ service : {
     "get_self" : () -> (UserResult);
     "update_wallet" : (principal) -> (BoolUserResult);
     "delete_wallet" : () -> (BoolUserResult);
+
+    "get_user_achievement" : (principal) -> (AchievementResult);
+    "get_self_achievement" : () -> (AchievementResult);
 
     "create_post" : (PostCreateCommand) -> (CreatePostResult);
     "edit_post" : (PostEditCommand) -> (BoolPostResult);
