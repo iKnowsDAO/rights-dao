@@ -20,16 +20,10 @@ pub struct UserProfile {
     pub status: UserStatus,
     pub created_at: Timestamp,
     pub wallet_principal: Option<Principal>,
+    pub achievement: Option<Achievement>, // 用户成就
+    pub current_medal_id: Option<u64>,    // 当前佩戴的勋章图片 id
 }
 
-// impl Default for UserProfile {
-//     fn default() -> Self {
-//         Self {
-//             owner: Principal::anonymous(),
-//             ..Default::default()
-//         }
-//     }
-// }
 impl UserProfile {
     pub fn new(
         id: UserId,
@@ -59,6 +53,8 @@ impl UserProfile {
             status,
             created_at,
             wallet_principal: None,
+            achievement: None,
+            current_medal_id: None,
         }
     }
 
@@ -163,6 +159,49 @@ impl UserEditCommand {
 
         Ok(true)
     }
+}
+
+/// 用户成就
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct Achievement {
+    // 成就关键词
+    pub keyword: String,
+    // 成就简短描述
+    pub description: String,
+    // 经验值
+    pub experience: u64,
+    // 成就等级，例如：铜牌，银牌，金牌
+    pub level: AchieveLevel,
+    // 成就完成状态
+    pub status: bool,
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub enum AchieveLevel {
+    // 平民
+    Commoner,
+    // 铜牌
+    Bronze,
+    // 银牌
+    Silver,
+    // 金牌
+    Gold,
+}
+
+impl Default for AchieveLevel {
+    fn default() -> Self {
+        Self::Commoner
+    }
+}
+
+pub type SbtId = u64;
+
+/// 用户 SBT
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct Sbt {
+    pub id: SbtId,
+    pub achievement: Achievement,
+    pub created_at: u64,
 }
 
 #[cfg(test)]

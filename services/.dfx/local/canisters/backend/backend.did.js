@@ -38,6 +38,19 @@ export const idlFactory = ({ IDL }) => {
     'event_time' : IDL.Nat64,
   });
   const UserStatus = IDL.Variant({ 'Enable' : IDL.Null, 'Disable' : IDL.Null });
+  const AchieveLevel = IDL.Variant({
+    'Gold' : IDL.Null,
+    'Bronze' : IDL.Null,
+    'Commoner' : IDL.Null,
+    'Silver' : IDL.Null,
+  });
+  const Achievement = IDL.Record({
+    'status' : IDL.Bool,
+    'description' : IDL.Text,
+    'level' : AchieveLevel,
+    'experience' : IDL.Nat64,
+    'keyword' : IDL.Text,
+  });
   const UserProfile = IDL.Record({
     'id' : IDL.Nat64,
     'status' : UserStatus,
@@ -48,8 +61,10 @@ export const idlFactory = ({ IDL }) => {
     'name' : IDL.Text,
     'biography' : IDL.Text,
     'wallet_principal' : IDL.Opt(IDL.Principal),
+    'achievement' : IDL.Opt(Achievement),
     'created_at' : IDL.Nat64,
     'email' : IDL.Text,
+    'current_medal_id' : IDL.Opt(IDL.Nat64),
     'avatar_id' : IDL.Nat64,
     'location' : IDL.Text,
   });

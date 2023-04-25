@@ -41,9 +41,9 @@ fn init_canister() {
     };
 
     let now = context.env.now();
-    let creator1 = GOVERNANACE_LSHOO.with(|g| g.clone());
-    let creator2 = GOVERNANACE_ZHOU.with(|g| g.clone());
-    let creator_reputation = GOVERNANACE_CREATOR_REPUTATION.with(|cr| cr.clone());
+    let creator1 = GOVERNANACE_LSHOO.with(|g| *g);
+    let creator2 = GOVERNANACE_ZHOU.with(|g| *g);
+    let creator_reputation = GOVERNANACE_CREATOR_REPUTATION.with(|cr| *cr);
 
     CONTEXT.with(|c| {
         *c.borrow_mut() = context;
@@ -86,47 +86,20 @@ fn pre_upgrade() {
     CONTEXT.with(|c| {
         let context = c.borrow();
         let id = context.id;
-        let users = Vec::from_iter(context.user_service.users.iter().map(|(_k, v)| (v.clone())));
+        let users = Vec::from_iter(context.user_service.users.values().cloned());
 
-        let posts = Vec::from_iter(context.post_service.posts.iter().map(|(_k, v)| (v.clone())));
+        let posts = Vec::from_iter(context.post_service.posts.values().cloned());
 
-        let likes = Vec::from_iter(context.post_service.likes.iter().map(|(_k, v)| v.clone()));
-        let post_bounties = Vec::from_iter(
-            context
-                .post_service
-                .bounties
-                .iter()
-                .map(|(_k, v)| v.clone()),
-        );
+        let likes = Vec::from_iter(context.post_service.likes.values().cloned());
+        let post_bounties = Vec::from_iter(context.post_service.bounties.values().cloned());
 
-        let reputation_summaries = Vec::from_iter(
-            context
-                .reputation_service
-                .summaries
-                .iter()
-                .map(|(_, summary)| summary.clone()),
-        );
-        let reputation_events = Vec::from_iter(
-            context
-                .reputation_service
-                .events
-                .iter()
-                .map(|(_, event)| event.clone()),
-        );
-        let governance_proposals = Vec::from_iter(
-            context
-                .governance_service
-                .proposals
-                .iter()
-                .map(|(_k, v)| (v.clone())),
-        );
-        let governance_members = Vec::from_iter(
-            context
-                .governance_service
-                .members
-                .iter()
-                .map(|(_k, v)| (v.clone())),
-        );
+        let reputation_summaries =
+            Vec::from_iter(context.reputation_service.summaries.values().cloned());
+        let reputation_events = Vec::from_iter(context.reputation_service.events.values().cloned());
+        let governance_proposals =
+            Vec::from_iter(context.governance_service.proposals.values().cloned());
+        let governance_members =
+            Vec::from_iter(context.governance_service.members.values().cloned());
         let payload: DaoDataStorage = DaoDataStorage {
             id,
             users,

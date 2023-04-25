@@ -1,4 +1,15 @@
 import type { Principal } from '@dfinity/principal';
+export type AchieveLevel = { 'Gold' : null } |
+  { 'Bronze' : null } |
+  { 'Commoner' : null } |
+  { 'Silver' : null };
+export interface Achievement {
+  'status' : boolean,
+  'description' : string,
+  'level' : AchieveLevel,
+  'experience' : bigint,
+  'keyword' : string,
+}
 export type BoolPostResult = { 'Ok' : boolean } |
   { 'Err' : PostError };
 export type BoolUserResult = { 'Ok' : boolean } |
@@ -343,8 +354,10 @@ export interface UserProfile {
   'name' : string,
   'biography' : string,
   'wallet_principal' : [] | [Principal],
+  'achievement' : [] | [Achievement],
   'created_at' : bigint,
   'email' : string,
+  'current_medal_id' : [] | [bigint],
   'avatar_id' : bigint,
   'location' : string,
 }

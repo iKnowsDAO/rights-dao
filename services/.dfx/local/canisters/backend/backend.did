@@ -39,6 +39,8 @@ type UserProfile = record {
     status : UserStatus;
     created_at : nat64;
     wallet_principal : opt principal;
+    achievement: opt Achievement;
+    current_medal_id: opt nat64;
 };
 
 type UserStatus = variant {
@@ -56,6 +58,30 @@ type UserEditCommand = record {
     location: text;
     memo: text;
     status: UserStatus;
+};
+
+type Achievement = record {
+    // 成就关键词
+    keyword: text;
+    // 成就简短描述
+    description: text;
+    // 经验值
+    experience: nat64;
+    // 成就等级，例如：铜牌，银牌，金牌
+    level: AchieveLevel;
+    // 成就完成状态
+    status: bool;
+};
+
+type AchieveLevel = variant {
+    // 平民
+    Commoner;
+    // 铜牌
+    Bronze;
+    // 银牌
+    Silver;
+    // 金牌
+    Gold;
 };
 
 type BoolUserResult = variant {

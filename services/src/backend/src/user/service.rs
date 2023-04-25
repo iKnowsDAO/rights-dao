@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use candid::Principal;
 
 use super::{
-    domain::{UserEditCommand, UserProfile, UserStatus},
+    domain::{Achievement, UserEditCommand, UserProfile, UserStatus},
     error::UserError,
 };
 
@@ -77,5 +77,10 @@ impl UserService {
                 profile.wallet_principal = None;
             })
             .map(|_| true)
+    }
+
+    // 获取用户成就
+    pub fn get_user_achievement(&self, user: &Principal) -> Option<Achievement> {
+        self.get_user(user).and_then(|u| u.achievement)
     }
 }

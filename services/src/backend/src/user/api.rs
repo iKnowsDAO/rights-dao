@@ -134,3 +134,11 @@ fn get_self() -> Result<UserProfile, UserError> {
             .ok_or(UserError::UserNotFound)
     })
 }
+
+/// 获取用户成就完成情况
+#[query]
+fn get_user_achievement(principal: Principal) -> Result<Achievement, UserError> {
+    CONTEXT
+        .with(|c| c.borrow().user_service.get_user_achievement(&principal))
+        .ok_or(UserError::UserNotFound)
+}
