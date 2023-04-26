@@ -38,8 +38,17 @@ export const idlFactory = ({ IDL }) => {
     'event_time' : IDL.Nat64,
   });
   const UserStatus = IDL.Variant({ 'Enable' : IDL.Null, 'Disable' : IDL.Null });
+  const AchieveLevel = IDL.Variant({
+    'Diamond' : IDL.Null,
+    'Gold' : IDL.Null,
+    'Platinum' : IDL.Null,
+    'Bronze' : IDL.Null,
+    'Commoner' : IDL.Null,
+    'Silver' : IDL.Null,
+  });
   const AchievementItem = IDL.Record({
     'description' : IDL.Text,
+    'level' : AchieveLevel,
     'experience' : IDL.Nat64,
     'keyword' : IDL.Text,
   });
@@ -49,12 +58,6 @@ export const idlFactory = ({ IDL }) => {
     'reputation' : AchievementItem,
     'active_user' : AchievementItem,
     'received_bounty' : AchievementItem,
-  });
-  const AchieveLevel = IDL.Variant({
-    'Gold' : IDL.Null,
-    'Bronze' : IDL.Null,
-    'Commoner' : IDL.Null,
-    'Silver' : IDL.Null,
   });
   const Sbt = IDL.Record({
     'id' : IDL.Nat64,

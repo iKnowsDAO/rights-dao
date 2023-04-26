@@ -2,8 +2,10 @@ use std::collections::BTreeMap;
 
 use candid::Principal;
 
+use crate::sbt::domain::Sbt;
+
 use super::{
-    domain::{Sbt, UserEditCommand, UserProfile, UserStatus},
+    domain::{UserEditCommand, UserProfile, UserStatus},
     error::UserError,
 };
 

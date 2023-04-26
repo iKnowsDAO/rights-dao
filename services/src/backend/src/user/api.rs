@@ -7,6 +7,7 @@ use super::{domain::*, error::UserError};
 
 use crate::common::guard::user_owner_guard;
 use crate::context::DaoContext;
+use crate::sbt::domain::{Achievement, AchievementItem};
 use crate::CONTEXT;
 
 #[update]
@@ -119,6 +120,10 @@ fn delete_wallet() -> Result<bool, UserError> {
     })
 }
 
+// Claim SBT
+
+// Claim 成就
+
 #[query]
 fn get_user(principal: Principal) -> Result<UserProfile, UserError> {
     CONTEXT
@@ -139,25 +144,25 @@ fn get_self() -> Result<UserProfile, UserError> {
 
 /// 获取用户经验值情况
 #[query]
-fn get_user_achievement(user: Principal) -> Result<Achievement, UserError> {
+fn get_user_experience(user: Principal) -> Result<Achievement, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
-        query_achievement(ctx, user)
+        query_experience(ctx, user)
     })
 }
 
 /// 获取调用者经验值情况
 #[query]
-fn get_self_achievement() -> Result<Achievement, UserError> {
+fn get_self_experience() -> Result<Achievement, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let user = ctx.env.caller();
-        query_achievement(ctx, user)
+        query_experience(ctx, user)
     })
 }
 
 /// 实时查询用户经验值
-fn query_achievement(ctx: Ref<DaoContext>, user: Principal) -> Result<Achievement, UserError> {
+fn query_experience(ctx: Ref<DaoContext>, user: Principal) -> Result<Achievement, UserError> {
     let owner = ctx
         .user_service
         .get_user(&user)
@@ -165,40 +170,40 @@ fn query_achievement(ctx: Ref<DaoContext>, user: Principal) -> Result<Achievemen
         .ok_or(UserError::UserNotFound)?;
 
     let active = ctx.post_service.get_comment_count_by_user(user);
-    let post_comment = ctx.post_service.get_post_comment_count_by_user(user);
-    let reputation = ctx.reputation_service.get_reputation(&user).amount;
-    let issued_bounty = ctx.post_service.get_issued_bounty_by_user(user);
-    let received_bounty = ctx.post_service.get_received_bounty_by_user(user);
+    // let post_comment = ctx.post_service.get_post_comment_count_by_user(user);
+    // let reputation = ctx.reputation_service.get_reputation(&user).amount;
+    // let issued_bounty = ctx.post_service.get_issued_bounty_by_user(user);
+    // let received_bounty = ctx.post_service.get_received_bounty_by_user(user);
 
     let active_item =
-        AchievementItem::new("active user".to_string(), "active user".to_string(), active);
-    let post_comment_item = AchievementItem::new(
-        "post comment".to_string(),
-        "post comment".to_string(),
-        post_comment,
-    );
-    let reputation_item = AchievementItem::new(
-        "reputation".to_string(),
-        "reputation".to_string(),
-        reputation,
-    );
-    let issued_bounty_item = AchievementItem::new(
-        "issued bounty".to_string(),
-        "issued bounty".to_string(),
-        issued_bounty,
-    );
-    let received_bounty_item = AchievementItem::new(
-        "received bounty".to_string(),
-        "received bounty".to_string(),
-        received_bounty,
-    );
+        AchievementItem::create("active user".to_string(), "active user".to_string(), active);
+    // let post_comment_item = AchievementItem::create(
+    //     "post comment".to_string(),
+    //     "post comment".to_string(),
+    //     post_comment,
+    // );
+    // let reputation_item = AchievementItem::create(
+    //     "reputation".to_string(),
+    //     "reputation".to_string(),
+    //     reputation,
+    // );
+    // let issued_bounty_item = AchievementItem::create(
+    //     "issued bounty".to_string(),
+    //     "issued bounty".to_string(),
+    //     issued_bounty,
+    // );
+    // let received_bounty_item = AchievementItem::create(
+    //     "received bounty".to_string(),
+    //     "received bounty".to_string(),
+    //     received_bounty,
+    // );
 
     Ok(Achievement::new(
         owner,
         active_item,
-        post_comment_item,
-        reputation_item,
-        issued_bounty_item,
-        received_bounty_item,
+        // post_comment_item,
+        // reputation_item,
+        // issued_bounty_item,
+        // received_bounty_item,
     ))
 }

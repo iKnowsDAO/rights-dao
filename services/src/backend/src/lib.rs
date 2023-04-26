@@ -20,6 +20,8 @@ pub mod governance;
 
 pub mod reputation;
 
+pub mod sbt;
+
 pub mod user;
 
 use ic_ledger_types::{

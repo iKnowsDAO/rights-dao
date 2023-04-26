@@ -1,5 +1,7 @@
 import type { Principal } from '@dfinity/principal';
-export type AchieveLevel = { 'Gold' : null } |
+export type AchieveLevel = { 'Diamond' : null } |
+  { 'Gold' : null } |
+  { 'Platinum' : null } |
   { 'Bronze' : null } |
   { 'Commoner' : null } |
   { 'Silver' : null };
@@ -12,6 +14,7 @@ export interface Achievement {
 }
 export interface AchievementItem {
   'description' : string,
+  'level' : AchieveLevel,
   'experience' : bigint,
   'keyword' : string,
 }

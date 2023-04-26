@@ -696,7 +696,7 @@ pub struct PostUpdateBountyCommand {
 pub struct PostBountyProfile {
     pub id: u64,
     pub post_id: PostId,
-    pub amount: u64, // 此数值比实际放大10000倍，1icp = 10000
+    pub amount: u64, // 此数值比实际放大10000 * 10000倍，1 icp = 10000 * 10000
     pub nonce: u64,
     pub status: PostBountyStatus,
     pub block_height: Option<u64>,

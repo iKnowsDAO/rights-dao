@@ -1,5 +1,7 @@
 use candid::{CandidType, Deserialize, Principal};
 
+use crate::sbt::domain::{Achievement, Sbt};
+
 use super::error::UserError;
 
 pub const MAX_ACTIVE_USER_EXPERIENCE: u64 = 10;
@@ -22,6 +24,7 @@ pub struct UserProfile {
     pub status: UserStatus,
     pub created_at: Timestamp,
     pub wallet_principal: Option<Principal>,
+    pub achievement: Option<Achievement>,
     pub claimed_sbt: Option<Sbt>, // 用户成就 SBT
 }
 
@@ -54,6 +57,7 @@ impl UserProfile {
             status,
             created_at,
             wallet_principal: None,
+            achievement: None,
             claimed_sbt: None,
         }
     }
@@ -159,96 +163,6 @@ impl UserEditCommand {
 
         Ok(true)
     }
-}
-
-/// 用户成就
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct Achievement {
-    pub owner: Principal,
-    // 活跃用户
-    pub active_user: AchievementItem,
-    // 问题回复
-    pub post_comment: AchievementItem,
-    // 积分（声望）成就
-    pub reputation: AchievementItem,
-    // 发出赏金
-    pub issued_bounty: AchievementItem,
-    // 收到赏金
-    pub received_bounty: AchievementItem,
-}
-
-impl Achievement {
-    pub fn new(
-        owner: Principal,
-        active_user: AchievementItem,
-        post_comment: AchievementItem,
-        reputation: AchievementItem,
-        issued_bounty: AchievementItem,
-        received_bounty: AchievementItem,
-    ) -> Self {
-        Self {
-            owner,
-            active_user,
-            post_comment,
-            reputation,
-            issued_bounty,
-            received_bounty,
-        }
-    }
-}
-
-/// 用户成就项
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct AchievementItem {
-    // 成就关键词
-    pub keyword: String,
-    // 成就简短描述
-    pub description: String,
-    // 经验值(例如 1条帖子，1条回复，1个积分，1 ICP等)
-    pub experience: u64,
-    // 成就完成状态
-    // pub status: bool,
-}
-
-impl AchievementItem {
-    pub fn new(keyword: String, description: String, experience: u64) -> Self {
-        Self {
-            keyword,
-            description,
-            experience,
-        }
-    }
-}
-
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub enum AchieveLevel {
-    // 平民
-    Commoner,
-    // 铜牌
-    Bronze,
-    // 银牌
-    Silver,
-    // 金牌
-    Gold,
-}
-
-impl Default for AchieveLevel {
-    fn default() -> Self {
-        Self::Commoner
-    }
-}
-
-pub type SbtId = u64;
-
-/// 用户 SBT
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct Sbt {
-    pub id: SbtId,
-    pub achievement: Achievement,
-    pub photo_id: u64,
-    // 成就等级，例如：铜牌，银牌，金牌
-    pub level: AchieveLevel,
-    pub created_at: u64,
 }
 
 #[cfg(test)]

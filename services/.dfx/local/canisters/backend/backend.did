@@ -88,8 +88,8 @@ type AchievementItem = record {
     description: text;
     // 经验值(例如 1条帖子，1条回复，1个积分，1 ICP等)
     experience: nat64;
-    // 成就完成状态
-    // status: bool;
+    // 成就完成级别
+    level: AchieveLevel;
 };
 
 type AchieveLevel = variant {
@@ -101,6 +101,8 @@ type AchieveLevel = variant {
     Silver;
     // 金牌
     Gold;
+    Platinum;
+    Diamond;
 };
 
 type AchievementResult = variant {
