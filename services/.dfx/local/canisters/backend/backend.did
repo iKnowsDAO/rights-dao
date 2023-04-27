@@ -39,6 +39,7 @@ type UserProfile = record {
     status : UserStatus;
     created_at : nat64;
     wallet_principal : opt principal;
+    achievement: opt Achievement;
     claimed_sbt: opt Sbt;
 };
 
@@ -57,6 +58,18 @@ type UserEditCommand = record {
     location: text;
     memo: text;
     status: UserStatus;
+};
+
+type Experience = record {
+    owner: principal;
+    experience: nat64;
+    level: nat64;
+    next_level_experience: nat64;
+};
+
+type ExperienceResult = variant {
+    Ok: Experience;
+    Err: UserError;
 };
 
 type Sbt = record {
@@ -609,6 +622,9 @@ service : {
     "get_self" : () -> (UserResult);
     "update_wallet" : (principal) -> (BoolUserResult);
     "delete_wallet" : () -> (BoolUserResult);
+
+    "get_user_experience" : (principal) -> (ExperienceResult);
+    "get_self_experience" : () -> (ExperienceResult);
 
     "get_user_achievement" : (principal) -> (AchievementResult);
     "get_self_achievement" : () -> (AchievementResult);

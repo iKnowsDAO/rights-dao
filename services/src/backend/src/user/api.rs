@@ -7,7 +7,10 @@ use super::{domain::*, error::UserError};
 
 use crate::common::guard::user_owner_guard;
 use crate::context::DaoContext;
-use crate::sbt::domain::{Achievement, AchievementItem};
+use crate::sbt::domain::{
+    compute_active_user_or_post_comment_experience, compute_bounty_experience,
+    compute_reputation_experience, Achievement, AchievementItem, Experience,
+};
 use crate::CONTEXT;
 
 #[update]
@@ -123,6 +126,7 @@ fn delete_wallet() -> Result<bool, UserError> {
 // Claim SBT
 
 // Claim 成就
+// 把用户在各类任务的经验值换算为成就的最高等级
 
 #[query]
 fn get_user(principal: Principal) -> Result<UserProfile, UserError> {
@@ -144,7 +148,7 @@ fn get_self() -> Result<UserProfile, UserError> {
 
 /// 获取用户经验值情况
 #[query]
-fn get_user_experience(user: Principal) -> Result<Achievement, UserError> {
+fn get_user_experience(user: Principal) -> Result<Experience, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         query_experience(ctx, user)
@@ -153,7 +157,7 @@ fn get_user_experience(user: Principal) -> Result<Achievement, UserError> {
 
 /// 获取调用者经验值情况
 #[query]
-fn get_self_experience() -> Result<Achievement, UserError> {
+fn get_self_experience() -> Result<Experience, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let user = ctx.env.caller();
@@ -161,8 +165,57 @@ fn get_self_experience() -> Result<Achievement, UserError> {
     })
 }
 
-/// 实时查询用户经验值
-fn query_experience(ctx: Ref<DaoContext>, user: Principal) -> Result<Achievement, UserError> {
+/// 获取调用者的成就
+#[query]
+fn get_self_achievement() -> Result<Achievement, UserError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        let user = ctx.env.caller();
+        query_achievement(ctx, user)
+    })
+}
+
+/// 获取用户的成就
+#[query]
+fn get_user_achievement(user: Principal) -> Result<Achievement, UserError> {
+    CONTEXT.with(|c| {
+        let ctx = c.borrow();
+        query_achievement(ctx, user)
+    })
+}
+
+/// 实时查询用户经验
+fn query_experience(ctx: Ref<DaoContext>, user: Principal) -> Result<Experience, UserError> {
+    let owner = ctx
+        .user_service
+        .get_user(&user)
+        .map(|u| u.owner)
+        .ok_or(UserError::UserNotFound)?;
+
+    // 获取用户各任务的完成值
+    let active = ctx.post_service.get_comment_count_by_user(user);
+    let post_comment = ctx.post_service.get_post_comment_count_by_user(user);
+    let reputation = ctx.reputation_service.get_reputation(&user).amount;
+    let issued_bounty = ctx.post_service.get_issued_bounty_by_user(user);
+    let received_bounty = ctx.post_service.get_received_bounty_by_user(user);
+
+    // 把各任务完成值转换为经验值，及更高一级对就的的经验值
+    let active_exp = compute_active_user_or_post_comment_experience(active);
+    let post_comment_exp = compute_active_user_or_post_comment_experience(post_comment);
+    let reputation_exp = compute_reputation_experience(reputation);
+    let issued_bounty_exp = compute_bounty_experience(issued_bounty);
+    let received_bounty_exp = compute_bounty_experience(received_bounty);
+
+    let total_exp =
+        active_exp + post_comment_exp + reputation_exp + issued_bounty_exp + received_bounty_exp;
+
+    let experience = Experience::new(owner, total_exp);
+
+    Ok(experience)
+}
+
+/// 实时查询用户成就
+fn query_achievement(ctx: Ref<DaoContext>, user: Principal) -> Result<Achievement, UserError> {
     let owner = ctx
         .user_service
         .get_user(&user)

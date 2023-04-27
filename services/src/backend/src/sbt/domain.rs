@@ -1,10 +1,17 @@
-pub const TEN_LEVEL: u64 = 10;
-pub const HUNDRED_LEVEL: u64 = 100;
-pub const THOUSAND_LEVEL: u64 = 1000;
-pub const TEN_THOUSAND_LEVEL: u64 = 10000;
-pub const HUNDRED_MILLION_LEVEL: u64 = 100000000; // 1 ICP = 100000000(1亿), 下同
-pub const TEN_BILLION_LEVEL: u64 = 10000000000; // 100亿
-pub const HUNDRED_BILLION_LEVEL: u64 = 100000000000; // 1000亿
+pub const ZERO: u64 = 0;
+pub const TEN: u64 = 10;
+pub const TWENTY: u64 = 20;
+pub const THIRTY: u64 = 30;
+pub const FIFTY: u64 = 50;
+pub const SIXTY: u64 = 60;
+pub const HUNDRED: u64 = 100;
+pub const TWO_HUNDRED: u64 = 200;
+pub const FIVE_HUNDRED: u64 = 500;
+pub const THOUSAND: u64 = 1000;
+pub const TEN_THOUSAND: u64 = 10000; // 1万
+pub const HUNDRED_MILLION: u64 = 100000000; // 1 ICP = 100000000(1亿), 下同
+pub const TEN_BILLION: u64 = 10000000000; // 100 ICP (100亿)
+pub const HUNDRED_BILLION: u64 = 100000000000; // 1000 ICP（1000亿）
 
 // pub enum ActiveUserAchievement {
 //     Bronze(BronzeActiveUser),
@@ -16,76 +23,133 @@ pub const HUNDRED_BILLION_LEVEL: u64 = 100000000000; // 1000亿
 
 use candid::{CandidType, Deserialize, Principal};
 
-pub trait CompletionExperience<S> {
-    fn ten(&self) -> S;
-    fn hundred(&self) -> S;
-    fn thousand(&self) -> S;
-}
+// pub trait CompletionExperience<S> {
+//     fn ten(&self) -> S;
+//     fn hundred(&self) -> S;
+//     fn thousand(&self) -> S;
+// }
 
-/// 活跃用户成就元数据
+/// 任务完成值数据
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct TaskExperience {
+//     pub completion: u64,    // 任务完成值
+//     pub experience: u64,    // 获得的经验值
+// }
+
+/// 用户经验数据，通过汇总的各个任务经验计算
 #[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct ExperienceValue {
-    pub completion: u64,
-    pub experience: u64,
+pub struct Experience {
+    pub owner: Principal,
+    pub experience: u64,            // 获得的经验值
+    pub level: u64,                 // 经验值对应的等级
+    pub next_level_experience: u64, // 下一等级需要的经验值
 }
 
-impl ExperienceValue {
-    fn new(completion: u64, experience: u64) -> Self {
+impl Experience {
+    pub fn new(owner: Principal, experience: u64) -> Self {
+        let level = compute_experience_level(experience);
+        let next_level_experience = compute_next_level_experience(experience);
         Self {
-            completion,
+            owner,
             experience,
+            level,
+            next_level_experience,
         }
     }
+}
 
-    pub fn next_exeperience(&self) -> u64 {
-        self.completion + self.experience
-    }
-
-    pub fn ten() -> Self {
-        Self::new(10, 10)
-    }
-
-    pub fn hundred() -> Self {
-        Self::new(100, 30)
-    }
-
-    pub fn thousand() -> Self {
-        Self::new(1000, 100)
+pub fn compute_active_user_or_post_comment_experience(completion: u64) -> u64 {
+    if completion >= THOUSAND {
+        FIFTY
+    } else if completion >= HUNDRED {
+        THIRTY
+    } else if completion >= TEN {
+        TEN
+    } else {
+        ZERO
     }
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct CompletionTen;
-
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct CompletionHudred;
-
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct CompletionThousand;
-
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct CompletionTenThousand;
-
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct CompletionHundredMillion;
-
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct CompletionTenBillion;
-
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub struct CompletionHundredBillion;
-
-impl From<CompletionTen> for AchieveValue {
-    fn from(_: CompletionTen) -> Self {
-        AchieveValue::Ten
+pub fn compute_reputation_experience(completion: u64) -> u64 {
+    if completion >= TEN_THOUSAND {
+        FIFTY
+    } else if completion >= THOUSAND {
+        THIRTY
+    } else if completion >= HUNDRED {
+        TEN
+    } else {
+        ZERO
     }
 }
 
-impl From<CompletionHudred> for AchieveValue {
-    fn from(_: CompletionHudred) -> Self {
-        AchieveValue::Hundred
+pub fn compute_bounty_experience(completion: u64) -> u64 {
+    if completion >= HUNDRED_BILLION {
+        HUNDRED
+    } else if completion >= TEN_BILLION {
+        SIXTY
+    } else if completion >= HUNDRED_MILLION {
+        TWENTY
+    } else {
+        ZERO
     }
 }
+
+fn compute_experience_level(exp: u64) -> u64 {
+    if exp >= FIVE_HUNDRED {
+        3
+    } else if exp >= TWO_HUNDRED {
+        2
+    } else if exp >= TEN {
+        1
+    } else {
+        ZERO
+    }
+}
+
+fn compute_next_level_experience(exp: u64) -> u64 {
+    if exp >= FIVE_HUNDRED {
+        ZERO
+    } else if exp >= TWO_HUNDRED {
+        FIVE_HUNDRED - exp
+    } else if exp >= TEN {
+        TWO_HUNDRED - exp
+    } else {
+        TEN
+    }
+}
+
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct CompletionTen;
+
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct CompletionHudred;
+
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct CompletionThousand;
+
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct CompletionTenThousand;
+
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct CompletionHundredMillion;
+
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct CompletionTenBillion;
+
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub struct CompletionHundredBillion;
+
+// impl From<CompletionTen> for AchieveValue {
+//     fn from(_: CompletionTen) -> Self {
+//         AchieveValue::Ten
+//     }
+// }
+
+// impl From<CompletionHudred> for AchieveValue {
+//     fn from(_: CompletionHudred) -> Self {
+//         AchieveValue::Hundred
+//     }
+// }
 
 // impl From<CompletionThousand> for AchieveLevel {
 //     fn from(_: CompletionThousand) -> Self {
@@ -117,64 +181,64 @@ impl From<CompletionHudred> for AchieveValue {
 //     }
 // }
 
-pub trait Levelable {
-    type Lv: Into<AchieveValue>;
-    // type Nl;
-    fn level(&self) -> Self::Lv;
-    // fn next(self) -> Option<Self::Nl>;
-}
+// pub trait Levelable {
+//     type Lv: Into<AchieveValue>;
+//     // type Nl;
+//     fn level(&self) -> Self::Lv;
+//     // fn next(self) -> Option<Self::Nl>;
+// }
 
-pub trait NextLevelable {
-    type Nl;
-    fn next_level(&self) -> Self::Nl;
-}
+// pub trait NextLevelable {
+//     type Nl;
+//     fn next_level(&self) -> Self::Nl;
+// }
 
-pub struct ActiveUser<Level>
-where
-    Level: Into<AchieveValue>,
-{
-    pub value: Level,
-}
+// pub struct ActiveUser<Level>
+// where
+//     Level: Into<AchieveValue>,
+// {
+//     pub value: Level,
+// }
 
-impl<L: Into<AchieveValue>> ActiveUser<L> {
-    pub fn new(value: L) -> Self {
-        Self { value }
-    }
-}
+// impl<L: Into<AchieveValue>> ActiveUser<L> {
+//     pub fn new(value: L) -> Self {
+//         Self { value }
+//     }
+// }
 
-impl<L: Clone + Into<AchieveValue>> Levelable for ActiveUser<L> {
-    type Lv = L;
-    fn level(&self) -> Self::Lv {
-        self.value.clone()
-    }
-}
+// impl<L: Clone + Into<AchieveValue>> Levelable for ActiveUser<L> {
+//     type Lv = L;
+//     fn level(&self) -> Self::Lv {
+//         self.value.clone()
+//     }
+// }
 
-impl NextLevelable for ActiveUser<CompletionTen> {
-    type Nl = CompletionHudred;
+// impl NextLevelable for ActiveUser<CompletionTen> {
+//     type Nl = CompletionHudred;
 
-    fn next_level(&self) -> Self::Nl {
-        CompletionHudred
-    }
-}
+//     fn next_level(&self) -> Self::Nl {
+//         CompletionHudred
+//     }
+// }
 
-impl NextLevelable for ActiveUser<CompletionHudred> {
-    type Nl = CompletionThousand;
+// impl NextLevelable for ActiveUser<CompletionHudred> {
+//     type Nl = CompletionThousand;
 
-    fn next_level(&self) -> Self::Nl {
-        CompletionThousand
-    }
-}
+//     fn next_level(&self) -> Self::Nl {
+//         CompletionThousand
+//     }
+// }
 
-impl<Level: Levelable + Into<AchieveValue>> From<ActiveUser<Level>> for AchievementItem {
-    fn from(au: ActiveUser<Level>) -> Self {
-        Self {
-            keyword: "active_user".to_string(),
-            description: "active_user".to_string(),
-            experience: au.value.into().into(),
-            level: AchieveLevel::One,
-        }
-    }
-}
+// impl<Level: Levelable + Into<AchieveValue>> From<ActiveUser<Level>> for AchievementItem {
+//     fn from(au: ActiveUser<Level>) -> Self {
+//         Self {
+//             keyword: "active_user".to_string(),
+//             description: "active_user".to_string(),
+//             experience: au.value.into().into(),
+//             level: AchieveLevel::One,
+//         }
+//     }
+// }
 
 // impl<CompletionTen> From<ActiveUser<CompletionTen>> for AchieveLevel {
 //     fn from(au: ActiveUser<CompletionTen>) -> Self {
@@ -186,10 +250,10 @@ impl<Level: Levelable + Into<AchieveValue>> From<ActiveUser<Level>> for Achievem
 //     fn next_level
 // }
 
-pub struct PostComment;
-pub struct Reputation;
-pub struct IssuedBounty;
-pub struct ReceivedBounty;
+// pub struct PostComment;
+// pub struct Reputation;
+// pub struct IssuedBounty;
+// pub struct ReceivedBounty;
 
 /// 用户成就
 #[derive(Debug, Clone, CandidType, Deserialize)]

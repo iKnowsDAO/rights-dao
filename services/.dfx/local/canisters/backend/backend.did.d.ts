@@ -68,6 +68,14 @@ export type CurrencyUnit = { 'BTC' : null } |
   { 'ETH' : null } |
   { 'ICP' : null } |
   { 'USDT' : null };
+export interface Experience {
+  'next_level_experience' : bigint,
+  'owner' : Principal,
+  'level' : bigint,
+  'experience' : bigint,
+}
+export type ExperienceResult = { 'Ok' : Experience } |
+  { 'Err' : UserError };
 export type GovernanceError = {
     'GovernanaceMemberActionFormatInvalid' : null
   } |
@@ -372,6 +380,7 @@ export interface UserProfile {
   'name' : string,
   'biography' : string,
   'wallet_principal' : [] | [Principal],
+  'achievement' : [] | [Achievement],
   'created_at' : bigint,
   'email' : string,
   'avatar_id' : bigint,
@@ -440,9 +449,11 @@ export interface _SERVICE {
     >,
   'get_self' : () => Promise<UserResult>,
   'get_self_achievement' : () => Promise<AchievementResult>,
+  'get_self_experience' : () => Promise<ExperienceResult>,
   'get_top_likes_posts' : () => Promise<PostProfileListResult>,
   'get_user' : (arg_0: Principal) => Promise<UserResult>,
   'get_user_achievement' : (arg_0: Principal) => Promise<AchievementResult>,
+  'get_user_experience' : (arg_0: Principal) => Promise<ExperienceResult>,
   'greet' : (arg_0: string) => Promise<string>,
   'is_like_post' : (arg_0: PostLikeCommand) => Promise<BoolPostResult>,
   'is_like_post_answer' : (arg_0: PostAnswerLikeCommand) => Promise<

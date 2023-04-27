@@ -77,6 +77,7 @@ export const idlFactory = ({ IDL }) => {
     'name' : IDL.Text,
     'biography' : IDL.Text,
     'wallet_principal' : IDL.Opt(IDL.Principal),
+    'achievement' : IDL.Opt(Achievement),
     'created_at' : IDL.Nat64,
     'email' : IDL.Text,
     'avatar_id' : IDL.Nat64,
@@ -346,6 +347,16 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : Achievement,
     'Err' : UserError,
   });
+  const Experience = IDL.Record({
+    'next_level_experience' : IDL.Nat64,
+    'owner' : IDL.Principal,
+    'level' : IDL.Nat64,
+    'experience' : IDL.Nat64,
+  });
+  const ExperienceResult = IDL.Variant({
+    'Ok' : Experience,
+    'Err' : UserError,
+  });
   const PostProfileListResult = IDL.Variant({
     'Ok' : IDL.Vec(PostProfile),
     'Err' : PostError,
@@ -516,9 +527,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'get_self' : IDL.Func([], [UserResult], []),
     'get_self_achievement' : IDL.Func([], [AchievementResult], []),
+    'get_self_experience' : IDL.Func([], [ExperienceResult], []),
     'get_top_likes_posts' : IDL.Func([], [PostProfileListResult], []),
     'get_user' : IDL.Func([IDL.Principal], [UserResult], []),
     'get_user_achievement' : IDL.Func([IDL.Principal], [AchievementResult], []),
+    'get_user_experience' : IDL.Func([IDL.Principal], [ExperienceResult], []),
     'greet' : IDL.Func([IDL.Text], [IDL.Text], ['query']),
     'is_like_post' : IDL.Func([PostLikeCommand], [BoolPostResult], []),
     'is_like_post_answer' : IDL.Func(
