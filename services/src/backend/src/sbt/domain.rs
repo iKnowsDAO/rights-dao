@@ -40,9 +40,9 @@ use candid::{CandidType, Deserialize, Principal};
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct Experience {
     pub owner: Principal,
-    pub experience: u64,            // 获得的经验值
-    pub level: u64,                 // 经验值对应的等级
-    pub next_level_experience: u64, // 下一等级需要的经验值
+    pub experience: u64,     // 获得的经验值
+    pub level: u64,          // 经验值对应的等级
+    pub next_level_gap: u64, // 升级需要的经验值
 }
 
 impl Experience {
@@ -53,7 +53,7 @@ impl Experience {
             owner,
             experience,
             level,
-            next_level_experience,
+            next_level_gap: next_level_experience,
         }
     }
 }
@@ -417,4 +417,56 @@ pub struct Sbt {
     // 成就等级，例如：铜牌，银牌，金牌
     pub level: AchieveLevel,
     pub created_at: u64,
+}
+
+#[cfg(test)]
+mod tests {
+    use candid::Principal;
+
+    use crate::sbt::domain::Experience;
+
+    use super::{
+        compute_active_user_or_post_comment_experience, compute_bounty_experience,
+        compute_reputation_experience, TEN_BILLION,
+    };
+
+    #[test]
+    fn compute_experience_should_works() {
+        let active_user_completion = 1900;
+        let post_comment_completion = 90;
+        let reputation_completion = 1001;
+        let issued_bounty_completion = TEN_BILLION + 1;
+        let received_bounty_completion = TEN_BILLION + 1;
+
+        let active_user_exp =
+            compute_active_user_or_post_comment_experience(active_user_completion);
+        let post_comment_exp =
+            compute_active_user_or_post_comment_experience(post_comment_completion);
+        let reputation_exp = compute_reputation_experience(reputation_completion);
+        let issued_bounty_exp = compute_bounty_experience(issued_bounty_completion);
+        let received_bounty_exp = compute_bounty_experience(received_bounty_completion);
+
+        assert_eq!(active_user_exp, 50);
+        assert_eq!(post_comment_exp, 10);
+        assert_eq!(reputation_exp, 30);
+        assert_eq!(issued_bounty_exp, 60);
+        assert_eq!(received_bounty_exp, 60);
+
+        let owner = Principal::anonymous();
+        let total_exp = active_user_exp
+            + post_comment_exp
+            + reputation_exp
+            + issued_bounty_exp
+            + received_bounty_exp;
+        let exp = Experience::new(owner, total_exp);
+
+        assert_eq!(exp.experience, 210);
+        assert_eq!(exp.level, 2);
+        assert_eq!(exp.next_level_gap, 290);
+    }
+
+    // #[test]
+    // fn compute_experience_should_works() {
+
+    // }
 }
