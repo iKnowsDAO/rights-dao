@@ -9,7 +9,7 @@ use crate::common::guard::user_owner_guard;
 use crate::context::DaoContext;
 use crate::sbt::domain::{
     compute_active_user_or_post_comment_experience, compute_bounty_experience,
-    compute_reputation_experience, Achievement, AchievementItem, Experience,
+    compute_reputation_experience, Achievement, AchievementClaimCmd, AchievementItem, Experience,
 };
 use crate::CONTEXT;
 
@@ -127,6 +127,19 @@ fn delete_wallet() -> Result<bool, UserError> {
 
 // Claim 成就
 // 把用户在各类任务的经验值换算为成就的最高等级
+#[update]
+fn claim_achievement() -> Result<bool, UserError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let user = ctx.env.caller();
+        let claimed_at = ctx.env.now();
+        let achievement = query_achievement(&ctx, user, claimed_at)?;
+
+        ctx.user_service
+            .update_achievement(achievement)
+            .ok_or(UserError::UserNotFound)
+    })
+}
 
 #[query]
 fn get_user(principal: Principal) -> Result<UserProfile, UserError> {
@@ -171,7 +184,8 @@ fn get_self_achievement() -> Result<Achievement, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let user = ctx.env.caller();
-        query_achievement(ctx, user)
+        let claimed_at = ctx.env.now();
+        query_achievement(&ctx, user, claimed_at)
     })
 }
 
@@ -180,7 +194,8 @@ fn get_self_achievement() -> Result<Achievement, UserError> {
 fn get_user_achievement(user: Principal) -> Result<Achievement, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
-        query_achievement(ctx, user)
+        let claimed_at = ctx.env.now();
+        query_achievement(&ctx, user, claimed_at)
     })
 }
 
@@ -215,7 +230,11 @@ fn query_experience(ctx: Ref<DaoContext>, user: Principal) -> Result<Experience,
 }
 
 /// 实时查询用户成就
-fn query_achievement(ctx: Ref<DaoContext>, user: Principal) -> Result<Achievement, UserError> {
+fn query_achievement(
+    ctx: &DaoContext,
+    user: Principal,
+    claimed_at: u64,
+) -> Result<Achievement, UserError> {
     let owner = ctx
         .user_service
         .get_user(&user)
@@ -254,9 +273,14 @@ fn query_achievement(ctx: Ref<DaoContext>, user: Principal) -> Result<Achievemen
     Ok(Achievement::new(
         owner,
         active_item,
+        todo!(),
+        todo!(),
+        todo!(),
+        todo!(),
         // post_comment_item,
         // reputation_item,
         // issued_bounty_item,
         // received_bounty_item,
+        claimed_at,
     ))
 }

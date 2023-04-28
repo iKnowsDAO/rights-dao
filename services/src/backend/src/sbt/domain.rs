@@ -13,6 +13,12 @@ pub const HUNDRED_MILLION: u64 = 100000000; // 1 ICP = 100000000(1亿), 下同
 pub const TEN_BILLION: u64 = 10000000000; // 100 ICP (100亿)
 pub const HUNDRED_BILLION: u64 = 100000000000; // 1000 ICP（1000亿）
 
+pub const ACHIEVEMENT_ACTIVE_USER: &str = "active_user";
+pub const ACHIEVEMENT_POST_COMMENT: &str = "post_comment";
+pub const ACHIEVEMENT_REPUTATION: &str = "reputation";
+pub const ACHIEVEMENT_ISSUED_BOUNTY: &str = "issued_bounty";
+pub const ACHIEVEMENT_RECEIVED_BOUNTY: &str = "received_bounty";
+
 // pub enum ActiveUserAchievement {
 //     Bronze(BronzeActiveUser),
 //     Silver(SilverActiveUser),
@@ -22,6 +28,8 @@ pub const HUNDRED_BILLION: u64 = 100000000000; // 1000 ICP（1000亿）
 // }
 
 use candid::{CandidType, Deserialize, Principal};
+
+use crate::user::error::UserError;
 
 // pub trait CompletionExperience<S> {
 //     fn ten(&self) -> S;
@@ -262,33 +270,48 @@ pub struct Achievement {
     // 活跃用户
     pub active_user: AchievementItem,
     // 问题回复
-    // pub post_comment: AchievementItem,
+    pub post_comment: AchievementItem,
     // 积分（声望）成就
-    // pub reputation: AchievementItem,
+    pub reputation: AchievementItem,
     // 发出赏金
-    // pub issued_bounty: AchievementItem,
+    pub issued_bounty: AchievementItem,
     // 收到赏金
-    // pub received_bounty: AchievementItem,
+    pub received_bounty: AchievementItem,
+    // Claim 时间
+    pub claimed_at: u64,
 }
 
 impl Achievement {
     pub fn new(
         owner: Principal,
         active_user: AchievementItem,
-        // post_comment: AchievementItem,
-        // reputation: AchievementItem,
-        // issued_bounty: AchievementItem,
-        // received_bounty: AchievementItem,
+        post_comment: AchievementItem,
+        reputation: AchievementItem,
+        issued_bounty: AchievementItem,
+        received_bounty: AchievementItem,
+        claimed_at: u64,
     ) -> Self {
         Self {
             owner,
             active_user,
-            // post_comment,
-            // reputation,
-            // issued_bounty,
-            // received_bounty,
+            post_comment,
+            reputation,
+            issued_bounty,
+            received_bounty,
+            claimed_at,
         }
     }
+
+    // pub fn update(
+    //     &mut self,
+    //     // id: &str,
+    //     new_achievement: Achievement,
+    // ) -> Result<(), UserError>{
+    //     if self.owner != new_achievement.owner {
+    //         return Err(UserError::UserNotSame);
+    //     }
+
+    // }
 }
 
 /// 用户成就项
@@ -368,6 +391,11 @@ impl AchievementItem {
     pub fn create(keyword: String, description: String, experience: u64) -> Self {
         Self::new(keyword, description, experience, AchieveLevel::default())
     }
+}
+
+#[derive(Debug, Clone, CandidType, Deserialize)]
+pub struct AchievementClaimCmd {
+    pub achievement_id: String,
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]

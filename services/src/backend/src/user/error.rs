@@ -19,4 +19,6 @@ pub enum UserError {
     UserLocationTooLong,
     #[error("Anonymous not allow registering")]
     AnonymousNotAllowRegistering,
+    #[error("Not the same User")]
+    UserNotSame,
 }

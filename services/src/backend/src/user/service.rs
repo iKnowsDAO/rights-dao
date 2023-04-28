@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use candid::Principal;
 
-use crate::sbt::domain::Sbt;
+use crate::sbt::domain::{Achievement, Sbt};
 
 use super::{
     domain::{UserEditCommand, UserProfile, UserStatus},
@@ -77,6 +77,17 @@ impl UserService {
             .get_mut(user)
             .map(|profile| {
                 profile.wallet_principal = None;
+            })
+            .map(|_| true)
+    }
+
+    /// 更新用户的成就
+    pub fn update_achievement(&mut self, achievement: Achievement) -> Option<bool> {
+        let user = &achievement.owner;
+        self.users
+            .get_mut(user)
+            .map(|profile| {
+                profile.achievement = Some(achievement);
             })
             .map(|_| true)
     }
