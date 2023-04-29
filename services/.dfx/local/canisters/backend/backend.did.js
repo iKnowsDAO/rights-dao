@@ -38,7 +38,7 @@ export const idlFactory = ({ IDL }) => {
     'event_time' : IDL.Nat64,
   });
   const UserStatus = IDL.Variant({ 'Enable' : IDL.Null, 'Disable' : IDL.Null });
-  const AchieveLevel = IDL.Variant({
+  const MedalLevel = IDL.Variant({
     'Diamond' : IDL.Null,
     'Gold' : IDL.Null,
     'Platinum' : IDL.Null,
@@ -48,7 +48,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const AchievementItem = IDL.Record({
     'description' : IDL.Text,
-    'level' : AchieveLevel,
+    'level' : MedalLevel,
     'experience' : IDL.Nat64,
     'keyword' : IDL.Text,
   });
@@ -64,7 +64,7 @@ export const idlFactory = ({ IDL }) => {
     'achievement' : Achievement,
     'photo_id' : IDL.Nat64,
     'created_at' : IDL.Nat64,
-    'level' : AchieveLevel,
+    'level' : MedalLevel,
   });
   const UserProfile = IDL.Record({
     'id' : IDL.Nat64,
@@ -343,6 +343,13 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : ReputationSummary,
     'Err' : ReputationError,
   });
+  const MedalMeta = IDL.Record({
+    'photo_url' : IDL.Text,
+    'name' : MedalLevel,
+    'level' : IDL.Nat64,
+    'experience' : IDL.Nat64,
+  });
+  const MedalMetaOption = IDL.Opt(MedalMeta);
   const AchievementResult = IDL.Variant({
     'Ok' : Achievement,
     'Err' : UserError,
@@ -526,6 +533,7 @@ export const idlFactory = ({ IDL }) => {
         [ReputationSummaryResult],
         [],
       ),
+    'get_sbt_medal' : IDL.Func([IDL.Nat64], [MedalMetaOption], []),
     'get_self' : IDL.Func([], [UserResult], []),
     'get_self_achievement' : IDL.Func([], [AchievementResult], []),
     'get_self_experience' : IDL.Func([], [ExperienceResult], []),

@@ -155,21 +155,23 @@ pub struct AchievementItem {
     // 经验值
     pub experience: u64,
     // 成就完成等级
-    pub level: AchieveLevel,
+    pub level: MedalLevel,
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
-pub enum AchieveLevel {
-    One,
-    Two,
-    Three,
-}
+// #[derive(Debug, Clone, CandidType, Deserialize)]
+// pub enum AchieveLevel {
+//     One,
+//     Two,
+//     Three,
+//     Four,
+//     Five,
+// }
 
-impl Default for AchieveLevel {
-    fn default() -> Self {
-        Self::One
-    }
-}
+// impl Default for AchieveLevel {
+//     fn default() -> Self {
+//         Self::One
+//     }
+// }
 
 impl AchievementItem {
     pub fn new(
@@ -177,7 +179,7 @@ impl AchievementItem {
         description: String,
         completion: u64,
         experience: u64,
-        level: AchieveLevel,
+        level: MedalLevel,
     ) -> Self {
         Self {
             keyword,
@@ -194,7 +196,7 @@ impl AchievementItem {
             description,
             completion,
             experience,
-            AchieveLevel::default(),
+            MedalLevel::default(),
         )
     }
 }
@@ -204,20 +206,32 @@ pub struct AchievementClaimCmd {
     pub achievement_id: String,
 }
 
-#[derive(Debug, Clone, CandidType, Deserialize)]
+#[derive(Debug, Copy, Clone, CandidType, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub enum MedalLevel {
     // 平民
-    Commoner = 0,
+    Commoner,
     // 铜牌
-    Bronze = 1,
+    Bronze,
     // 银牌
-    Silver = 2,
+    Silver,
     // 金牌
-    Gold = 3,
+    Gold,
     // 铂金
-    Platinum = 4,
+    Platinum,
     // 钻石
-    Diamond = 5,
+    Diamond,
+}
+
+impl MedalLevel {
+    pub fn index(&self) -> usize {
+        *self as usize
+    }
+}
+
+impl Default for MedalLevel {
+    fn default() -> Self {
+        Self::Commoner
+    }
 }
 
 pub type SbtId = u64;
@@ -225,14 +239,14 @@ pub type SbtId = u64;
 /// 勋章元数据, 包括勋章名级（铜牌），等级（1），经验值，图片地址
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct MedalMeta {
-    pub name: AchieveLevel,
+    pub name: MedalLevel,
     pub level: u64,
     pub experience: u64,
     pub photo_url: String,
 }
 
 impl MedalMeta {
-    pub fn new(name: AchieveLevel, level: u64, experience: u64, photo_url: String) -> Self {
+    pub fn new(name: MedalLevel, level: u64, experience: u64, photo_url: String) -> Self {
         Self {
             name,
             level,
@@ -249,7 +263,7 @@ pub struct Sbt {
     pub achievement: Achievement,
     pub photo_url: String,
     // 成就等级，例如：铜牌，银牌，金牌
-    pub level: AchieveLevel,
+    pub level: MedalLevel,
     pub created_at: u64,
 }
 

@@ -1,10 +1,4 @@
 import type { Principal } from '@dfinity/principal';
-export type AchieveLevel = { 'Diamond' : null } |
-  { 'Gold' : null } |
-  { 'Platinum' : null } |
-  { 'Bronze' : null } |
-  { 'Commoner' : null } |
-  { 'Silver' : null };
 export interface Achievement {
   'issued_bounty' : AchievementItem,
   'post_comment' : AchievementItem,
@@ -14,7 +8,7 @@ export interface Achievement {
 }
 export interface AchievementItem {
   'description' : string,
-  'level' : AchieveLevel,
+  'level' : MedalLevel,
   'experience' : bigint,
   'keyword' : string,
 }
@@ -154,6 +148,19 @@ export interface LikeProfile {
   'author' : Principal,
 }
 export type LikeProfileOption = [] | [LikeProfile];
+export type MedalLevel = { 'Diamond' : null } |
+  { 'Gold' : null } |
+  { 'Platinum' : null } |
+  { 'Bronze' : null } |
+  { 'Commoner' : null } |
+  { 'Silver' : null };
+export interface MedalMeta {
+  'photo_url' : string,
+  'name' : MedalLevel,
+  'level' : bigint,
+  'experience' : bigint,
+}
+export type MedalMetaOption = [] | [MedalMeta];
 export interface PageQuery {
   'page_size' : bigint,
   'querystring' : string,
@@ -346,7 +353,7 @@ export interface Sbt {
   'achievement' : Achievement,
   'photo_id' : bigint,
   'created_at' : bigint,
-  'level' : AchieveLevel,
+  'level' : MedalLevel,
 }
 export type U64GovernanceResult = { 'Ok' : bigint } |
   { 'Err' : GovernanceError };
@@ -448,6 +455,7 @@ export interface _SERVICE {
   'get_reputation' : (arg_0: ReputationGetQuery) => Promise<
       ReputationSummaryResult
     >,
+  'get_sbt_medal' : (arg_0: bigint) => Promise<MedalMetaOption>,
   'get_self' : () => Promise<UserResult>,
   'get_self_achievement' : () => Promise<AchievementResult>,
   'get_self_experience' : () => Promise<ExperienceResult>,

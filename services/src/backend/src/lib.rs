@@ -1,6 +1,6 @@
 use crate::context::DaoContext;
 
-use std::cell::RefCell;
+use std::{cell::RefCell, collections::HashMap};
 
 use candid::{CandidType, Deserialize, Principal};
 
@@ -30,6 +30,7 @@ use ic_ledger_types::{
 };
 
 pub use post::*;
+use sbt::domain::MedalMeta;
 
 thread_local! {
     static CONTEXT: RefCell<DaoContext> = RefCell::default();
@@ -39,6 +40,13 @@ thread_local! {
 
     /// 初始化创始人声望值 1 亿
     static GOVERNANACE_CREATOR_REPUTATION : u64 = 100_000_000;
+
+    /// 初始化 SBT 等级对应勋章图片地址
+    static SBT_MEDAL_META_MAP: HashMap<u64, MedalMeta> = HashMap::from([
+        (1, MedalMeta::new(sbt::domain::MedalLevel::Bronze, 1, 10, "".to_string())),    // TOD Add medal image url
+        (2, MedalMeta::new(sbt::domain::MedalLevel::Silver, 2, 100, "".to_string())),
+        (1, MedalMeta::new(sbt::domain::MedalLevel::Gold, 3, 500, "".to_string())),
+    ]);
 }
 
 async fn transfer(cmd: TransferCommand) -> Result<BlockIndex, String> {

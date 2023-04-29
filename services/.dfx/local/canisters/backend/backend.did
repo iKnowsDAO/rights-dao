@@ -77,7 +77,7 @@ type Sbt = record {
     achievement: Achievement;
     photo_id: nat64;
     // 等级，例如：铜牌，银牌，金牌
-    level: AchieveLevel;
+    level: MedalLevel;
     created_at: nat64;
 };
 
@@ -102,20 +102,7 @@ type AchievementItem = record {
     // 经验值(例如 1条帖子，1条回复，1个积分，1 ICP等)
     experience: nat64;
     // 成就完成级别
-    level: AchieveLevel;
-};
-
-type AchieveLevel = variant {
-    // 平民
-    Commoner;
-    // 铜牌
-    Bronze;
-    // 银牌
-    Silver;
-    // 金牌
-    Gold;
-    Platinum;
-    Diamond;
+    level: MedalLevel;
 };
 
 type AchievementResult = variant {
@@ -609,6 +596,24 @@ type LikeProfile = record {
     updated_at: nat64;
 };
 
+type MedalMetaOption = opt MedalMeta;
+
+type MedalMeta = record {
+    name: MedalLevel;
+    level: nat64;
+    experience: nat64;
+    photo_url: text;
+};
+
+type MedalLevel = variant {
+    Commoner;
+    Bronze;
+    Silver;
+    Gold;
+    Platinum;
+    Diamond;
+};
+
 service : {
  
     "greet": (text) -> (text) query;
@@ -629,6 +634,8 @@ service : {
     "claim_achievement" : () -> (BoolUserResult);
     "get_user_achievement" : (principal) -> (AchievementResult);
     "get_self_achievement" : () -> (AchievementResult);
+
+    "get_sbt_medal": (nat64) -> (MedalMetaOption);
 
     "create_post" : (PostCreateCommand) -> (CreatePostResult);
     "edit_post" : (PostEditCommand) -> (BoolPostResult);

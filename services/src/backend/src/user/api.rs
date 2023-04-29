@@ -9,9 +9,9 @@ use crate::common::guard::user_owner_guard;
 use crate::context::DaoContext;
 use crate::sbt::domain::{
     compute_active_user_or_post_comment_experience, compute_bounty_experience,
-    compute_reputation_experience, Achievement, AchievementItem, Experience,
+    compute_reputation_experience, Achievement, AchievementItem, Experience, MedalMeta,
 };
-use crate::CONTEXT;
+use crate::{CONTEXT, SBT_MEDAL_META_MAP};
 
 #[update]
 fn register_user(cmd: UserRegisterCommand) -> Result<String, UserError> {
@@ -197,6 +197,11 @@ fn get_user_achievement(user: Principal) -> Result<Achievement, UserError> {
         let claimed_at = ctx.env.now();
         query_achievement(&ctx, user, claimed_at)
     })
+}
+
+#[query]
+fn get_sbt_medal(level: u64) -> Option<MedalMeta> {
+    SBT_MEDAL_META_MAP.with(|m| m.get(&level).cloned())
 }
 
 /// 实时查询用户经验
