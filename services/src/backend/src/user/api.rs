@@ -9,7 +9,7 @@ use crate::common::guard::user_owner_guard;
 use crate::context::DaoContext;
 use crate::sbt::domain::{
     compute_active_user_or_post_comment_experience, compute_bounty_experience,
-    compute_reputation_experience, Achievement, AchievementClaimCmd, AchievementItem, Experience,
+    compute_reputation_experience, Achievement, AchievementItem, Experience,
 };
 use crate::CONTEXT;
 
@@ -242,45 +242,55 @@ fn query_achievement(
         .ok_or(UserError::UserNotFound)?;
 
     let active = ctx.post_service.get_comment_count_by_user(user);
-    // let post_comment = ctx.post_service.get_post_comment_count_by_user(user);
-    // let reputation = ctx.reputation_service.get_reputation(&user).amount;
-    // let issued_bounty = ctx.post_service.get_issued_bounty_by_user(user);
-    // let received_bounty = ctx.post_service.get_received_bounty_by_user(user);
+    let post_comment = ctx.post_service.get_post_comment_count_by_user(user);
+    let reputation = ctx.reputation_service.get_reputation(&user).amount;
+    let issued_bounty = ctx.post_service.get_issued_bounty_by_user(user);
+    let received_bounty = ctx.post_service.get_received_bounty_by_user(user);
 
-    let active_item =
-        AchievementItem::create("active user".to_string(), "active user".to_string(), active);
-    // let post_comment_item = AchievementItem::create(
-    //     "post comment".to_string(),
-    //     "post comment".to_string(),
-    //     post_comment,
-    // );
-    // let reputation_item = AchievementItem::create(
-    //     "reputation".to_string(),
-    //     "reputation".to_string(),
-    //     reputation,
-    // );
-    // let issued_bounty_item = AchievementItem::create(
-    //     "issued bounty".to_string(),
-    //     "issued bounty".to_string(),
-    //     issued_bounty,
-    // );
-    // let received_bounty_item = AchievementItem::create(
-    //     "received bounty".to_string(),
-    //     "received bounty".to_string(),
-    //     received_bounty,
-    // );
+    let active_exp = compute_active_user_or_post_comment_experience(active);
+    let post_comment_exp = compute_active_user_or_post_comment_experience(post_comment);
+    let reputation_exp = compute_reputation_experience(reputation);
+    let issued_bounty_exp = compute_bounty_experience(issued_bounty);
+    let received_bounty_exp = compute_bounty_experience(received_bounty);
+
+    let active_item = AchievementItem::create(
+        "active user".to_string(),
+        "active user".to_string(),
+        active,
+        active_exp,
+    );
+    let post_comment_item = AchievementItem::create(
+        "post comment".to_string(),
+        "post comment".to_string(),
+        post_comment,
+        post_comment_exp,
+    );
+    let reputation_item = AchievementItem::create(
+        "reputation".to_string(),
+        "reputation".to_string(),
+        reputation,
+        reputation_exp,
+    );
+    let issued_bounty_item = AchievementItem::create(
+        "issued bounty".to_string(),
+        "issued bounty".to_string(),
+        issued_bounty,
+        issued_bounty_exp,
+    );
+    let received_bounty_item = AchievementItem::create(
+        "received bounty".to_string(),
+        "received bounty".to_string(),
+        received_bounty,
+        received_bounty_exp,
+    );
 
     Ok(Achievement::new(
         owner,
         active_item,
-        todo!(),
-        todo!(),
-        todo!(),
-        todo!(),
-        // post_comment_item,
-        // reputation_item,
-        // issued_bounty_item,
-        // received_bounty_item,
+        post_comment_item,
+        reputation_item,
+        issued_bounty_item,
+        received_bounty_item,
         claimed_at,
     ))
 }

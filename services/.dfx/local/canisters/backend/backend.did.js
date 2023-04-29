@@ -104,6 +104,7 @@ export const idlFactory = ({ IDL }) => {
     'status' : IDL.Text,
     'description' : IDL.Text,
   });
+  const BoolUserResult = IDL.Variant({ 'Ok' : IDL.Bool, 'Err' : UserError });
   const PostCreateCommand = IDL.Record({
     'title' : IDL.Text,
     'participants' : IDL.Vec(IDL.Text),
@@ -122,7 +123,6 @@ export const idlFactory = ({ IDL }) => {
     'answer_id' : IDL.Nat64,
     'comment_id' : IDL.Nat64,
   });
-  const BoolUserResult = IDL.Variant({ 'Ok' : IDL.Bool, 'Err' : UserError });
   const PostEditCommand = IDL.Record({
     'id' : IDL.Nat64,
     'status' : IDL.Text,
@@ -482,6 +482,7 @@ export const idlFactory = ({ IDL }) => {
         [BoolPostResult],
         [],
       ),
+    'claim_achievement' : IDL.Func([], [BoolUserResult], []),
     'create_post' : IDL.Func([PostCreateCommand], [CreatePostResult], []),
     'delete_post' : IDL.Func([PostIdCommand], [BoolPostResult], []),
     'delete_post_answer' : IDL.Func([PostAnswerCommand], [BoolPostResult], []),

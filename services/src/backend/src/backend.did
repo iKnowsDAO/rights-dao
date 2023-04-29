@@ -626,6 +626,7 @@ service : {
     "get_user_experience" : (principal) -> (ExperienceResult);
     "get_self_experience" : () -> (ExperienceResult);
 
+    "claim_achievement" : () -> (BoolUserResult);
     "get_user_achievement" : (principal) -> (AchievementResult);
     "get_self_achievement" : () -> (AchievementResult);
 

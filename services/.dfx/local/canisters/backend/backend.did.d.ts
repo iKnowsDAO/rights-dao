@@ -418,6 +418,7 @@ export interface _SERVICE {
   'change_post_status' : (arg_0: PostChangeStatusCommand) => Promise<
       BoolPostResult
     >,
+  'claim_achievement' : () => Promise<BoolUserResult>,
   'create_post' : (arg_0: PostCreateCommand) => Promise<CreatePostResult>,
   'delete_post' : (arg_0: PostIdCommand) => Promise<BoolPostResult>,
   'delete_post_answer' : (arg_0: PostAnswerCommand) => Promise<BoolPostResult>,
