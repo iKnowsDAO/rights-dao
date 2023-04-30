@@ -146,46 +146,21 @@ fn claim_sbt() -> Result<bool, UserError> {
         }
 
         let claimed_at = ctx.env.now();
-        let sbt_id = ctx.id;
-        let sbt = Sbt::new(sbt_id, medal.unwrap(), claimed_at);
-        match ctx.user_service.update_sbt(&exp.owner, sbt) {
+
+        let sbt_id_opt = ctx.user_service.get_sbt(&user).map(|s| s.id);
+        let sbt_id = sbt_id_opt.unwrap_or(ctx.id);
+        let sbt = Sbt::new(sbt_id, user, medal.unwrap(), claimed_at);
+
+        match ctx.user_service.update_sbt(sbt) {
             Some(r) => {
-                ctx.id += 1;
+                if sbt_id_opt.is_none() {
+                    ctx.id += 1;
+                }
                 Ok(r)
             }
             None => Err(UserError::UserNotFound),
         }
     })
-    // let exp = CONTEXT.with(|c| {
-    //     let mut ctx = c.borrow_mut();
-    //     let user = ctx.env.caller();
-
-    //     if ctx.user_service.get_user(&user).and_then(|u| u.achievement).is_none() {
-    //         return Err(UserError::AchievementMustClaimFirst);
-    //     }
-
-    //     query_experience(&ctx, user)
-    // })?;
-
-    // let medal = SBT_MEDAL_META_MAP.with(|m| m.get(&exp.level).cloned());
-
-    // if medal.is_none() {
-    //     return Err(UserError::ExperienceNotEnough);
-    // }
-
-    // CONTEXT.with(|c| {
-    //     let mut ctx = c.borrow_mut();
-    //     let claimed_at = ctx.env.now();
-    //     let sbt_id = ctx.id;
-    //     let sbt = Sbt::new(sbt_id, medal.unwrap(), claimed_at);
-    //     match ctx.user_service.update_sbt(&exp.owner, sbt) {
-    //         Some(r) => {
-    //             ctx.id += 1;
-    //             Ok(r)
-    //         }
-    //         None => Err(UserError::UserNotFound),
-    //     }
-    // })
 }
 
 // Claim 成就

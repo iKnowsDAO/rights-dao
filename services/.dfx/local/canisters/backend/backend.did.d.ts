@@ -63,8 +63,8 @@ export type CurrencyUnit = { 'BTC' : null } |
   { 'ICP' : null } |
   { 'USDT' : null };
 export interface Experience {
-  'next_level_experience' : bigint,
   'owner' : Principal,
+  'next_level_gap' : bigint,
   'level' : bigint,
   'experience' : bigint,
 }
@@ -350,10 +350,9 @@ export type ReputationSummaryResult = { 'Ok' : ReputationSummary } |
 export interface RichText { 'content' : string, 'format' : string }
 export interface Sbt {
   'id' : bigint,
-  'achievement' : Achievement,
-  'photo_id' : bigint,
+  'medal' : MedalMeta,
+  'owner' : Principal,
   'created_at' : bigint,
-  'level' : MedalLevel,
 }
 export type U64GovernanceResult = { 'Ok' : bigint } |
   { 'Err' : GovernanceError };
@@ -373,8 +372,11 @@ export type UserError = { 'UserAlreadyExists' : null } |
   { 'UserLocationTooLong' : null } |
   { 'UserNameTooLong' : null } |
   { 'UserAlreadyDisable' : null } |
+  { 'ExperienceNotEnough' : null } |
   { 'AnonymousNotAllowRegistering' : null } |
   { 'UserBiographyTooLong' : null } |
+  { 'UserNotSame' : null } |
+  { 'AchievementMustClaimFirst' : null } |
   { 'UserNotFound' : null };
 export interface UserProfile {
   'id' : bigint,
@@ -426,6 +428,7 @@ export interface _SERVICE {
       BoolPostResult
     >,
   'claim_achievement' : () => Promise<BoolUserResult>,
+  'claim_sbt' : () => Promise<BoolUserResult>,
   'create_post' : (arg_0: PostCreateCommand) => Promise<CreatePostResult>,
   'delete_post' : (arg_0: PostIdCommand) => Promise<BoolPostResult>,
   'delete_post_answer' : (arg_0: PostAnswerCommand) => Promise<BoolPostResult>,

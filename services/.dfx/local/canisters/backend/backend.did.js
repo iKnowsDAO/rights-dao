@@ -46,6 +46,18 @@ export const idlFactory = ({ IDL }) => {
     'Commoner' : IDL.Null,
     'Silver' : IDL.Null,
   });
+  const MedalMeta = IDL.Record({
+    'photo_url' : IDL.Text,
+    'name' : MedalLevel,
+    'level' : IDL.Nat64,
+    'experience' : IDL.Nat64,
+  });
+  const Sbt = IDL.Record({
+    'id' : IDL.Nat64,
+    'medal' : MedalMeta,
+    'owner' : IDL.Principal,
+    'created_at' : IDL.Nat64,
+  });
   const AchievementItem = IDL.Record({
     'description' : IDL.Text,
     'level' : MedalLevel,
@@ -58,13 +70,6 @@ export const idlFactory = ({ IDL }) => {
     'reputation' : AchievementItem,
     'active_user' : AchievementItem,
     'received_bounty' : AchievementItem,
-  });
-  const Sbt = IDL.Record({
-    'id' : IDL.Nat64,
-    'achievement' : Achievement,
-    'photo_id' : IDL.Nat64,
-    'created_at' : IDL.Nat64,
-    'level' : MedalLevel,
   });
   const UserProfile = IDL.Record({
     'id' : IDL.Nat64,
@@ -89,8 +94,11 @@ export const idlFactory = ({ IDL }) => {
     'UserLocationTooLong' : IDL.Null,
     'UserNameTooLong' : IDL.Null,
     'UserAlreadyDisable' : IDL.Null,
+    'ExperienceNotEnough' : IDL.Null,
     'AnonymousNotAllowRegistering' : IDL.Null,
     'UserBiographyTooLong' : IDL.Null,
+    'UserNotSame' : IDL.Null,
+    'AchievementMustClaimFirst' : IDL.Null,
     'UserNotFound' : IDL.Null,
   });
   const UserResult = IDL.Variant({ 'Ok' : UserProfile, 'Err' : UserError });
@@ -343,20 +351,14 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : ReputationSummary,
     'Err' : ReputationError,
   });
-  const MedalMeta = IDL.Record({
-    'photo_url' : IDL.Text,
-    'name' : MedalLevel,
-    'level' : IDL.Nat64,
-    'experience' : IDL.Nat64,
-  });
   const MedalMetaOption = IDL.Opt(MedalMeta);
   const AchievementResult = IDL.Variant({
     'Ok' : Achievement,
     'Err' : UserError,
   });
   const Experience = IDL.Record({
-    'next_level_experience' : IDL.Nat64,
     'owner' : IDL.Principal,
+    'next_level_gap' : IDL.Nat64,
     'level' : IDL.Nat64,
     'experience' : IDL.Nat64,
   });
@@ -490,6 +492,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'claim_achievement' : IDL.Func([], [BoolUserResult], []),
+    'claim_sbt' : IDL.Func([], [BoolUserResult], []),
     'create_post' : IDL.Func([PostCreateCommand], [CreatePostResult], []),
     'delete_post' : IDL.Func([PostIdCommand], [BoolPostResult], []),
     'delete_post_answer' : IDL.Func([PostAnswerCommand], [BoolPostResult], []),

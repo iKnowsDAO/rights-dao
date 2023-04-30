@@ -23,6 +23,9 @@ type UserError = variant {
     UserBiographyTooLong;
     UserLocationTooLong;
     AnonymousNotAllowRegistering;
+    UserNotSame;
+    ExperienceNotEnough;
+    AchievementMustClaimFirst;
 };
 
 type UserProfile = record {
@@ -64,7 +67,7 @@ type Experience = record {
     owner: principal;
     experience: nat64;
     level: nat64;
-    next_level_experience: nat64;
+    next_level_gap: nat64;
 };
 
 type ExperienceResult = variant {
@@ -74,10 +77,8 @@ type ExperienceResult = variant {
 
 type Sbt = record {
     id: nat64;
-    achievement: Achievement;
-    photo_id: nat64;
-    // 等级，例如：铜牌，银牌，金牌
-    level: MedalLevel;
+    owner: principal;
+    medal: MedalMeta;
     created_at: nat64;
 };
 
@@ -636,6 +637,7 @@ service : {
     "get_self_achievement" : () -> (AchievementResult);
 
     "get_sbt_medal": (nat64) -> (MedalMetaOption);
+    "claim_sbt" : () -> (BoolUserResult);
 
     "create_post" : (PostCreateCommand) -> (CreatePostResult);
     "edit_post" : (PostEditCommand) -> (BoolPostResult);

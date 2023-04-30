@@ -93,7 +93,8 @@ impl UserService {
     }
 
     /// 更新用户的sbt
-    pub fn update_sbt(&mut self, user: &Principal, sbt: Sbt) -> Option<bool> {
+    pub fn update_sbt(&mut self, sbt: Sbt) -> Option<bool> {
+        let user = &sbt.owner;
         self.users
             .get_mut(user)
             .map(|profile| {

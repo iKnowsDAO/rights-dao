@@ -270,14 +270,16 @@ impl Default for MedalMeta {
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct Sbt {
     pub id: SbtId,
+    pub owner: Principal,
     pub medal: MedalMeta,
     pub created_at: u64,
 }
 
 impl Sbt {
-    pub fn new(id: SbtId, medal: MedalMeta, created_at: u64) -> Self {
+    pub fn new(id: SbtId, owner: Principal, medal: MedalMeta, created_at: u64) -> Self {
         Self {
             id,
+            owner,
             medal,
             created_at,
         }
