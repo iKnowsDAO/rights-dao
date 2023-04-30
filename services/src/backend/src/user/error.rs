@@ -21,4 +21,8 @@ pub enum UserError {
     AnonymousNotAllowRegistering,
     #[error("Not the same User")]
     UserNotSame,
+    #[error("Experience not enough")]
+    ExperienceNotEnough,
+    #[error("Must claim achievement first")]
+    AchievementMustClaimFirst,
 }

@@ -1,4 +1,11 @@
-use crate::context::DaoContext;
+use crate::{
+    context::DaoContext,
+    sbt::domain::{
+        SBT_MEDAL_BRONZE_EXPERIENCE_ONE, SBT_MEDAL_BRONZE_LEVE_ONE, SBT_MEDAL_BRONZE_PHOTO_URL,
+        SBT_MEDAL_GOLD_EXPERIENCE_THREE, SBT_MEDAL_GOLD_LEVEL_THREE, SBT_MEDAL_GOLD_PHOTO_URL,
+        SBT_MEDAL_SILVER_EXPERIENCE_TWO, SBT_MEDAL_SILVER_LEVEL_TWO, SBT_MEDAL_SILVER_PHOTO_URL,
+    },
+};
 
 use std::{cell::RefCell, collections::HashMap};
 
@@ -43,9 +50,9 @@ thread_local! {
 
     /// 初始化 SBT 等级对应勋章图片地址
     static SBT_MEDAL_META_MAP: HashMap<u64, MedalMeta> = HashMap::from([
-        (1, MedalMeta::new(sbt::domain::MedalLevel::Bronze, 1, 10, "".to_string())),    // TOD Add medal image url
-        (2, MedalMeta::new(sbt::domain::MedalLevel::Silver, 2, 100, "".to_string())),
-        (1, MedalMeta::new(sbt::domain::MedalLevel::Gold, 3, 500, "".to_string())),
+        (SBT_MEDAL_BRONZE_LEVE_ONE, MedalMeta::new(sbt::domain::MedalLevel::Bronze, SBT_MEDAL_BRONZE_LEVE_ONE, SBT_MEDAL_BRONZE_EXPERIENCE_ONE, SBT_MEDAL_BRONZE_PHOTO_URL.to_string())),
+        (SBT_MEDAL_SILVER_LEVEL_TWO, MedalMeta::new(sbt::domain::MedalLevel::Silver, SBT_MEDAL_SILVER_LEVEL_TWO, SBT_MEDAL_SILVER_EXPERIENCE_TWO, SBT_MEDAL_SILVER_PHOTO_URL.to_string())),
+        (SBT_MEDAL_GOLD_LEVEL_THREE, MedalMeta::new(sbt::domain::MedalLevel::Gold, SBT_MEDAL_GOLD_LEVEL_THREE, SBT_MEDAL_GOLD_EXPERIENCE_THREE, SBT_MEDAL_GOLD_PHOTO_URL.to_string())),
     ]);
 }
 

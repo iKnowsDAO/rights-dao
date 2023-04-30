@@ -1,5 +1,3 @@
-use std::cell::Ref;
-
 use candid::Principal;
 use ic_cdk_macros::{query, update};
 
@@ -9,7 +7,7 @@ use crate::common::guard::user_owner_guard;
 use crate::context::DaoContext;
 use crate::sbt::domain::{
     compute_active_user_or_post_comment_experience, compute_bounty_experience,
-    compute_reputation_experience, Achievement, AchievementItem, Experience, MedalMeta,
+    compute_reputation_experience, Achievement, AchievementItem, Experience, MedalMeta, Sbt,
 };
 use crate::{CONTEXT, SBT_MEDAL_META_MAP};
 
@@ -123,7 +121,72 @@ fn delete_wallet() -> Result<bool, UserError> {
     })
 }
 
-// Claim SBT
+// Claim SBT， 要先 Claim 成就才能 Claim SBT
+#[update]
+fn claim_sbt() -> Result<bool, UserError> {
+    CONTEXT.with(|c| {
+        let mut ctx = c.borrow_mut();
+        let user = ctx.env.caller();
+
+        if ctx
+            .user_service
+            .get_user(&user)
+            .and_then(|u| u.achievement)
+            .is_none()
+        {
+            return Err(UserError::AchievementMustClaimFirst);
+        }
+
+        let exp = query_experience(&ctx, user)?;
+
+        let medal = SBT_MEDAL_META_MAP.with(|m| m.get(&exp.level).cloned());
+
+        if medal.is_none() {
+            return Err(UserError::ExperienceNotEnough);
+        }
+
+        let claimed_at = ctx.env.now();
+        let sbt_id = ctx.id;
+        let sbt = Sbt::new(sbt_id, medal.unwrap(), claimed_at);
+        match ctx.user_service.update_sbt(&exp.owner, sbt) {
+            Some(r) => {
+                ctx.id += 1;
+                Ok(r)
+            }
+            None => Err(UserError::UserNotFound),
+        }
+    })
+    // let exp = CONTEXT.with(|c| {
+    //     let mut ctx = c.borrow_mut();
+    //     let user = ctx.env.caller();
+
+    //     if ctx.user_service.get_user(&user).and_then(|u| u.achievement).is_none() {
+    //         return Err(UserError::AchievementMustClaimFirst);
+    //     }
+
+    //     query_experience(&ctx, user)
+    // })?;
+
+    // let medal = SBT_MEDAL_META_MAP.with(|m| m.get(&exp.level).cloned());
+
+    // if medal.is_none() {
+    //     return Err(UserError::ExperienceNotEnough);
+    // }
+
+    // CONTEXT.with(|c| {
+    //     let mut ctx = c.borrow_mut();
+    //     let claimed_at = ctx.env.now();
+    //     let sbt_id = ctx.id;
+    //     let sbt = Sbt::new(sbt_id, medal.unwrap(), claimed_at);
+    //     match ctx.user_service.update_sbt(&exp.owner, sbt) {
+    //         Some(r) => {
+    //             ctx.id += 1;
+    //             Ok(r)
+    //         }
+    //         None => Err(UserError::UserNotFound),
+    //     }
+    // })
+}
 
 // Claim 成就
 // 把用户在各类任务的经验值换算为成就的最高等级
@@ -164,7 +227,7 @@ fn get_self() -> Result<UserProfile, UserError> {
 fn get_user_experience(user: Principal) -> Result<Experience, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
-        query_experience(ctx, user)
+        query_experience(&ctx, user)
     })
 }
 
@@ -174,7 +237,7 @@ fn get_self_experience() -> Result<Experience, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let user = ctx.env.caller();
-        query_experience(ctx, user)
+        query_experience(&ctx, user)
     })
 }
 
@@ -205,7 +268,7 @@ fn get_sbt_medal(level: u64) -> Option<MedalMeta> {
 }
 
 /// 实时查询用户经验
-fn query_experience(ctx: Ref<DaoContext>, user: Principal) -> Result<Experience, UserError> {
+fn query_experience(ctx: &DaoContext, user: Principal) -> Result<Experience, UserError> {
     let owner = ctx
         .user_service
         .get_user(&user)

@@ -9,9 +9,7 @@ use crate::context::{DaoContext, DaoDataStorage};
 use crate::env::CanisterEnvironment;
 use crate::governance::domain::GovernanceMember;
 use crate::reputation::domain::ReputationSummary;
-use crate::{
-    CONTEXT, GOVERNANACE_CREATOR_REPUTATION, GOVERNANACE_LSHOO, GOVERNANACE_ZHOU,
-};
+use crate::{CONTEXT, GOVERNANACE_CREATOR_REPUTATION, GOVERNANACE_LSHOO, GOVERNANACE_ZHOU};
 
 #[query]
 fn next_id() -> u64 {

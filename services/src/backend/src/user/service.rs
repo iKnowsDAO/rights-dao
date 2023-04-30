@@ -92,6 +92,16 @@ impl UserService {
             .map(|_| true)
     }
 
+    /// 更新用户的sbt
+    pub fn update_sbt(&mut self, user: &Principal, sbt: Sbt) -> Option<bool> {
+        self.users
+            .get_mut(user)
+            .map(|profile| {
+                profile.claimed_sbt = Some(sbt);
+            })
+            .map(|_| true)
+    }
+
     // 获取用户成就
     pub fn get_sbt(&self, user: &Principal) -> Option<Sbt> {
         self.get_user(user).and_then(|u| u.claimed_sbt)

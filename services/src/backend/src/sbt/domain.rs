@@ -21,6 +21,16 @@ pub const ACHIEVEMENT_REPUTATION: &str = "reputation";
 pub const ACHIEVEMENT_ISSUED_BOUNTY: &str = "issued_bounty";
 pub const ACHIEVEMENT_RECEIVED_BOUNTY: &str = "received_bounty";
 
+pub const SBT_MEDAL_BRONZE_LEVE_ONE: u64 = 1;
+pub const SBT_MEDAL_SILVER_LEVEL_TWO: u64 = 2;
+pub const SBT_MEDAL_GOLD_LEVEL_THREE: u64 = 3;
+pub const SBT_MEDAL_BRONZE_EXPERIENCE_ONE: u64 = 10;
+pub const SBT_MEDAL_SILVER_EXPERIENCE_TWO: u64 = 200;
+pub const SBT_MEDAL_GOLD_EXPERIENCE_THREE: u64 = 500;
+pub const SBT_MEDAL_BRONZE_PHOTO_URL: &str = ""; // TODO
+pub const SBT_MEDAL_SILVER_PHOTO_URL: &str = ""; // TODO
+pub const SBT_MEDAL_GOLD_PHOTO_URL: &str = ""; // TODO
+
 /// 用户经验数据，通过汇总的各个任务经验计算
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct Experience {
@@ -154,24 +164,9 @@ pub struct AchievementItem {
     pub completion: u64,
     // 经验值
     pub experience: u64,
-    // 成就完成等级
+    // 成就完成对应的勋章等级
     pub level: MedalLevel,
 }
-
-// #[derive(Debug, Clone, CandidType, Deserialize)]
-// pub enum AchieveLevel {
-//     One,
-//     Two,
-//     Three,
-//     Four,
-//     Five,
-// }
-
-// impl Default for AchieveLevel {
-//     fn default() -> Self {
-//         Self::One
-//     }
-// }
 
 impl AchievementItem {
     pub fn new(
@@ -239,9 +234,13 @@ pub type SbtId = u64;
 /// 勋章元数据, 包括勋章名级（铜牌），等级（1），经验值，图片地址
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct MedalMeta {
+    // 勋章等级名，例如：铜牌，银牌，金牌
     pub name: MedalLevel,
+    // 勋章等级值，例如：1， 2， 3
     pub level: u64,
+    // 勋章等级对应的成就经验值
     pub experience: u64,
+    // 勋章等级对应的图片
     pub photo_url: String,
 }
 
@@ -256,15 +255,33 @@ impl MedalMeta {
     }
 }
 
+impl Default for MedalMeta {
+    fn default() -> Self {
+        Self::new(
+            MedalLevel::Bronze,
+            SBT_MEDAL_BRONZE_LEVE_ONE,
+            SBT_MEDAL_BRONZE_EXPERIENCE_ONE,
+            SBT_MEDAL_BRONZE_PHOTO_URL.to_string(),
+        )
+    }
+}
+
 /// 用户 SBT
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct Sbt {
     pub id: SbtId,
-    pub achievement: Achievement,
-    pub photo_url: String,
-    // 成就等级，例如：铜牌，银牌，金牌
-    pub level: MedalLevel,
+    pub medal: MedalMeta,
     pub created_at: u64,
+}
+
+impl Sbt {
+    pub fn new(id: SbtId, medal: MedalMeta, created_at: u64) -> Self {
+        Self {
+            id,
+            medal,
+            created_at,
+        }
+    }
 }
 
 #[cfg(test)]
