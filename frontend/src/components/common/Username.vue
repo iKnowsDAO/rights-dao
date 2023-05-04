@@ -1,9 +1,13 @@
 <template>
-    <span class="username-container"
-          :class="{ 'username-clickable': clickable }"
-          @click.stop="onClick">
-        {{ showName }}
+    <span class="username-container">
+        <span class="username-container"
+              :class="{ 'username-clickable': clickable }"
+              @click.stop="onClick">
+            {{ showName }}
+        </span>
+        <img v-if="showSBT" src="@/assets/images/sbt-test/sbt-silver.png">
     </span>
+
 </template>
 
 <script lang="ts" setup>
@@ -21,6 +25,10 @@
             type: String,
             required: true,
         },
+        showSBT: {
+            type: Boolean,
+            default: true,
+        },
         // 是否可以点击（hover时鼠标变手）
         clickable: {
             type: Boolean,
@@ -36,7 +44,7 @@
 
     const onClick = async () => {
         //可点击时执行方法
-        if(props.clickable){
+        if (props.clickable) {
             try {
                 openTab('/person/profile/' + props.principalId)
             } catch (e) {
@@ -59,7 +67,13 @@
 </script>
 
 <style lang="scss">
-    .username-container.username-clickable{
-        cursor: pointer;
+    .username-container {
+        .username-clickable {
+            cursor: pointer;
+        }
+        img {
+            width: 30px;
+            margin-left: 5px;
+        }
     }
 </style>

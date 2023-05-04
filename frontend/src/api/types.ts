@@ -1,4 +1,4 @@
-import {Principal} from "@dfinity/principal/lib/cjs";
+import { Principal } from "@dfinity/principal/lib/cjs";
 
 // 后端的错误
 export type ApiError = {
@@ -179,4 +179,29 @@ export type ApiDaoArgs = {
     content: RichText;
     deadline: number;
     action: string; // action目前只有Add,Delete两个值，对应增加删除管理员
+};
+
+//勋章等级
+export type MedalLevel = {
+    Commoner: null, //
+    Bronze: null, //青铜
+    Silver: null,
+    Gold: null,
+    Platinum: null,
+    Diamond: null
+}
+
+export type ApiAchievement = {
+    description: string; //描述
+    experience: bigint; //经验值
+    keyword: string; //关键词
+    level: MedalLevel;
+};
+
+export type AchievementResult = {
+    active_user: ApiAchievement, //活跃用户（发贴n次）
+    post_comment: ApiAchievement, //问题获得回复
+    issued_bounty: ApiAchievement, //给赏金
+    received_bounty: ApiAchievement, //收到赏金
+    reputation: ApiAchievement, //积分成就
 };

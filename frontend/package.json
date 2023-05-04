@@ -1,5 +1,5 @@
 {
-    "name": "right-dao",
+    "name": "iknows",
     "version": "1.0.0",
     "scripts": {
         "dev": "vite --mode=development",

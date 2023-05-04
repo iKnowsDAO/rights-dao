@@ -1,6 +1,14 @@
 import {clearCacheData, getCache, TTL} from '@/common/cache';
 import {getCurrentPrincipal, getBackend} from './canister_pool';
-import {ApiProfilePost, ApiResult, ApiResultByPage, ApiUserInfo, GovernanceMember, UserReputation} from "@/api/types";
+import {
+    AchievementResult,
+    ApiProfilePost,
+    ApiResult,
+    ApiResultByPage,
+    ApiUserInfo,
+    GovernanceMember,
+    UserReputation
+} from "@/api/types";
 import {Principal} from "@dfinity/principal/lib/cjs";
 
 const userTTL = TTL.day1; //用户自身信息缓存时长。
@@ -129,4 +137,9 @@ export async function userConnectWallet(principalId: string): Promise<ApiResult<
 // 用户取消绑定钱包
 export async function userDisConnectWallet(): Promise<ApiResult<Boolean>> {
     return await getBackend().delete_wallet()
+}
+
+// 获取用户成就列表
+export async function getUserAchievement(principalId: string): Promise<ApiResult<AchievementResult>> {
+    return await getBackend().get_user_achievement(Principal.fromText(principalId))
 }

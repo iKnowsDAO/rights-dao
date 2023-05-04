@@ -8,6 +8,7 @@
                             :avatar-id="0"
                             :clickable="false"
                             :size="120"/>
+                    <SBTList v-if="targetPrincipal" :userPrincipal="targetPrincipal"/>
                 </el-col>
                 <el-col :sm=15 :xs="24">
                     <div class="user-profile">
@@ -25,15 +26,23 @@
                         </el-row>
                         <el-row>
                             <span class="principal" @click="copyPrincipal">{{ targetPrincipal }}</span>
-                            <el-icon class="copy" @click="copyPrincipal"><CopyDocument /></el-icon>
+                            <el-icon class="copy" @click="copyPrincipal">
+                                <CopyDocument/>
+                            </el-icon>
                         </el-row>
                         <el-row v-if="user.wallet_principal[0]">
-                            <el-icon><Wallet /></el-icon>
+                            <el-icon>
+                                <Wallet/>
+                            </el-icon>
                             <span class="principal" @click="copyWalletPrincipal">{{ user.wallet_principal[0] }}</span>
-                            <el-icon class="copy" @click="copyWalletPrincipal"><CopyDocument /></el-icon>
+                            <el-icon class="copy" @click="copyWalletPrincipal">
+                                <CopyDocument/>
+                            </el-icon>
                         </el-row>
                         <el-row v-if="user.location">
-                            <el-icon><LocationFilled/></el-icon>
+                            <el-icon>
+                                <LocationFilled/>
+                            </el-icon>
                             {{user.location}}
                         </el-row>
                         <el-row v-if="user.email">
@@ -51,21 +60,23 @@
                         <el-row>
                             <el-tooltip :content="t('user.reputation')">
                                 <div class="flex-y-center">
-                                    <img src="@/assets/favicon.svg" style="width: 20px;border-radius: 9px;margin-right: 5px">
+                                    <img src="@/assets/favicon.svg"
+                                         style="width: 20px;border-radius: 9px;margin-right: 5px">
                                     {{reputation}}
                                 </div>
                             </el-tooltip>
                         </el-row>
+                        <el-row class="flex-y-center" v-if="user.interests.length>0">
+                            <el-icon>
+                                <StarFilled/>
+                            </el-icon>
+                            <el-tag class="user-tag" v-for="(item,index) in user.interests">{{item}}</el-tag>
+                        </el-row>
                         <el-row justify="space-between">
-                            <div>
-                                <div class="flex-y-center" v-if="user.interests.length>0">
-                                    <el-icon>
-                                        <StarFilled/>
-                                    </el-icon>
-                                    <el-tag class="user-tag" v-for="(item,index) in user.interests">{{item}}</el-tag>
-                                </div>
-                            </div>
-                            <div v-if="user?.created_at!==0">
+                            <div v-if="user?.created_at!==0" class="flex-y-center">
+                                <el-icon>
+                                    <Clock/>
+                                </el-icon>
                                 {{t('post.joined')+" " + formatDate(Number(user?.created_at ? user?.created_at : 0))}}
                             </div>
                         </el-row>
@@ -169,20 +180,37 @@
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import {ref, onMounted, computed, defineEmits} from 'vue';
-    import {useRoute, useRouter} from 'vue-router';
-    import {t} from '@/locale';
+    import { ref, onMounted, computed, defineEmits } from 'vue';
+    import { useRoute, useRouter } from 'vue-router';
+    import { t } from '@/locale';
     import {
         ElRow, ElCol, ElButton, ElDialog, ElForm, ElFormItem,
-        ElInput, ElMessage, ElTag, ElIcon,ElTooltip
+        ElInput, ElMessage, ElTag, ElIcon, ElTooltip
     } from 'element-plus/es';
-    import {UserFilled, Message, Comment, Close, StarFilled, LocationFilled, CopyDocument, Wallet} from '@element-plus/icons-vue';
+    import {
+        UserFilled,
+        Message,
+        Comment,
+        Close,
+        StarFilled,
+        LocationFilled,
+        CopyDocument,
+        Wallet,
+        Clock
+    } from '@element-plus/icons-vue';
     import Avatar from '@/components/common/Avatar.vue';
     import Navigator from '@/components/navigator/Navigator.vue';
-    import {formatDate} from '@/utils/dates';
-    import {editUserSelf, getTargetUser, getTargetUserNewCache, getUserReputation} from "@/api/user";
-    import {showMessageError, showMessageSuccess} from "@/utils/message";
-    import {toClipboard} from "@soerenmartius/vue3-clipboard";
+    import SBTList from './SBTList.vue'
+    import { formatDate } from '@/utils/dates';
+    import {
+        editUserSelf,
+        getTargetUser,
+        getTargetUserNewCache,
+        getUserAchievement,
+        getUserReputation
+    } from "@/api/user";
+    import { showMessageError, showMessageSuccess } from "@/utils/message";
+    import { toClipboard } from "@soerenmartius/vue3-clipboard";
     import { useUserStore } from "@/stores/user";
 
     const userStore = useUserStore();
@@ -224,6 +252,7 @@
         initReputation();
     });
 
+
     const initReputation = () => {
         getUserReputation(targetPrincipal.value).then(res => {
             if (res.Ok) {
@@ -235,7 +264,7 @@
     const copyPrincipal = async () => {
         try {
             await toClipboard(targetPrincipal.value)
-            showMessageSuccess(t('message.copy.success',{item:"Principal"}))
+            showMessageSuccess(t('message.copy.success', {item: "Principal"}))
         } catch (e) {
             console.error(e)
         }
@@ -243,9 +272,9 @@
 
     const copyWalletPrincipal = async () => {
         try {
-            if(user.value.wallet_principal[0]){
+            if (user.value.wallet_principal[0]) {
                 await toClipboard(user.value.wallet_principal[0])
-                showMessageSuccess(t('message.copy.success',{item:"Wallet Principal"}))
+                showMessageSuccess(t('message.copy.success', {item: "Wallet Principal"}))
             }
         } catch (e) {
             console.error(e)
@@ -272,7 +301,7 @@
         }
     }
 
-    const emit = defineEmits(['username','editProfile']);
+    const emit = defineEmits(['username', 'editProfile']);
 
     const initUser = () => {
         getTargetUser(targetPrincipal.value).then(res => {
@@ -352,21 +381,21 @@
             color: rgb(96, 98, 102);
             font-size: 20px;
         }
-        @media screen and (max-width:426px) {
-            .avatar,.title{
+        @media screen and (max-width: 426px) {
+            .avatar, .title {
                 justify-content: center;
             }
-            .title{
+            .title {
                 margin-top: 5px;
             }
-            .container{
-                padding: 0 20px!important;
+            .container {
+                padding: 0 20px !important;
             }
         }
         .container {
             padding: 40px 40px;
-            .avatar{
-                display: inherit
+            .avatar {
+                /*display: inherit*/
             }
             .avatar-container {
                 align-items: start;
@@ -376,10 +405,10 @@
                     margin-bottom: 5px;
                     align-items: center;
                 }
-                .principal{
+                .principal {
                     cursor: pointer;
                 }
-                .copy{
+                .copy {
                     margin-left: 5px;
                     cursor: pointer;
                 }
