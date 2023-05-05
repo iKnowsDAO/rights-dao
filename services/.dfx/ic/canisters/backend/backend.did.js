@@ -59,6 +59,7 @@ export const idlFactory = ({ IDL }) => {
     'created_at' : IDL.Nat64,
   });
   const AchievementItem = IDL.Record({
+    'completion' : IDL.Nat64,
     'description' : IDL.Text,
     'level' : MedalLevel,
     'experience' : IDL.Nat64,

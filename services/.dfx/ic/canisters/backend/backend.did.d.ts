@@ -7,6 +7,7 @@ export interface Achievement {
   'received_bounty' : AchievementItem,
 }
 export interface AchievementItem {
+  'completion' : bigint,
   'description' : string,
   'level' : MedalLevel,
   'experience' : bigint,
