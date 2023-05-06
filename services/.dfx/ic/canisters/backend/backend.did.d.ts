@@ -162,6 +162,7 @@ export interface MedalMeta {
   'experience' : bigint,
 }
 export type MedalMetaOption = [] | [MedalMeta];
+export type MedalMetaVector = Array<MedalMeta>;
 export interface PageQuery {
   'page_size' : bigint,
   'querystring' : string,
@@ -420,6 +421,7 @@ export interface _SERVICE {
     >,
   'add_post_comment' : (arg_0: PostCommentCommand) => Promise<BoolPostResult>,
   'add_post_event' : (arg_0: PostEventCommand) => Promise<BoolPostResult>,
+  'all_sbt_medal' : () => Promise<MedalMetaVector>,
   'auto_register_user' : () => Promise<UserResult>,
   'cancel_like_post' : (arg_0: PostLikeCommand) => Promise<BoolPostResult>,
   'cancel_like_post_answer' : (arg_0: PostAnswerLikeCommand) => Promise<

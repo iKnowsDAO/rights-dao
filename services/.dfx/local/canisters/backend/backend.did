@@ -100,7 +100,9 @@ type AchievementItem = record {
     keyword: text;
     // 成就简短描述
     description: text;
-    // 经验值(例如 1条帖子，1条回复，1个积分，1 ICP等)
+    // 完成值(例如 1条帖子，1条回复，1个积分，1 ICP等)
+    completion: nat64;
+    // 成就对应的经验值
     experience: nat64;
     // 成就完成级别
     level: MedalLevel;
@@ -598,6 +600,7 @@ type LikeProfile = record {
 };
 
 type MedalMetaOption = opt MedalMeta;
+type MedalMetaVector = vec MedalMeta;
 
 type MedalMeta = record {
     name: MedalLevel;
@@ -637,6 +640,7 @@ service : {
     "get_self_achievement" : () -> (AchievementResult);
 
     "get_sbt_medal": (nat64) -> (MedalMetaOption);
+    "all_sbt_medal": () -> (MedalMetaVector);
     "claim_sbt" : () -> (BoolUserResult);
 
     "create_post" : (PostCreateCommand) -> (CreatePostResult);

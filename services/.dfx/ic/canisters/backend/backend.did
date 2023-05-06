@@ -600,6 +600,7 @@ type LikeProfile = record {
 };
 
 type MedalMetaOption = opt MedalMeta;
+type MedalMetaVector = vec MedalMeta;
 
 type MedalMeta = record {
     name: MedalLevel;
@@ -639,6 +640,7 @@ service : {
     "get_self_achievement" : () -> (AchievementResult);
 
     "get_sbt_medal": (nat64) -> (MedalMetaOption);
+    "all_sbt_medal": () -> (MedalMetaVector);
     "claim_sbt" : () -> (BoolUserResult);
 
     "create_post" : (PostCreateCommand) -> (CreatePostResult);

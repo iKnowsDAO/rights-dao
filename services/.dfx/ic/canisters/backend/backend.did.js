@@ -37,7 +37,6 @@ export const idlFactory = ({ IDL }) => {
     'description' : IDL.Text,
     'event_time' : IDL.Nat64,
   });
-  const UserStatus = IDL.Variant({ 'Enable' : IDL.Null, 'Disable' : IDL.Null });
   const MedalLevel = IDL.Variant({
     'Diamond' : IDL.Null,
     'Gold' : IDL.Null,
@@ -52,6 +51,8 @@ export const idlFactory = ({ IDL }) => {
     'level' : IDL.Nat64,
     'experience' : IDL.Nat64,
   });
+  const MedalMetaVector = IDL.Vec(MedalMeta);
+  const UserStatus = IDL.Variant({ 'Enable' : IDL.Null, 'Disable' : IDL.Null });
   const Sbt = IDL.Record({
     'id' : IDL.Nat64,
     'medal' : MedalMeta,
@@ -480,6 +481,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'add_post_comment' : IDL.Func([PostCommentCommand], [BoolPostResult], []),
     'add_post_event' : IDL.Func([PostEventCommand], [BoolPostResult], []),
+    'all_sbt_medal' : IDL.Func([], [MedalMetaVector], []),
     'auto_register_user' : IDL.Func([], [UserResult], []),
     'cancel_like_post' : IDL.Func([PostLikeCommand], [BoolPostResult], []),
     'cancel_like_post_answer' : IDL.Func(

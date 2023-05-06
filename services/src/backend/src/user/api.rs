@@ -242,6 +242,11 @@ fn get_sbt_medal(level: u64) -> Option<MedalMeta> {
     SBT_MEDAL_META_MAP.with(|m| m.get(&level).cloned())
 }
 
+#[query]
+fn all_sbt_medal() -> Vec<MedalMeta> {
+    SBT_MEDAL_META_MAP.with(|m| m.values().cloned().collect())
+}
+
 /// 实时查询用户经验
 fn query_experience(ctx: &DaoContext, user: Principal) -> Result<Experience, UserError> {
     let owner = ctx
