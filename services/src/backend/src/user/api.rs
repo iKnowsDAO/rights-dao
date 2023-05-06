@@ -7,7 +7,7 @@ use crate::common::guard::user_owner_guard;
 use crate::context::DaoContext;
 use crate::sbt::domain::{
     compute_active_user_or_post_comment_experience, compute_bounty_experience,
-    compute_reputation_experience, Achievement, AchievementItem, Experience, MedalMeta, Sbt,
+    compute_reputation_experience, Achievement, AchievementItem, Experience, MedalMeta, Sbt, compute_medal_level, compute_active_user_or_post_comment_completion_target, compute_reputation_completion_target, compute_bounty_completion_target,
 };
 use crate::{CONTEXT, SBT_MEDAL_META_MAP};
 
@@ -301,35 +301,57 @@ fn query_achievement(
     let issued_bounty_exp = compute_bounty_experience(issued_bounty);
     let received_bounty_exp = compute_bounty_experience(received_bounty);
 
-    let active_item = AchievementItem::create(
+    let active_level = compute_medal_level(active_exp);
+    let post_comment_level = compute_medal_level(post_comment_exp);
+    let reputation_level = compute_medal_level(reputation_exp);
+    let issued_bounty_level = compute_medal_level(issued_bounty_exp);
+    let received_bounty_level = compute_medal_level(received_bounty_exp);
+
+    let active_target = compute_active_user_or_post_comment_completion_target(active);
+    let post_comment_target = compute_active_user_or_post_comment_completion_target(post_comment);
+    let reputation_target = compute_reputation_completion_target(reputation);
+    let issued_bounty_target = compute_bounty_completion_target(issued_bounty);
+    let received_bounty_target = compute_bounty_completion_target(received_bounty);
+
+    let active_item = AchievementItem::new(
         "active user".to_string(),
         "active user".to_string(),
         active,
         active_exp,
+        active_level,
+        active_target
     );
-    let post_comment_item = AchievementItem::create(
+    let post_comment_item = AchievementItem::new(
         "post comment".to_string(),
         "post comment".to_string(),
         post_comment,
         post_comment_exp,
+        post_comment_level,
+        post_comment_target,
     );
-    let reputation_item = AchievementItem::create(
+    let reputation_item = AchievementItem::new(
         "reputation".to_string(),
         "reputation".to_string(),
         reputation,
         reputation_exp,
+        reputation_level,
+        reputation_target,
     );
-    let issued_bounty_item = AchievementItem::create(
+    let issued_bounty_item = AchievementItem::new(
         "issued bounty".to_string(),
         "issued bounty".to_string(),
         issued_bounty,
         issued_bounty_exp,
+        issued_bounty_level,
+        issued_bounty_target,
     );
-    let received_bounty_item = AchievementItem::create(
+    let received_bounty_item = AchievementItem::new(
         "received bounty".to_string(),
         "received bounty".to_string(),
         received_bounty,
         received_bounty_exp,
+        received_bounty_level,
+        received_bounty_target,
     );
 
     Ok(Achievement::new(

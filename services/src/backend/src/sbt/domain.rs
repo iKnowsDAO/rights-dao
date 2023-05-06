@@ -65,6 +65,16 @@ pub fn compute_active_user_or_post_comment_experience(completion: u64) -> u64 {
     }
 }
 
+pub fn compute_active_user_or_post_comment_completion_target(completion: u64) -> u64 {
+    if completion >= HUNDRED {
+        THOUSAND
+    } else if completion >= TEN {
+        HUNDRED
+    } else {
+        TEN
+    }
+}
+
 pub fn compute_reputation_experience(completion: u64) -> u64 {
     if completion >= TEN_THOUSAND {
         FIFTY
@@ -77,6 +87,17 @@ pub fn compute_reputation_experience(completion: u64) -> u64 {
     }
 }
 
+pub fn compute_reputation_completion_target(completion: u64) -> u64 {
+    if completion >= THOUSAND {
+        TEN_THOUSAND
+    } else if completion >= HUNDRED {
+        THOUSAND
+    } else {
+        HUNDRED
+    } 
+}
+
+
 pub fn compute_bounty_experience(completion: u64) -> u64 {
     if completion >= HUNDRED_BILLION {
         HUNDRED
@@ -86,6 +107,29 @@ pub fn compute_bounty_experience(completion: u64) -> u64 {
         TWENTY
     } else {
         ZERO
+    }
+}
+
+pub fn compute_bounty_completion_target(completion: u64) -> u64 {
+    if completion >= TEN_BILLION {
+        HUNDRED_BILLION
+    } else if completion >= HUNDRED_MILLION {
+        TEN_BILLION
+    } else {
+        HUNDRED_MILLION
+    }
+}
+
+pub fn compute_medal_level(exp: u64) -> MedalLevel {
+    let exp_level = compute_experience_level(exp);
+    if exp_level == 3 {
+        MedalLevel::Gold
+    } else if exp_level == 2 {
+        MedalLevel::Silver
+    } else if exp_level == 1{
+        MedalLevel::Bronze
+    } else {
+        MedalLevel::Commoner
     }
 }
 
@@ -166,6 +210,8 @@ pub struct AchievementItem {
     pub experience: u64,
     // 成就完成对应的勋章等级
     pub level: MedalLevel,
+    // 完成一下级别对应的目标值
+    pub target: u64,
 }
 
 impl AchievementItem {
@@ -175,25 +221,30 @@ impl AchievementItem {
         completion: u64,
         experience: u64,
         level: MedalLevel,
+        target: u64,
     ) -> Self {
+
         Self {
             keyword,
             description,
             completion,
             experience,
             level,
+            target,
         }
     }
 
-    pub fn create(keyword: String, description: String, completion: u64, experience: u64) -> Self {
-        Self::new(
-            keyword,
-            description,
-            completion,
-            experience,
-            MedalLevel::default(),
-        )
-    }
+    // pub fn create(keyword: String, description: String, completion: u64, experience: u64, target: u64) -> Self {
+    //     let level = 
+    //     Self::new(
+    //         keyword,
+    //         description,
+    //         completion,
+    //         experience,
+    //         MedalLevel::default(),
+    //         target,
+    //     )
+    // }
 }
 
 #[derive(Debug, Clone, CandidType, Deserialize)]

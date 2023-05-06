@@ -11,6 +11,7 @@ export interface AchievementItem {
   'description' : string,
   'level' : MedalLevel,
   'experience' : bigint,
+  'target' : bigint,
   'keyword' : string,
 }
 export type AchievementResult = { 'Ok' : Achievement } |

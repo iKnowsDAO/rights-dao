@@ -106,6 +106,7 @@ type AchievementItem = record {
     experience: nat64;
     // 成就完成级别
     level: MedalLevel;
+    target: nat64;
 };
 
 type AchievementResult = variant {

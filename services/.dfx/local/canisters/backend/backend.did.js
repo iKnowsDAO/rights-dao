@@ -64,6 +64,7 @@ export const idlFactory = ({ IDL }) => {
     'description' : IDL.Text,
     'level' : MedalLevel,
     'experience' : IDL.Nat64,
+    'target' : IDL.Nat64,
     'keyword' : IDL.Text,
   });
   const Achievement = IDL.Record({
