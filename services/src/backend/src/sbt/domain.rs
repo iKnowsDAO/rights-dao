@@ -27,9 +27,9 @@ pub const SBT_MEDAL_GOLD_LEVEL_THREE: u64 = 3;
 pub const SBT_MEDAL_BRONZE_EXPERIENCE_ONE: u64 = 10;
 pub const SBT_MEDAL_SILVER_EXPERIENCE_TWO: u64 = 200;
 pub const SBT_MEDAL_GOLD_EXPERIENCE_THREE: u64 = 500;
-pub const SBT_MEDAL_BRONZE_PHOTO_URL: &str = ""; // TODO
-pub const SBT_MEDAL_SILVER_PHOTO_URL: &str = ""; // TODO
-pub const SBT_MEDAL_GOLD_PHOTO_URL: &str = ""; // TODO
+pub const SBT_MEDAL_BRONZE_PHOTO_URL: &str = "https://ir2gy-fiaaa-aaaah-qcjhq-cai.raw.ic0.app/?picId=10009";
+pub const SBT_MEDAL_SILVER_PHOTO_URL: &str = "https://ir2gy-fiaaa-aaaah-qcjhq-cai.raw.ic0.app/?picId=10010";
+pub const SBT_MEDAL_GOLD_PHOTO_URL: &str = "https://ir2gy-fiaaa-aaaah-qcjhq-cai.raw.ic0.app/?picId=10011";
 
 /// 用户经验数据，通过汇总的各个任务经验计算
 #[derive(Debug, Clone, CandidType, Deserialize)]
