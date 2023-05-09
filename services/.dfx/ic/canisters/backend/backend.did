@@ -67,7 +67,7 @@ type Experience = record {
     owner: principal;
     experience: nat64;
     level: nat64;
-    next_level_gap: nat64;
+    next_level: nat64;
 };
 
 type ExperienceResult = variant {

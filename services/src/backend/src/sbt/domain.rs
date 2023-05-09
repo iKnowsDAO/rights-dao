@@ -37,7 +37,7 @@ pub struct Experience {
     pub owner: Principal,
     pub experience: u64,     // 获得的经验值
     pub level: u64,          // 经验值对应的等级
-    pub next_level_gap: u64, // 升级需要的经验值
+    pub next_level: u64,     // 更高一级需要的经验值
 }
 
 impl Experience {
@@ -48,7 +48,7 @@ impl Experience {
             owner,
             experience,
             level,
-            next_level_gap: next_level_experience,
+            next_level: next_level_experience,
         }
     }
 }
@@ -149,13 +149,15 @@ fn compute_next_level_experience(exp: u64) -> u64 {
     if exp >= FIVE_HUNDRED {
         ZERO
     } else if exp >= TWO_HUNDRED {
-        FIVE_HUNDRED - exp
+        FIVE_HUNDRED
     } else if exp >= TEN {
-        TWO_HUNDRED - exp
+        TWO_HUNDRED
     } else {
         TEN
     }
 }
+
+
 
 /// 用户成就
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -380,7 +382,7 @@ mod tests {
 
         assert_eq!(exp.experience, 210);
         assert_eq!(exp.level, 2);
-        assert_eq!(exp.next_level_gap, 290);
+        assert_eq!(exp.next_level, 500);
     }
 
     // #[test]
