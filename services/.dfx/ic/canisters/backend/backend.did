@@ -26,6 +26,7 @@ type UserError = variant {
     UserNotSame;
     ExperienceNotEnough;
     AchievementMustClaimFirst;
+    AchievementNotFound;
 };
 
 type UserProfile = record {

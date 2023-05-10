@@ -377,6 +377,7 @@ export type UserError = { 'UserAlreadyExists' : null } |
   { 'UserAlreadyDisable' : null } |
   { 'ExperienceNotEnough' : null } |
   { 'AnonymousNotAllowRegistering' : null } |
+  { 'AchievementNotFound' : null } |
   { 'UserBiographyTooLong' : null } |
   { 'UserNotSame' : null } |
   { 'AchievementMustClaimFirst' : null } |

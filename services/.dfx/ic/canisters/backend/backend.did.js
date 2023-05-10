@@ -99,6 +99,7 @@ export const idlFactory = ({ IDL }) => {
     'UserAlreadyDisable' : IDL.Null,
     'ExperienceNotEnough' : IDL.Null,
     'AnonymousNotAllowRegistering' : IDL.Null,
+    'AchievementNotFound' : IDL.Null,
     'UserBiographyTooLong' : IDL.Null,
     'UserNotSame' : IDL.Null,
     'AchievementMustClaimFirst' : IDL.Null,
