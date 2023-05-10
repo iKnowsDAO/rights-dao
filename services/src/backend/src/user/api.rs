@@ -201,13 +201,8 @@ fn get_self() -> Result<UserProfile, UserError> {
 fn get_user_experience(user: Principal) -> Result<Experience, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
-        let user_achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
-        user_achievement
-            .map(|a| {
-                let exp = a.total_exp();
-                Experience::new(user, exp)
-            })
-            .ok_or(UserError::UserNotFound)
+        let achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
+        Ok(achievement_to_experience(user, achievement))
     })
 }
 
@@ -217,13 +212,8 @@ fn get_self_experience() -> Result<Experience, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let user = ctx.env.caller();
-        let user_achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
-        user_achievement
-            .map(|a| {
-                let exp = a.total_exp();
-                Experience::new(user, exp)
-            })
-            .ok_or(UserError::UserNotFound)
+        let achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
+        Ok(achievement_to_experience(user, achievement))
     })
 }
 
@@ -233,8 +223,10 @@ fn get_self_achievement() -> Result<Achievement, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let user = ctx.env.caller();
-        let claimed_at = ctx.env.now();
-        query_achievement(&ctx, user, claimed_at)
+        // let claimed_at = ctx.env.now();
+        // query_achievement(&ctx, user, claimed_at)
+        let achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
+        achievement.ok_or(UserError::AchievementNotFound)
     })
 }
 
@@ -243,8 +235,10 @@ fn get_self_achievement() -> Result<Achievement, UserError> {
 fn get_user_achievement(user: Principal) -> Result<Achievement, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
-        let claimed_at = ctx.env.now();
-        query_achievement(&ctx, user, claimed_at)
+        // let claimed_at = ctx.env.now();
+        // query_achievement(&ctx, user, claimed_at)
+        let achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
+        achievement.ok_or(UserError::AchievementNotFound)
     })
 }
 
@@ -374,4 +368,13 @@ fn query_achievement(
         received_bounty_item,
         claimed_at,
     ))
+}
+
+fn achievement_to_experience(user: Principal, achievement: Option<Achievement>) -> Experience {
+    achievement
+        .map(|a| {
+            let exp = a.total_exp();
+            Experience::new(user, exp)
+        })
+        .unwrap_or(Experience::new(user, 0))
 }

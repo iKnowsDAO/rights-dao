@@ -25,4 +25,6 @@ pub enum UserError {
     ExperienceNotEnough,
     #[error("Must claim achievement first")]
     AchievementMustClaimFirst,
+    #[error("Achievement nof found")]
+    AchievementNotFound,
 }
