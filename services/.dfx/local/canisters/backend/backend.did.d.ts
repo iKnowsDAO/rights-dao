@@ -66,9 +66,9 @@ export type CurrencyUnit = { 'BTC' : null } |
   { 'USDT' : null };
 export interface Experience {
   'owner' : Principal,
-  'next_level_gap' : bigint,
   'level' : bigint,
   'experience' : bigint,
+  'next_level' : bigint,
 }
 export type ExperienceResult = { 'Ok' : Experience } |
   { 'Err' : UserError };

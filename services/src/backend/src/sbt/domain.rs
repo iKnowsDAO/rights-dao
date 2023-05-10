@@ -27,17 +27,20 @@ pub const SBT_MEDAL_GOLD_LEVEL_THREE: u64 = 3;
 pub const SBT_MEDAL_BRONZE_EXPERIENCE_ONE: u64 = 10;
 pub const SBT_MEDAL_SILVER_EXPERIENCE_TWO: u64 = 200;
 pub const SBT_MEDAL_GOLD_EXPERIENCE_THREE: u64 = 500;
-pub const SBT_MEDAL_BRONZE_PHOTO_URL: &str = "https://ir2gy-fiaaa-aaaah-qcjhq-cai.raw.ic0.app/?picId=10009";
-pub const SBT_MEDAL_SILVER_PHOTO_URL: &str = "https://ir2gy-fiaaa-aaaah-qcjhq-cai.raw.ic0.app/?picId=10010";
-pub const SBT_MEDAL_GOLD_PHOTO_URL: &str = "https://ir2gy-fiaaa-aaaah-qcjhq-cai.raw.ic0.app/?picId=10011";
+pub const SBT_MEDAL_BRONZE_PHOTO_URL: &str =
+    "https://ir2gy-fiaaa-aaaah-qcjhq-cai.raw.ic0.app/?picId=10009";
+pub const SBT_MEDAL_SILVER_PHOTO_URL: &str =
+    "https://ir2gy-fiaaa-aaaah-qcjhq-cai.raw.ic0.app/?picId=10010";
+pub const SBT_MEDAL_GOLD_PHOTO_URL: &str =
+    "https://ir2gy-fiaaa-aaaah-qcjhq-cai.raw.ic0.app/?picId=10011";
 
 /// 用户经验数据，通过汇总的各个任务经验计算
 #[derive(Debug, Clone, CandidType, Deserialize)]
 pub struct Experience {
     pub owner: Principal,
-    pub experience: u64,     // 获得的经验值
-    pub level: u64,          // 经验值对应的等级
-    pub next_level: u64,     // 更高一级需要的经验值
+    pub experience: u64, // 获得的经验值
+    pub level: u64,      // 经验值对应的等级
+    pub next_level: u64, // 更高一级需要的经验值
 }
 
 impl Experience {
@@ -94,9 +97,8 @@ pub fn compute_reputation_completion_target(completion: u64) -> u64 {
         THOUSAND
     } else {
         HUNDRED
-    } 
+    }
 }
-
 
 pub fn compute_bounty_experience(completion: u64) -> u64 {
     if completion >= HUNDRED_BILLION {
@@ -126,7 +128,7 @@ pub fn compute_medal_level(exp: u64) -> MedalLevel {
         MedalLevel::Gold
     } else if exp_level == 2 {
         MedalLevel::Silver
-    } else if exp_level == 1{
+    } else if exp_level == 1 {
         MedalLevel::Bronze
     } else {
         MedalLevel::Commoner
@@ -156,8 +158,6 @@ fn compute_next_level_experience(exp: u64) -> u64 {
         TEN
     }
 }
-
-
 
 /// 用户成就
 #[derive(Debug, Clone, CandidType, Deserialize)]
@@ -197,6 +197,14 @@ impl Achievement {
             claimed_at,
         }
     }
+
+    pub fn total_exp(&self) -> u64 {
+        self.active_user.experience
+            + self.post_comment.experience
+            + self.reputation.experience
+            + self.issued_bounty.experience
+            + self.received_bounty.experience
+    }
 }
 
 /// 用户成就项
@@ -225,7 +233,6 @@ impl AchievementItem {
         level: MedalLevel,
         target: u64,
     ) -> Self {
-
         Self {
             keyword,
             description,
@@ -237,7 +244,7 @@ impl AchievementItem {
     }
 
     // pub fn create(keyword: String, description: String, completion: u64, experience: u64, target: u64) -> Self {
-    //     let level = 
+    //     let level =
     //     Self::new(
     //         keyword,
     //         description,

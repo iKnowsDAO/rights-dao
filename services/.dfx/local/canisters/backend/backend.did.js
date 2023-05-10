@@ -361,9 +361,9 @@ export const idlFactory = ({ IDL }) => {
   });
   const Experience = IDL.Record({
     'owner' : IDL.Principal,
-    'next_level_gap' : IDL.Nat64,
     'level' : IDL.Nat64,
     'experience' : IDL.Nat64,
+    'next_level' : IDL.Nat64,
   });
   const ExperienceResult = IDL.Variant({
     'Ok' : Experience,
