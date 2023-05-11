@@ -223,10 +223,10 @@ fn get_self_achievement() -> Result<Achievement, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
         let user = ctx.env.caller();
-        // let claimed_at = ctx.env.now();
-        // query_achievement(&ctx, user, claimed_at)
-        let achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
-        achievement.ok_or(UserError::AchievementNotFound)
+        let claimed_at = ctx.env.now();
+        query_achievement(&ctx, user, claimed_at)
+        // let achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
+        // achievement.ok_or(UserError::AchievementNotFound)
     })
 }
 
@@ -235,10 +235,10 @@ fn get_self_achievement() -> Result<Achievement, UserError> {
 fn get_user_achievement(user: Principal) -> Result<Achievement, UserError> {
     CONTEXT.with(|c| {
         let ctx = c.borrow();
-        // let claimed_at = ctx.env.now();
-        // query_achievement(&ctx, user, claimed_at)
-        let achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
-        achievement.ok_or(UserError::AchievementNotFound)
+        let claimed_at = ctx.env.now();
+        query_achievement(&ctx, user, claimed_at)
+        // let achievement = ctx.user_service.get_user(&user).and_then(|u| u.achievement);
+        // achievement.ok_or(UserError::AchievementNotFound)
     })
 }
 
