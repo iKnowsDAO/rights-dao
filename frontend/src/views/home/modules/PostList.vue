@@ -27,7 +27,7 @@
                                 {{t('common.search')}}
                             </el-button>
                         </div>
-                        <el-card class="post-card" v-for="(item,inex) in showList"
+                        <el-card class="post-card" v-for="(item,index) in showList"
                                  @click="onClick(Number(item.id))">
                             <el-row justify="space-between">
                                 <el-col :span="20" class="card-info">
@@ -49,7 +49,9 @@
                                         <div class="info">
                                             <Username :principalId="item.author.toString()"
                                                       :username="item.authorData && item.authorData.name!==''
-                                                      ? item.authorData.name: ''"/>
+                                                      ? item.authorData.name: ''"
+                                                      :sbtLevel="item.authorData && item.authorData.claimed_sbt[0] ?
+                                                      item.authorData.claimed_sbt[0].medal.level : 0"/>
                                             <span>|</span>
                                             <span class="createTime">{{getTimeF(Number(item.created_at))}}</span>
                                         </div>

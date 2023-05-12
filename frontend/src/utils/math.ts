@@ -94,7 +94,9 @@ export function getRandomUint64(): number {
 }
 
 // 将目标数值和现有数值转化为百分比（保留2位小数），满100%则计算为100%
-export function calculatePercent(currentValue: number, targetValue: number): number {
+export function calculatePercent(currentValue: number | bigint, targetValue: number | bigint): number {
+    currentValue = Number(currentValue);
+    targetValue = Number(targetValue);
     const percent = (currentValue / targetValue) * 100;
     return Number((percent >= 100 ? 100 : percent).toFixed(2));
 }

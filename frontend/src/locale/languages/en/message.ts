@@ -62,5 +62,9 @@ export default {
     tip: {
         comingSoon: "Coming Soon",
         notClose: "Do not close the page until it is complete"
+    },
+    claim: {
+        success: "All achievements have been Claimed.",
+        sbt: "SBT has been Claimed to the account."
     }
 };

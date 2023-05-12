@@ -1,12 +1,15 @@
-import {ElMessage} from 'element-plus/es';
-import {PictureInfo} from "@/types/picture";
-import {showMessageError} from "@/utils/message";
-import {t} from '@/locale';
-import {savePic} from "@/api/images";
+import { ElMessage } from 'element-plus/es';
+import { PictureInfo } from "@/types/picture";
+import { showMessageError } from "@/utils/message";
+import { t } from '@/locale';
+import { savePic } from "@/api/images";
+import { getSBTInfo } from "@/api/user";
+import { async } from "q";
+
 const photoServiceCanisterId = process.env['PHOTO_CANISTER_ID'] ?? '';
 
 //通过http请求的方式获取图片，只需要返回网址赋予给图片标签的src即可显示图片
-export function getUrlByPhotoServiceId(id: number | bigint) {
+export const getUrlByPhotoServiceId = (id: number | bigint) => {
     id = Number(id);
     if (process.env['configMode'] === 'development') {
         //本地调试用本地图片
@@ -18,6 +21,17 @@ export function getUrlByPhotoServiceId(id: number | bigint) {
     return photoServiceCanisterId
         ? `https://${photoServiceCanisterId}.raw.ic0.app/?picId=${id}`
         : '';
+}
+
+//通过指定等级，返回对应勋章的图片url
+export const getSBT = async (level: number | bigint): Promise<string> => {
+    const sbtInfo = await getSBTInfo();
+    const matchedMedal = sbtInfo.find(medal => medal.level === Number(level));
+    if (matchedMedal) {
+        return matchedMedal.photo_url;
+    } else {
+        throw new Error(`No SBT medal found for level ${level}`);
+    }
 }
 
 // 上传图片
@@ -85,7 +99,7 @@ export async function readPictureForUpload(
                     content: buffer,
                     fileType: file.type,
                 });
-                resolve({ buffer, src });
+                resolve({buffer, src});
             } else {
                 reject(e);
             }

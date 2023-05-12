@@ -8,7 +8,8 @@
                             :avatar-id="0"
                             :clickable="false"
                             :size="120"/>
-                    <SBTList v-if="targetPrincipal" :userPrincipal="targetPrincipal"/>
+                    <SBTList v-if="targetPrincipal && isOwner" :userPrincipal="targetPrincipal"
+                    :sbtLevel="user.claimed_sbt[0] ? user.claimed_sbt[0]?.medal?.level : 0"/>
                 </el-col>
                 <el-col :sm=15 :xs="24">
                     <div class="user-profile">
@@ -85,7 +86,7 @@
             </el-row>
         </div>
     </div>
-    <el-dialog v-model="dialogFormVisible" custom-class="user-edit-dialog" :title="t('user.editInfo')" width="30%">
+    <el-dialog v-model="dialogFormVisible" custom-class="user-edit-dialog" :title="t('user.editInfo')" :width="isPhone? '95%' : '35%'">
         <Avatar :username=form.name
                 :principal-id=targetPrincipal
                 :avatar-id="0"
@@ -212,6 +213,7 @@
     import { showMessageError, showMessageSuccess } from "@/utils/message";
     import { toClipboard } from "@soerenmartius/vue3-clipboard";
     import { useUserStore } from "@/stores/user";
+    import { ClaimedMedalMeta } from "@/api/types";
 
     const userStore = useUserStore();
     const router = useRouter();
@@ -219,6 +221,7 @@
     const dialogFormVisible = ref(false);
     const ruleFormRef = ref("")
     const reputation = ref(0);
+    const isPhone = ref(document.documentElement.clientWidth < 769);
     const form = ref({
         owner: "",
         email: "",
@@ -236,7 +239,8 @@
         location: "",
         created_at: 0,
         interests: [],
-        wallet_principal: []
+        wallet_principal: [],
+        claimed_sbt: [] as ClaimedMedalMeta[]
     });
     const currentUserPrincipal = computed<string>(() => userStore.principal);
     const targetPrincipal = ref('');

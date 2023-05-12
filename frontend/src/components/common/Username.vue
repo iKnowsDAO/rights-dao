@@ -5,15 +5,16 @@
               @click.stop="onClick">
             {{ showName }}
         </span>
-        <img v-if="showSBT" src="@/assets/images/sbt-test/sbt-silver.png">
+        <SBTMedal v-if="showSBT" :medalLevel="sbtLevel"/>
     </span>
 
 </template>
 
 <script lang="ts" setup>
-    import { defineProps, computed, watch, onMounted } from 'vue';
+    import { defineProps, computed, onMounted } from 'vue';
     import { showUsername } from '@/utils/avatars';
     import { openTab } from '@/router/routers';
+    import SBTMedal from '@/components/common/sbt/SBTMedal.vue';
 
     const props = defineProps({
         // 必要的内容，显示哪些
@@ -28,6 +29,10 @@
         showSBT: {
             type: Boolean,
             default: true,
+        },
+        sbtLevel: {
+            type: Number,
+            default: 0
         },
         // 是否可以点击（hover时鼠标变手）
         clickable: {
@@ -52,13 +57,6 @@
             }
         }
     }
-    //
-    // watch(
-    //     () => props.principalId,
-    //     () => {
-    //         console.log("props",props)
-    //     },
-    // );
 
     onMounted(() => {
 

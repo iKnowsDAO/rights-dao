@@ -12,11 +12,16 @@
     import { PlugWallet } from "@connect2ic/core/providers/plug-wallet"
     import { AstroX } from "@connect2ic/core/providers/astrox"
     import { Connect2ICProvider } from "@connect2ic/vue"
+    import { getSBTInfo } from "@/api/user";
 
     const userStore = useUserStore();
     const locale = computed(() => userStore.getLocale);
-    // 设置语言 直接用 不用当成方法调用
-    onMounted(() => changeLanguage(locale.value));
+    onMounted(() => {
+        // 设置语言 直接用 不用当成方法调用
+        changeLanguage(locale.value)
+        //提前加载勋章列表数据
+        getSBTInfo()
+    });
     const client = createClient({
         providers: [
             new AstroX(),

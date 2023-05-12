@@ -5,8 +5,8 @@ import {
     ApiProfilePost,
     ApiResult,
     ApiResultByPage,
-    ApiUserInfo,
-    GovernanceMember,
+    ApiUserInfo, ApiUserLevel,
+    GovernanceMember, MedalMeta,
     UserReputation
 } from "@/api/types";
 import {Principal} from "@dfinity/principal/lib/cjs";
@@ -142,4 +142,29 @@ export async function userDisConnectWallet(): Promise<ApiResult<Boolean>> {
 // 获取用户成就列表
 export async function getUserAchievement(principalId: string): Promise<ApiResult<AchievementResult>> {
     return await getBackend().get_user_achievement(Principal.fromText(principalId))
+}
+
+// claim所有用户成就
+export async function claimUserAchievement(): Promise<ApiResult<Boolean>> {
+    return await getBackend().claim_achievement()
+}
+
+// claim用户的SBT
+export async function claimUserSBT(): Promise<ApiResult<Boolean>> {
+    return await getBackend().claim_sbt()
+}
+
+// 获取sbt列表数据
+export async function getSBTInfo(): Promise<Array<MedalMeta>> {
+    return await getCache({
+        key: 'SBT_ALL_INFO',
+        execute: () => getBackend().all_sbt_medal(),
+        ttl: otherUserTTL,
+        isLocal: true, // 需要本地存储
+    });
+}
+
+// 获取用户的sbt等级
+export async function getUserSBTLevel(principalId: string): Promise<ApiResult<ApiUserLevel>> {
+    return await getBackend().get_user_experience(Principal.fromText(principalId))
 }

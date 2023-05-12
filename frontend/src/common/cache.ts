@@ -85,9 +85,9 @@ export async function getCache(info: {
         // 缓存中没有就执行方法产生最新的值
         data = await info.execute();
         // console.log('execute result for ' + key, data);
-        if (data.Ok === undefined) {
+        // 如果数据没有正常返回，就不缓存了
+        if (data === undefined) {
             if (info.notice) info.notice(false);
-            // 如果没有正常返回，就不缓存了
             return data;
         }
         setExpiredData(key, data, info.ttl || 60 * 60, info.isLocal || false);

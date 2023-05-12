@@ -30,6 +30,8 @@
                                             <Username :principalId="item.author.toString()"
                                                       :username="item.authorData && item.authorData.name!==''
                                                       ? item.authorData.name: ''"
+                                                      :sbtLevel="item.authorData && item.authorData.claimed_sbt[0] ?
+                                                      item.authorData.claimed_sbt[0].medal.level : 0"
                                                       :clickable="true"/>
                                         </b>
                                         <div class="sign" v-if="item.authorData && item.authorData.biography!==''">

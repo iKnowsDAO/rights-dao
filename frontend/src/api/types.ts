@@ -79,6 +79,8 @@ export type ApiUserInfo = {
     biography: string; //类似于个人签名
     interests: string[]; //兴趣，类似于标签
     wallet_principal: string[]; //用户绑定的钱包
+    achievement: [AchievementResult];//成就完成详情
+    claimed_sbt: [ClaimedMedalMeta] //收集的SBT，opt格式，只会有一个。
 };
 
 export type ApiPost = {
@@ -190,10 +192,35 @@ export type MedalLevel = {
     Platinum: null,
     Diamond: null
 }
+//勋章数据表
+export type MedalMeta = {
+    name: MedalLevel;
+    level: number;
+    experience: bigint;
+    photo_url: string;
+};
+
+//用户收集的勋章数据表
+export type ClaimedMedalMeta = {
+    created_at: number,
+    id: number,
+    medal: MedalMeta,
+    owner: Principal
+};
+
+//用户等级
+export type ApiUserLevel = {
+    owner: Principal;
+    level: bigint; //等级
+    experience: bigint; //当前经验值
+    next_level: string; //升到下一级所需要的经验总量
+};
 
 export type ApiAchievement = {
     description: string; //描述
-    experience: bigint; //经验值
+    experience: bigint; // 达成后获得的经验值
+    completion: bigint;// 当前完成的次数
+    target: bigint;// 完成成就需要完成的次数
     keyword: string; //关键词
     level: MedalLevel;
 };

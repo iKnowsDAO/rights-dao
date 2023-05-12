@@ -8,36 +8,36 @@
         center
     >
         <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="key" :label="t('sbt.achievement')"/>
+            <el-table-column prop="key" :label="t('sbt.achievement.title')" width="120"/>
             <el-table-column prop="target" :label="t('sbt.target')"/>
             <el-table-column prop="now" :label="t('sbt.achieved')"/>
             <el-table-column prop="progress" :label="t('sbt.progress')">
                 <template #default="scope">
-                    <el-progress type="circle" :percentage="80" width="50"/>
+                    <el-progress type="circle" :percentage="scope.row.progress"
+                                 :width="50"/>
                 </template>
             </el-table-column>
             <el-table-column prop="exp" :label="t('sbt.exp')"/>
-            <el-table-column fixed="right" :label="t('sbt.operation')" width="120">
-                <template #default>
-                    <el-button link type="primary" size="small" @click="handleClick">Claim</el-button>
-                </template>
-            </el-table-column>
         </el-table>
         <template #footer>
           <span class="dialog-footer">
              <el-button @click="onClose">{{t('common.cancel')}}</el-button>
-              <el-button type="primary" @click="submit()" :loading="loading">
-                  {{t('common.confirm')}}
+              <el-button type="primary" @click="claimAll()" :loading="loading">
+                  Claim All
               </el-button>
           </span>
         </template>
     </el-dialog>
 </template>
 <script lang="ts" setup>
-    import { ref, onMounted, defineProps, defineEmits, PropType } from 'vue';
+    import { ref, reactive, onMounted, defineProps, defineEmits, PropType, watch } from 'vue';
     import { ElDialog, ElInput, ElButton, ElTable, ElTableColumn, ElProgress } from 'element-plus/es';
     import { t } from '@/locale';
     import { AchievementResult } from "@/api/types";
+    import { calculatePercent } from "@/utils/math";
+    import { SumDivision } from "@/api/bounty";
+    import { claimUserAchievement } from "@/api/user";
+    import { showMessageSuccess } from "@/utils/message";
 
 
     const props = defineProps({
@@ -55,36 +55,100 @@
     const emit = defineEmits(['update:visible'])
     //如果宽度小于769px则说明是平板以下的尺寸
     const isPhone = ref(document.documentElement.clientWidth < 769);
-    const tableData = [
+    const tableData = ref([
         {
-            key: '获得一定量的回复',
-            target: '10',
-            now: '80',
-            exp: '10',
-            progress: '100%',
+            key: t('sbt.achievement.active_user'),
+            target: 10,
+            now: 0,
+            exp: 10,
+            progress: 0,
         },
         {
-            key: '获得一定量的回复',
-            target: '100',
-            now: '80',
-            exp: '30',
-            progress: '80%',
+            key: t('sbt.achievement.post_comment'),
+            target: 10,
+            now: 0,
+            exp: 10,
+            progress: 0,
         },
         {
-            key: '2016-05-04',
-            target: 'Tom',
-            progress: 'No. 189, Grove St, Los Angeles',
+            key: t('sbt.achievement.reputation'),
+            target: 100,
+            now: 0,
+            exp: 10,
+            progress: 0,
         },
         {
-            key: '2016-05-01',
-            target: 'Tom',
-            progress: 'No. 189, Grove St, Los Angeles',
+            key: t('sbt.achievement.issued_bounty'),
+            target: 1,
+            now: 0,
+            exp: 20,
+            progress: 0,
         },
-    ]
+        {
+            key: t('sbt.achievement.received_bounty'),
+            target: 1,
+            now: 0,
+            exp: 20,
+            progress: 0,
+        },
+    ])
 
-    const transferToTable = () => {
-
+    const transferToTable = (menu: AchievementResult) => {
+        const array = [];
+        for (const key in menu) {
+            if (menu.hasOwnProperty(key)) {
+                const value = menu[key];
+                transICP(value);
+                const item = {
+                    key: t('sbt.achievement.' + key),
+                    target: Number(value.target),
+                    now: Number(value.completion),
+                    exp: Number(value.experience),
+                    progress: calculatePercent(value.completion, value.target),
+                };
+                //@ts-ignore
+                array.push(item);
+            }
+        }
+        tableData.value = array;
+        console.log("tableData", tableData.value)
     }
+
+    const transICP = (item) => {
+        switch (item.keyword) {
+            case "issued bounty":
+            case "received bounty":
+                item.completion = SumDivision(item.completion)
+                item.target = SumDivision(item.target)
+                return
+        }
+        return
+    }
+
+    const claimAll = () => {
+        loading.value = true;
+        claimUserAchievement().then(res => {
+            if (res.Ok) {
+                console.log("res", res)
+                showMessageSuccess(t('message.claim.success'))
+            }
+        }).finally(() => {
+            loading.value = false;
+        })
+    }
+
+    onMounted(() => {
+        if (props.achievementMenu) {
+            transferToTable(props.achievementMenu)
+        }
+    })
+
+    watch(
+        () => props.achievementMenu,
+        (nv) => {
+            transferToTable(props.achievementMenu);
+        },
+    );
 
     const onClose = () => {
         emit('update:visible');

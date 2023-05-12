@@ -58,10 +58,14 @@ export default {
         success: "已将 {item} 复制到粘贴板。 "
     },
     user: {
-        notFound: "找不到目标用户信息。"
+        notFound: "找不到目标用户信息。",
     },
     tip: {
         comingSoon: "尽请期待",
         notClose: "页面完成前请勿关闭页面"
+    },
+    claim: {
+        success: "所有成就已经Claim。",
+        sbt: "SBT已经Claim到账户。"
     }
 };

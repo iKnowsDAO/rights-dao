@@ -24,6 +24,8 @@
                                         <Username :principalId="post.author.toString()"
                                                   :username="author!==undefined && author.name!==''
                                                       ? author.name: ''"
+                                                  :sbtLevel="author && author.claimed_sbt[0] ?
+                                                      author.claimed_sbt[0].medal.level : 0"
                                                 :clickable="true"/>
                                         <span>|</span>
                                         <span class="createTime">{{getTimeF(Number(post.created_at))}}</span>
