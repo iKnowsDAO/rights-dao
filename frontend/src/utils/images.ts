@@ -1,10 +1,7 @@
-import { ElMessage } from 'element-plus/es';
-import { PictureInfo } from "@/types/picture";
 import { showMessageError } from "@/utils/message";
 import { t } from '@/locale';
 import { savePic } from "@/api/images";
 import { getSBTInfo } from "@/api/user";
-import { async } from "q";
 
 const photoServiceCanisterId = process.env['PHOTO_CANISTER_ID'] ?? '';
 
