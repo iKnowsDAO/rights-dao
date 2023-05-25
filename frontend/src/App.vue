@@ -25,7 +25,7 @@
     const client = createClient({
         providers: [
             new AstroX(),
-            new PlugWallet(),
+            // new PlugWallet(),
         ]
     })
 </script>

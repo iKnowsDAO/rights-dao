@@ -18,6 +18,8 @@
         <span v-if="!props.onlyTransfer">
             {{t('message.tip.notClose')}}
         </span>
+        <br/>
+        <span>fee: <s>15%</s>&nbsp 0%</span>
         <el-steps v-if="!props.onlyTransfer" :active="active" finish-status="success" simple style="margin-top: 20px">
             <el-step :title="t('wallet.bounty.createOrder')"/>
             <el-step :title="t('wallet.bounty.transfer')"/>
