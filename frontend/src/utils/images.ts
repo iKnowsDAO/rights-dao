@@ -23,10 +23,10 @@ export const getUrlByPhotoServiceId = (id: number | bigint) => {
 //通过指定等级，返回对应勋章的图片url
 export const getSBT = async (level: number | bigint): Promise<string> => {
     const sbtInfo = await getSBTInfo();
-    console.log("sbtInfo",sbtInfo)
+    // console.log("sbtInfo",sbtInfo)
     // console.log("level",level)
-    const matchedMedal = sbtInfo.find(medal => medal.level === Number(level));
-    console.log("matchedMedal",matchedMedal)
+    const matchedMedal = sbtInfo.find(medal => Number(medal.level) === Number(level));
+    // console.log("matchedMedal",matchedMedal)
     if (matchedMedal) {
         return matchedMedal.photo_url;
     } else {
