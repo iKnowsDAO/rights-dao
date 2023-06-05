@@ -73,7 +73,7 @@ export default defineConfig(({ command, mode }) => {
             minify: isBuild ? 'esbuild' : false, // 默认为 Esbuild，它比 terser 快 20-40 倍，压缩率只差 1%-2%
             terserOptions: {
                 compress: {
-                    //线上环境移除console
+                    // 线上环境移除console
                     // drop_console:
                     //     configMode == ConfigMode.production
                     //         ? true // 线上部署的生产打包一定不包含
