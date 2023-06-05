@@ -512,7 +512,7 @@
             .navbar {
                 .container-fluid {
                     .logo {
-                        left: -60px;
+                        /*left: -60px;*/
                     }
                     .content > .tabs > ul > li {
                         margin-right: 70px;

@@ -73,18 +73,18 @@ export default defineConfig(({ command, mode }) => {
             minify: isBuild ? 'esbuild' : false, // 默认为 Esbuild，它比 terser 快 20-40 倍，压缩率只差 1%-2%
             terserOptions: {
                 compress: {
-                    // drop_console:
-                    //     configMode == ConfigMode.production
-                    //         ? true // 线上部署的生产打包一定不包含
-                    //         : viteEnv.VITE_DROP_CONSOLE === undefined
-                    //         ? isBuild
-                    //         : viteEnv.VITE_DROP_CONSOLE, // 生产环境去除 console
-                    // drop_debugger:
-                    //     configMode == ConfigMode.production
-                    //         ? true // 线上部署的生产打包一定不包含
-                    //         : viteEnv.VITE_DROP_DEBUGGER === undefined
-                    //         ? isBuild
-                    //         : viteEnv.VITE_DROP_DEBUGGER, // 生产环境去除 debugger
+                    drop_console:
+                        configMode == ConfigMode.production
+                            ? true // 线上部署的生产打包一定不包含
+                            : viteEnv.VITE_DROP_CONSOLE === undefined
+                            ? isBuild
+                            : viteEnv.VITE_DROP_CONSOLE, // 生产环境去除 console
+                    drop_debugger:
+                        configMode == ConfigMode.production
+                            ? true // 线上部署的生产打包一定不包含
+                            : viteEnv.VITE_DROP_DEBUGGER === undefined
+                            ? isBuild
+                            : viteEnv.VITE_DROP_DEBUGGER, // 生产环境去除 debugger
                 },
             },
             rollupOptions: {
