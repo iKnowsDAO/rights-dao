@@ -126,13 +126,15 @@ const setExpiredData = (key: string, value: any, ttl: number, isLocal: boolean):
         if (typeof value === "bigint") {
             return Number(value);
         } else if (typeof value === "object" && value?.constructor.name === 'Principal') {
-            console.log("value object", key, value)
-            console.log("value object", typeof value);
+            // console.log("value object", key, value)
+            // console.log("value object", typeof value);
+            // 注意，value为null时，type为object
             // 将Principal格式的value转换为字符串储存
             // 以免JSON.stringify深拷贝时破坏Principal的constructor，导致无法转换成字符串
             return value.toString();
         } else if (value && value._isPrincipal) {
             console.log("value._isPrincipal", key, value)
+            console.log("value._isPrincipal", value?.constructor.name)
             return value.toString();
         }
         return value;
